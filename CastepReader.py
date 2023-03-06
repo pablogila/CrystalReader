@@ -19,30 +19,24 @@ I want to write the following columns of data in the .csv file, in this order:
 
 """
 
-import os
-import csv
-import numpy as np
+# Import the read_castep_file function from castep_parse
+from castep_parse import read_castep_file
 
-# Define the path to the folder containing the .castep files
-path = '/PBEsol-MP-2x2x2'
+# Load a .castep file into a CastepFile object
+cf = read_castep_file('cc-2.castep')
 
-# Define the path to the output file
-output = 'castep.out.csv'
+# Extract the data you want
+final_enthalpy = cf.final_enthalpy # in eV
+cell_parameters = cf.cell_parameters # in Angstroms
+a, b, c = cell_parameters['a'], cell_parameters['b'], cell_parameters['c']
+alpha, beta, gamma = cell_parameters['alpha'], cell_parameters['beta'], cell_parameters['gamma']
+volume = cf.volume # in Angstroms^3
+density = cf.density # in g/cm^3
 
-# Define the list of folders
-folders = os.listdir(path)
+# Print the data
+print(f'Final enthalpy: {final_enthalpy} eV')
+print(f'Cell parameters: a={a}, b={b}, c={c}, alpha={alpha}, beta={beta}, gamma={gamma}')
+print(f'Volume: {volume} Angstroms^3')
+print(f'Density: {density} g/cm^3')
 
-# Define the list of files
-files = []
 
-# Define the list of data
-data = []
-
-# Define the list of data to be written to the output file
-output_data = []
-
-# Define the list of column names
-column_names = ['Folder', 'Enthalpy (eV)', 'Enthalpy (kJ/mol)', 'a (Angstroms)', 'b (Angstroms)', 'c (Angstroms)', 'alpha (degrees)', 'beta (degrees)', 'gamma (degrees)', 'Volume (Angstroms^3)', 'Density (amu/Angstroms^3)', 'Density (g/cm^3)']
-
-# Define the list of units
-units = ['-', 'eV', 'kJ/mol', 'Angstroms', 'Angstroms', 'Angstroms', 'degrees', 'degrees', 'degrees', 'Angstroms^3', 'amu/Angstroms^3', 'g/cm^3
