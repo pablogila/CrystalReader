@@ -1,0 +1,12 @@
+/.git/
+*.xlsx
+*.csv
+*.txt
+*.data
+*.dat
+*.out
+/PBEsol-MP-2x2x2/
+/.venv/
+*.castep
+*.cif
+*.phonon

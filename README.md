@@ -1,0 +1,1 @@
+This is an attempt to automatize the reading and extraction of information of `.castep`, `.cif` and `.phonon` files.
