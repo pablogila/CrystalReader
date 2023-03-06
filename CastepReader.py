@@ -19,24 +19,75 @@ I want to write the following columns of data in the .csv file, in this order:
 
 """
 
-# Import the read_castep_file function from castep_parse
-from castep_parse import read_castep_file
 
-# Load a .castep file into a CastepFile object
-cf = read_castep_file('cc-2.castep')
+import re
 
-# Extract the data you want
-final_enthalpy = cf.final_enthalpy # in eV
-cell_parameters = cf.cell_parameters # in Angstroms
-a, b, c = cell_parameters['a'], cell_parameters['b'], cell_parameters['c']
-alpha, beta, gamma = cell_parameters['alpha'], cell_parameters['beta'], cell_parameters['gamma']
-volume = cf.volume # in Angstroms^3
-density = cf.density # in g/cm^3
 
-# Print the data
-print(f'Final enthalpy: {final_enthalpy} eV')
-print(f'Cell parameters: a={a}, b={b}, c={c}, alpha={alpha}, beta={beta}, gamma={gamma}')
-print(f'Volume: {volume} Angstroms^3')
-print(f'Density: {density} g/cm^3')
+def extract(string, name):
+    pattern = re.compile(name + r'\s*=\s*(-?\d+(?:\.\d+)?(?:[eE][+\-]?\d+)?)')
+    match = pattern.search(string)
+    if match:
+        return float(match.group(1))
+    else:
+        return None
+
+
+# This function will exclusively extract the density in g/cm^3, because that line in particular is a pain in the ass
+def extract_damm_densityg(string):
+    pattern = re.compile(r'=\s*([\d\.]+)')
+    match = pattern.search(string)
+    if match:
+        return float(match.group(1))
+    else:
+        return None
+
+
+def searcher(filename, search_value):
+    with open(filename, 'r') as file:
+        file.seek(0, 2)  # move the file pointer to the end of the file
+        position = file.tell()  # get the position of the file pointer
+        while position >= 0:
+            file.seek(position)
+            next_char = file.read(1)
+            if next_char == '\n':
+                line = file.readline().strip()
+                if line.startswith(search_value):
+                    return line
+            position -= 1
+    return None
+
+
+enthalpy_str = searcher('cc-2.castep', 'LBFGS: Final Enthalpy     =')
+cell_str = searcher('cc-2.castep', 'Current cell volume =')
+density_str = searcher('cc-2.castep', 'density =')
+densityg_str = searcher('cc-2.castep', '=') # This line in particular is weird so be careful
+a_str = searcher('cc-2.castep', 'a =')
+b_str = searcher('cc-2.castep', 'b =')
+c_str = searcher('cc-2.castep', 'c =')
+
+
+enthalpy = extract(enthalpy_str, 'LBFGS: Final Enthalpy')
+cell = extract(cell_str, 'Current cell volume')
+density = extract(density_str, 'density')
+densityg = extract_damm_densityg(densityg_str)
+a = extract(a_str, 'a')
+b = extract(b_str, 'b')
+c = extract(c_str, 'c')
+alpha = extract(a_str, 'alpha')
+beta = extract(b_str, 'beta')
+gamma = extract(c_str, 'gamma')
+
+print("")
+print("enthalpy = ",enthalpy)
+print("cell = ",cell)
+print("density = ",density)
+print("densityg = ",densityg)
+print("a = ",a)
+print("b = ",b)
+print("c = ",c)
+print("alpha = ",alpha)
+print("beta = ",beta)
+print("gamma = ",gamma)
+print("")
 
 
