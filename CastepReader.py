@@ -52,10 +52,10 @@ def searcher(filename, search_value):
 
 
 # This function will print a progress bar in the console, just for fun
-def progressbar(current_value,total_value):
+def progressbar(current, total):
     bar_length = 30
-    percentage = int((current_value/total_value)*100)
-    progress = int((bar_length * current_value ) / total_value)
+    percentage = int((current/total)*100)
+    progress = int((bar_length*current)/total)
     loadbar = "[{:{len}}]{}%".format(progress*'■',percentage,len=bar_length)
     print(loadbar, end='\r')
 
@@ -90,7 +90,7 @@ with open('out_castep.csv', 'w', newline='') as file:
 
         # Progress bar, just for fun
         i+=1
-        progressbar(i,len(directories))
+        progressbar(i, len(directories))
 
         # Define the path to the .castep file
         file = os.path.join(path, directory, 'cc-2.castep')
