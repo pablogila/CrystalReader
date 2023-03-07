@@ -1,6 +1,6 @@
 print("\n")
 print("CastepReader  v2023.03.07  by  Pablo Gila-Herranz")
-print("https://github.com/pablogila/CrystalReader ")
+print("https://github.com/pablogila/CrystalReader")
 print("\n")
 
 
@@ -8,8 +8,6 @@ import re
 import os
 import csv
 import time
-# Progress bar: for i in tqdm(list): etc
-#from tqdm import tqdm
 
 
 # This function will extract the numbers from the name of the parent folder
@@ -55,33 +53,31 @@ def searcher(filename, search_value):
 
 # This function will print a progress bar in the console, just for fun
 def progressbar(current_value,total_value):
-    bar_length = 40
+    bar_length = 30
     percentage = int((current_value/total_value)*100)
     progress = int((bar_length * current_value ) / total_value)
-    loadbar = "Progress: [{:{len}}]{}%".format(progress*'■',percentage,len=bar_length)
+    loadbar = "[{:{len}}]{}%".format(progress*'■',percentage,len=bar_length)
     print(loadbar, end='\r')
 
 
-# Start a timer to measure the execution time. Just for fun.
-time_start = time.time()
-
-# For the progress bar
-i = 0
-
 # Define the conversion factor from eV to kJ/mol
-# THIS NEEDS TO BE FIXED
-ev = 1.602176634E-19 / 1000 # eV to kJ
+ev = 1.602176634E-19 / 1000 # THIS NEEDS TO BE FIXED ----------------------------------------------
+# Directory containing the folders with the .castep files
+data_directory = 'data'
 
+print("Reading files...")
 
 # Get the absolute path to the directory containing the Python script
 dir_path = os.path.dirname(os.path.realpath(__file__))
 # Specify the path to the directory containing the folders with the .castep files, relative to the script's directory
-path = os.path.join(dir_path, 'data')
+path = os.path.join(dir_path, data_directory)
 # Get the names of all the directories in the given path, and store them in a list
 directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
-print("Starting to read files...")
-print(" ")
+# Start a timer to measure the execution time. Just for fun.
+time_start = time.time()
+# Start the counter for the progress bar
+i = 0
 
 # Open the output file to write the data
 with open('out_castep.csv', 'w', newline='') as file:
@@ -127,7 +123,6 @@ with open('out_castep.csv', 'w', newline='') as file:
 
         # Print the data on screen, for debugging purposes
         #print(file_name)
-        #print("")
         #print("enthalpy = ", enthalpy)
         #print("enthalpy*ev = ", enthalpy*ev)
         #print("a = ", a)
@@ -142,10 +137,8 @@ with open('out_castep.csv', 'w', newline='') as file:
         #print("")
 
 
-print("")
-print("Finished reading the '.castep' files\nData extracted and saved to 'out_castep.csv'")
-print("")
-
 time_elapsed = (time.time() - time_start)
-print("Completed in ", time_elapsed, " seconds")
+print("")
+print("Finished reading the '.castep' files in ", time_elapsed, " seconds")
+print("Data extracted and saved to 'out_castep.csv'")
 print("")
