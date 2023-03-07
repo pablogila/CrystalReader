@@ -1,6 +1,6 @@
 """
 
-CastepReader v2023.03.07.1845 from CrystalReader. Extract data from '.castep' files.
+CastepReader v2023.03.07.1900 from CrystalReader. Extract data from '.castep' files.
 Copyright (C) 2023  Pablo Gila-Herranz
 Check the latest version at https://github.com/pablogila/CrystalReader
 Feel free to contact me at pablo.gila.herranz@gmail.com
@@ -25,7 +25,7 @@ print("")
 print("CastepReader from CrystalReader,  Copyright (C) 2023  Pablo Gila-Herranz")
 print("This is free software, and you are welcome to redistribute it under GNU General Public License")
 print("If you find this code useful, a citation would be greatly appreciated :D")
-print("https://github.com/pablogila/CrystalReader")
+print("Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
 print("")
 
 
@@ -63,8 +63,10 @@ def extract(string, name):
 # This function will search for a specific string value in a given file, and return the corresponding line
 def searcher(filename, search_value):
     with open(filename, 'r') as file:
-        file.seek(0, 2)  # move the file pointer to the end of the file
-        position = file.tell()  # get the position of the file pointer
+        # Move the file pointer to the end of the file
+        file.seek(0, 2)
+        # Get the position of the file pointer
+        position = file.tell()
         while position >= 0:
             file.seek(position)
             next_char = file.read(1)
@@ -91,7 +93,7 @@ data_name = 'cc-2.castep'
 data_output = 'out_castep.csv'
 data_header = ['filename', 'enthalpy / eV', 'enthalpy / kJ/mol', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume / A^3', 'density / amu/A^3', 'density / g/cm^3']
 # Define the conversion factor from eV to kJ/mol
-ev = 1.602176634E-19 / 1000 # THIS NEEDS TO BE FIXED ----------------------------------------------
+ev = (1.602176634E-19 / 1000) * 6.02214076E+23 ########## THIS SUPPOSES THAT enthalpy IS IN [eV/ATOM]
 
 print("Reading files...")
 
