@@ -6,6 +6,7 @@
 *.dat
 *.out
 /PBEsol-MP-2x2x2/
+/data/
 /.venv/
 *.castep
 *.cif
