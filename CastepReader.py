@@ -1,9 +1,28 @@
+"""
+
+CastepReader v2023.03.07.1740 from CrystalReader. Extract data from '.castep' files.
+Copyright (C) 2023  Pablo Gila-Herranz
+Feel free to contact me at pablo.gila.herranz@gmail.com
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+<https://www.gnu.org/licenses/>.
+
+"""
+
+
 print("")
-print("CastepReader v2023.03.07.1600")
-print("From CrystalReader by Pablo Gila-Herranz")
-print("https://github.com/pablogila/CrystalReader")
-print("Released under GNU General Public License v3.0")
+print("CastepReader from CrystalReader,  Copyright (C) 2023  Pablo Gila-Herranz")
+print("This is free software, and you are welcome to redistribute it under GNU General Public License")
 print("If you find this code useful, a citation would be appreciated :D")
+print("https://github.com/pablogila/CrystalReader")
 print("")
 
 
