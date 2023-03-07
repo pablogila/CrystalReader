@@ -1,7 +1,8 @@
 """
 
-CastepReader v2023.03.07.1740 from CrystalReader. Extract data from '.castep' files.
+CastepReader v2023.03.07.1845 from CrystalReader. Extract data from '.castep' files.
 Copyright (C) 2023  Pablo Gila-Herranz
+Check the latest version at https://github.com/pablogila/CrystalReader
 Feel free to contact me at pablo.gila.herranz@gmail.com
 
 This program is free software: you can redistribute it and/or modify
@@ -13,7 +14,9 @@ This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-<https://www.gnu.org/licenses/>.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 
@@ -21,7 +24,7 @@ GNU General Public License for more details.
 print("")
 print("CastepReader from CrystalReader,  Copyright (C) 2023  Pablo Gila-Herranz")
 print("This is free software, and you are welcome to redistribute it under GNU General Public License")
-print("If you find this code useful, a citation would be appreciated :D")
+print("If you find this code useful, a citation would be greatly appreciated :D")
 print("https://github.com/pablogila/CrystalReader")
 print("")
 
@@ -75,23 +78,25 @@ def searcher(filename, search_value):
 
 # This function will print a progress bar in the console, just for fun
 def progressbar(current, total):
-    bar_length = 30
+    bar_length = 40
     percentage = int((current/total)*100)
     progress = int((bar_length*current)/total)
     loadbar = "[{:{len}}]{}%".format(progress*'■',percentage,len=bar_length)
     print(loadbar, end='\r')
 
 
-# Start a timer to measure the execution time. Just for fun.
-time_start = time.time()
-# Start the counter for the progress bar
-i = 0
+# Structure of the data
+data_directory = 'data'
+data_name = 'cc-2.castep'
+data_output = 'out_castep.csv'
+data_header = ['filename', 'enthalpy / eV', 'enthalpy / kJ/mol', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume / A^3', 'density / amu/A^3', 'density / g/cm^3']
 # Define the conversion factor from eV to kJ/mol
 ev = 1.602176634E-19 / 1000 # THIS NEEDS TO BE FIXED ----------------------------------------------
-# Directory containing the folders with the .castep files
-data_directory = 'data'
 
 print("Reading files...")
+
+# Start a timer to measure the execution time. Just for fun.
+time_start = time.time()
 
 # Get the absolute path to the directory containing the Python script
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -101,20 +106,21 @@ path = os.path.join(dir_path, data_directory)
 directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
 # Open the output file to write the data
-with open('out_castep.csv', 'w', newline='') as file:
+with open(data_output, 'w', newline='') as file:
     writer = csv.writer(file)
     # Write a header row for the CSV file
-    writer.writerow(['filename', 'enthalpy / eV', 'enthalpy / kJ/mol', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume / A^3', 'density / amu/A^3', 'density / g/cm^3'])
+    writer.writerow(data_header)
 
+    # Start the counter for the progress bar
+    i = 0
     # Loop through all the folders in the /data path
     for directory in directories:
-
         # Progress bar, just for fun
         i+=1
         progressbar(i, len(directories))
 
         # Define the path to the .castep file
-        file = os.path.join(path, directory, 'cc-2.castep')
+        file = os.path.join(path, directory, data_name)
         file_name = naming(directory)
 
         # Read the file and look for the desired lines
@@ -157,9 +163,7 @@ with open('out_castep.csv', 'w', newline='') as file:
         #print("densityg = ", densityg)
         #print("")
 
-
-time_elapsed = (time.time() - time_start)
-print("")
+time_elapsed = round(time.time() - time_start, 3)
 print("Finished reading the '.castep' files in ", time_elapsed, " seconds")
 print("Data extracted and saved to 'out_castep.csv'")
 print("")
