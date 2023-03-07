@@ -1,7 +1,10 @@
-print("\n")
-print("CastepReader  v2023.03.07  by  Pablo Gila-Herranz")
+print("")
+print("CastepReader v2023.03.07.1600")
+print("From CrystalReader by Pablo Gila-Herranz")
 print("https://github.com/pablogila/CrystalReader")
-print("\n")
+print("Released under GNU General Public License v3.0")
+print("If you find this code useful, a citation would be appreciated :D")
+print("")
 
 
 import re
@@ -60,6 +63,10 @@ def progressbar(current, total):
     print(loadbar, end='\r')
 
 
+# Start a timer to measure the execution time. Just for fun.
+time_start = time.time()
+# Start the counter for the progress bar
+i = 0
 # Define the conversion factor from eV to kJ/mol
 ev = 1.602176634E-19 / 1000 # THIS NEEDS TO BE FIXED ----------------------------------------------
 # Directory containing the folders with the .castep files
@@ -73,11 +80,6 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(dir_path, data_directory)
 # Get the names of all the directories in the given path, and store them in a list
 directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
-
-# Start a timer to measure the execution time. Just for fun.
-time_start = time.time()
-# Start the counter for the progress bar
-i = 0
 
 # Open the output file to write the data
 with open('out_castep.csv', 'w', newline='') as file:
