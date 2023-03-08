@@ -20,13 +20,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 
-version = "v-cif.2023.03.08.1500"
+version = "vCRcif.2023.03.08.1600"
 
 print("")
-print("Running CrystalReader in 'cif' mode, version " + version)
-print("If you find this code useful, a citation would be greatly appreciated :D")
-print("Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
-print("This is free software, and you are welcome to redistribute it under GNU General Public License")
+print(" Running CrystalReader in 'cif' mode, version " + version)
+print(" If you find this code useful, a citation would be greatly appreciated :D")
+print(" Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
+print(" This is free software, and you are welcome to redistribute it under GNU General Public License")
 print("")
 
 
@@ -81,10 +81,10 @@ def searcher(filename, search_value):
 
 # This function will print a progress bar in the console, just for fun
 def progressbar(current, total):
-    bar_length = 40
+    bar_length = 50
     percentage = int((current/total)*100)
     progress = int((bar_length*current)/total)
-    loadbar = "[{:{len}}]{}%".format(progress*'■',percentage,len=bar_length)
+    loadbar = " [{:{len}}]{}%".format(progress*'■',percentage,len=bar_length)
     print(loadbar, end='\r')
 
 
@@ -95,7 +95,7 @@ data_cifE = 'cc-2_Efield-out.cif'
 data_cif_out = 'out_cif.csv'
 data_cif_header = ['filename', 'cif', 'cifE']
 
-print("Reading files...")
+print(" Reading files...")
 
 # Start a timer to measure the execution time. Just for fun.
 time_start = time.time()
@@ -145,6 +145,6 @@ with open(data_cif_out, 'w', newline='') as file:
         #print("")
 
 time_elapsed = round(time.time() - time_start, 3)
-print("Finished reading the ", data_cif, " and ", data_cifE, " files in ", time_elapsed, " seconds")
-print("Data extracted and saved to ", data_cif_out)
+print(" Finished reading the ", data_cif, " and ", data_cifE, " files in ", time_elapsed, " seconds")
+print(" Data extracted and saved to ", data_cif_out)
 print("")

@@ -20,13 +20,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 
-version = "v-castep.2023.03.08.1500"
+version = "vCRcastep.2023.03.08.1600"
 
 print("")
-print("Running CrystalReader in 'castep' mode, version " + version)
-print("If you find this code useful, a citation would be greatly appreciated :D")
-print("Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
-print("This is free software, and you are welcome to redistribute it under GNU General Public License")
+print(" Running CrystalReader in 'castep' mode, version " + version)
+print(" If you find this code useful, a citation would be greatly appreciated :D")
+print(" Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
+print(" This is free software, and you are welcome to redistribute it under GNU General Public License")
 print("")
 
 
@@ -81,10 +81,10 @@ def searcher(filename, search_value):
 
 # This function will print a progress bar in the console, just for fun
 def progressbar(current, total):
-    bar_length = 40
+    bar_length = 50
     percentage = int((current/total)*100)
     progress = int((bar_length*current)/total)
-    loadbar = "[{:{len}}]{}%".format(progress*'■',percentage,len=bar_length)
+    loadbar = " [{:{len}}]{}%".format(progress*'■',percentage,len=bar_length)
     print(loadbar, end='\r')
 
 
@@ -96,9 +96,9 @@ data_castep_header = ['filename', 'enthalpy / eV', 'enthalpy / kJ/mol', 'a', 'b'
 
 # Define the conversion factor from eV to kJ/mol, SUPPOSING THAT 'enthalpy' IS IN [eV/molecule]
 ev = (1.602176634E-19 / 1000) * 6.02214076E+23
-print("eV to kJ/mol conversion factor: ", ev, "\n")
+print(" eV to kJ/mol conversion factor: ", ev, "\n")
 
-print("Reading files...")
+print(" Reading files...")
 
 # Start a timer to measure the execution time. Just for fun.
 time_start = time.time()
@@ -169,6 +169,6 @@ with open(data_castep_out, 'w', newline='') as file:
         #print("")
 
 time_elapsed = round(time.time() - time_start, 3)
-print("Finished reading the ", data_castep, " files in ", time_elapsed, " seconds")
-print("Data extracted and saved to ", data_castep_out)
+print(" Finished reading the ", data_castep, " files in ", time_elapsed, " seconds")
+print(" Data extracted and saved to ", data_castep_out)
 print("")
