@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 
-version = "v.castep.2023.03.08.1430"
+version = "v-castep.2023.03.08.1500"
 
 print("")
 print("Running CrystalReader in 'castep' mode, version " + version)

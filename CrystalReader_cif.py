@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 
-version = "v.cif.2023.03.08.1430"
+version = "v-cif.2023.03.08.1500"
 
 print("")
 print("Running CrystalReader in 'cif' mode, version " + version)
