@@ -1,6 +1,6 @@
 """
 
-CrystalReader for '.castep' files v2023.03.08.1150
+CrystalReader version 'castep'. Read and extract data from '.castep' files.
 Copyright (C) 2023  Pablo Gila-Herranz
 Check the latest version at https://github.com/pablogila/CrystalReader
 Feel free to contact me at pablo.gila.herranz@gmail.com
@@ -20,9 +20,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 
+version = "v.castep.2023.03.08.1430"
 
 print("")
-print("CrystalReader entering 'castep' mode")
+print("Running CrystalReader in 'castep' mode, version " + version)
 print("If you find this code useful, a citation would be greatly appreciated :D")
 print("Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
 print("This is free software, and you are welcome to redistribute it under GNU General Public License")
@@ -168,6 +169,6 @@ with open(data_castep_out, 'w', newline='') as file:
         #print("")
 
 time_elapsed = round(time.time() - time_start, 3)
-print("Finished reading the '.castep' files in ", time_elapsed, " seconds")
-print("Data extracted and saved to 'out_castep.csv'")
+print("Finished reading the ", data_castep, " files in ", time_elapsed, " seconds")
+print("Data extracted and saved to ", data_castep_out)
 print("")

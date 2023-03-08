@@ -1,6 +1,6 @@
 """
 
-CrystalReader for '.cif' files v2023.03.08.1150
+CrystalReader version 'cif'. Read and extract data from '.cif' files.
 Copyright (C) 2023  Pablo Gila-Herranz
 Check the latest version at https://github.com/pablogila/CrystalReader
 Feel free to contact me at pablo.gila.herranz@gmail.com
@@ -20,9 +20,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 
+version = "v.cif.2023.03.08.1430"
 
 print("")
-print("CrystalReader entering 'cif' mode")
+print("Running CrystalReader in 'cif' mode, version " + version)
 print("If you find this code useful, a citation would be greatly appreciated :D")
 print("Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
 print("This is free software, and you are welcome to redistribute it under GNU General Public License")
@@ -144,6 +145,6 @@ with open(data_cif_out, 'w', newline='') as file:
         #print("")
 
 time_elapsed = round(time.time() - time_start, 3)
-print("Finished reading the 'cc-2-out.cif' and 'cc-2_Efield-out.cif' files in ", time_elapsed, " seconds")
-print("Data extracted and saved to 'out_cif.csv'")
+print("Finished reading the ", data_cif, " and ", data_cifE, " files in ", time_elapsed, " seconds")
+print("Data extracted and saved to ", data_cif_out)
 print("")
