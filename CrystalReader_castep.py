@@ -1,6 +1,6 @@
 """
 
-CifReader v2023.03.07.1940 from CrystalReader. Extract data from '.cif' files.
+CrystalReader for '.castep' files v2023.03.08.1150
 Copyright (C) 2023  Pablo Gila-Herranz
 Check the latest version at https://github.com/pablogila/CrystalReader
 Feel free to contact me at pablo.gila.herranz@gmail.com
@@ -22,10 +22,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 print("")
-print("CifReader from CrystalReader,  Copyright (C) 2023  Pablo Gila-Herranz")
-print("This is free software, and you are welcome to redistribute it under GNU General Public License")
+print("CrystalReader entering 'castep' mode")
 print("If you find this code useful, a citation would be greatly appreciated :D")
 print("Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
+print("This is free software, and you are welcome to redistribute it under GNU General Public License")
 print("")
 
 
@@ -50,9 +50,9 @@ def naming(string):
         return None
 
 
-# This function will extract the value of a given variable from a raw string, without an '=' sign
-def extract(string, name):
-    pattern = re.compile(name + r'\s*(-?\d+(?:\.\d+)?(?:[eE][+\-]?\d+)?)')
+# This function will extract the float value of a given variable from a raw string
+def extract_float(string, name):
+    pattern = re.compile(name + r'\s*=?\s*(-?\d+(?:\.\d+)?(?:[eE][+\-]?\d+)?)')
     match = pattern.search(string)
     if match:
         return float(match.group(1))
@@ -60,7 +60,6 @@ def extract(string, name):
         return None
 
 
-##################################### TO FIX: IT RETURNS NONE, I HAVE TO CHECK WHY #####################################
 # This function will search for a specific string value in a given file, and return the corresponding line
 def searcher(filename, search_value):
     with open(filename, 'r') as file:
@@ -90,10 +89,13 @@ def progressbar(current, total):
 
 # Structure of the data
 data_directory = 'data'
-data_cif = 'cc-2-out.cif'
-data_cifE = 'cc-2_Efield-out.cif'
-data_output = 'out_cif.csv'
-data_header = ['filename', 'cif', 'cifE']
+data_castep = 'cc-2.castep'
+data_castep_out = 'out_castep.csv'
+data_castep_header = ['filename', 'enthalpy / eV', 'enthalpy / kJ/mol', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume / A^3', 'density / amu/A^3', 'density / g/cm^3']
+
+# Define the conversion factor from eV to kJ/mol, SUPPOSING THAT 'enthalpy' IS IN [eV/molecule]
+ev = (1.602176634E-19 / 1000) * 6.02214076E+23
+print("eV to kJ/mol conversion factor: ", ev, "\n")
 
 print("Reading files...")
 
@@ -108,10 +110,10 @@ path = os.path.join(dir_path, data_directory)
 directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
 # Open the output file to write the data
-with open(data_output, 'w', newline='') as file:
+with open(data_castep_out, 'w', newline='') as file:
     writer = csv.writer(file)
     # Write a header row for the CSV file
-    writer.writerow(data_header)
+    writer.writerow(data_castep_header)
 
     # Start the counter for the progress bar
     i = 0
@@ -119,31 +121,53 @@ with open(data_output, 'w', newline='') as file:
     for directory in directories:
         # Progress bar, just for fun
         i+=1
-        #progressbar(i, len(directories))
+        progressbar(i, len(directories))
 
         # Define the path to the .castep file
-        file_cif = os.path.join(path, directory, data_cif)
-        file_cifE = os.path.join(path, directory, data_cifE)
+        file = os.path.join(path, directory, data_castep)
         file_name = naming(directory)
 
         # Read the file and look for the desired lines
-        cif_str = searcher(file_cif, '_symmetry_space_group_name_H_M')
-        cifE_str = searcher(file_cifE, '_symmetry_space_group_name_H_M')
+        enthalpy_str = searcher(file, 'LBFGS: Final Enthalpy     =')
+        volume_str = searcher(file, 'Current cell volume =')
+        density_str = searcher(file, 'density =')
+        densityg_str = searcher(file, '=')
+        a_str = searcher(file, 'a =')
+        b_str = searcher(file, 'b =')
+        c_str = searcher(file, 'c =')
 
         # Extract the values from the strings
-        cif = extract(cif_str, '_symmetry_space_group_name_H_M')
-        cifE = extract(cifE_str, '_symmetry_space_group_name_H_M')
+        enthalpy = extract_float(enthalpy_str, 'LBFGS: Final Enthalpy')
+        volume = extract_float(volume_str, 'Current cell volume')
+        density = extract_float(density_str, 'density')
+        densityg = extract_float(densityg_str, '')
+        a = extract_float(a_str, 'a')
+        b = extract_float(b_str, 'b')
+        c = extract_float(c_str, 'c')
+        alpha = extract_float(a_str, 'alpha')
+        beta = extract_float(b_str, 'beta')
+        gamma = extract_float(c_str, 'gamma')
 
         # write the data row to the file
-        row = [file_name, cif, cifE]
+        row = [file_name, enthalpy, enthalpy*ev, a, b, c, alpha, beta, gamma, volume, density, densityg]
         writer.writerow(row)
 
         # Print the data on screen, for debugging purposes
-        print(file_name)
-        print("cif = ", cif)
-        print("cifE = ", cifE)
+        #print(file_name)
+        #print("enthalpy = ", enthalpy)
+        #print("enthalpy*ev = ", enthalpy*ev)
+        #print("a = ", a)
+        #print("b = ", b)
+        #print("c = ", c)
+        #print("alpha = ", alpha)
+        #print("beta = ", beta)
+        #print("gamma = ", gamma)
+        #print("volume = ", volume)
+        #print("density = ", density)
+        #print("densityg = ", densityg)
+        #print("")
 
 time_elapsed = round(time.time() - time_start, 3)
-print("Finished reading the 'cc-2-out.cif' and 'cc-2_Efield-out.cif' files in ", time_elapsed, " seconds")
-print("Data extracted and saved to 'out_cif.csv'")
+print("Finished reading the '.castep' files in ", time_elapsed, " seconds")
+print("Data extracted and saved to 'out_castep.csv'")
 print("")
