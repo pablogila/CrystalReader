@@ -77,6 +77,6 @@ The scripts use the following functions:
 * `extract_str(string, name)`. Similar to `extract_float()`, but returns string outputs; if the value is between commas it is returned without said commas.
 
 &NewLine;
-* `naming(string)`. This function reads the name of the parent folder, and returns it in the `xxx-xxx-xxx-xxx` format. Be aware that if your nested folders follow a different naming, you may want to change this function.
+* `naming(string)`. This function reads the name of the folder, and returns it in the `xxx-xxx-xxx-xxx` format. Be aware that if your nested folders follow a different naming, you may want to change the `pattern` variable inside this function.
 
 * `progressbar(current, total)`. Don't mind how it works, just know that it gives you a hint as to whether or not you can go out and get coffee.
