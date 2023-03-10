@@ -1,6 +1,6 @@
 """
 
-CrystalReader version 'castep'. Read and extract data from '.castep' files.
+CrystalReader version 'phonon'. Read and extract data from '.phonon' files.
 Copyright (C) 2023  Pablo Gila-Herranz
 Check the latest version at https://github.com/pablogila/CrystalReader
 Feel free to contact me at pablo.gila.herranz@gmail.com
@@ -20,10 +20,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 
-version = "vCRcastep.2023.03.10.1900"
+version = "vCRphonon.2023.03.10.1900"
 
 print("")
-print("  Running CrystalReader in 'castep' mode, version " + version)
+print("  Running CrystalReader in 'phonon' mode, version " + version)
 print("  If you find this code useful, a citation would be greatly appreciated :D")
 print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
 print("  This is free software, and you are welcome to redistribute it under GNU General Public License")
@@ -51,12 +51,12 @@ def naming(string):
         return None
 
 
-# This function will extract the float value of a given variable from a raw string
-def extract_float(string, name):
-    pattern = re.compile(name + r'\s*=?\s*(-?\d+(?:\.\d+)?(?:[eE][+\-]?\d+)?)')
+# This function will extract the string value of a given variable from a raw string
+def extract_str(string, name):
+    pattern = re.compile(name + r"\s*(=)?\s*['\"](.*?)(?=['\"]|$)")
     match = pattern.search(string)
     if match:
-        return float(match.group(1))
+        return match.group(2).strip()
     else:
         return None
 
@@ -90,13 +90,9 @@ def progressbar(current, total):
 
 # Structure of the data
 data_directory = 'data'
-data_castep = 'cc-2.castep'
-data_castep_out = 'out_castep.csv'
-data_castep_header = ['filename', 'enthalpy / eV', 'enthalpy / kJ/mol', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume / A^3', 'density / amu/A^3', 'density / g/cm^3']
-
-# Define the conversion factor from eV to kJ/mol, SUPPOSING THAT 'enthalpy' IS IN [eV/molecule]
-ev = (1.602176634E-19 / 1000) * 6.02214076E+23
-print("  eV to kJ/mol conversion factor: ", ev, "\n")
+data_phonon = 'cc-2_Efield.phonon'
+data_phonon_out = 'out_phonon.csv'
+data_phonon_header = ['filename', 'IR_1', 'IR_2', 'IR_3', 'E_1', 'E_2', 'E_3', '>0.05?', 'E_73', 'E_74', 'E_75', 'E_76', 'Zero_E_Gamma_Point=(E_4+...+144)/2 /cm^-1', 'Zero_E_Gamma_Point / eV']
 
 print("  Reading files...")
 
@@ -111,10 +107,10 @@ path = os.path.join(dir_path, data_directory)
 directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
 # Open the output file to write the data
-with open(data_castep_out, 'w', newline='') as file:
+with open(data_phonon_out, 'w', newline='') as file:
     writer = csv.writer(file)
     # Write a header row for the CSV file
-    writer.writerow(data_castep_header)
+    writer.writerow(data_phonon_header)
 
     # Start the counter for the progress bar
     i = 0
@@ -125,50 +121,28 @@ with open(data_castep_out, 'w', newline='') as file:
         progressbar(i, len(directories))
 
         # Define the path to the .castep file
-        file = os.path.join(path, directory, data_castep)
+        file_phonon = os.path.join(path, directory, data_phonon)
         file_name = naming(directory)
 
-        # Read the file and look for the desired lines
-        enthalpy_str = searcher(file, 'LBFGS: Final Enthalpy     =')
-        volume_str = searcher(file, 'Current cell volume =')
-        density_str = searcher(file, 'density =')
-        densityg_str = searcher(file, '=')
-        a_str = searcher(file, 'a =')
-        b_str = searcher(file, 'b =')
-        c_str = searcher(file, 'c =')
+        # Read the file and look for the desired line, return the corresponding lines after the match
+        phonon_str = searcher_lines(file_cif, 'q-pt=', 145) # RETURN AN ARRAY OF 145  LINES
 
-        # Extract the values from the strings
-        enthalpy = extract_float(enthalpy_str, 'LBFGS: Final Enthalpy')
-        volume = extract_float(volume_str, 'Current cell volume')
-        density = extract_float(density_str, 'density')
-        densityg = extract_float(densityg_str, '')
-        a = extract_float(a_str, 'a')
-        b = extract_float(b_str, 'b')
-        c = extract_float(c_str, 'c')
-        alpha = extract_float(a_str, 'alpha')
-        beta = extract_float(b_str, 'beta')
-        gamma = extract_float(c_str, 'gamma')
+        for line in phonon_str:
+            #
+            # Extract the values from the strings
+            cif = extract_str(cif_str, '_symmetry_space_group_name_H_M')
 
         # write the data row to the file
-        row = [file_name, enthalpy, enthalpy*ev, a, b, c, alpha, beta, gamma, volume, density, densityg]
+        row = [file_name, 'IR_1', 'IR_2', 'IR_3', 'E_1', 'E_2', 'E_3', '>0.05?', 'E_73', 'E_74', 'E_75', 'E_76', 'Zero_E_Gamma_Point=(E_4+...+144)/2 /cm^-1', 'Zero_E_Gamma_Point / eV']
         writer.writerow(row)
 
         # Print the data on screen, for debugging purposes
         #print(file_name)
-        #print("enthalpy = ", enthalpy)
-        #print("enthalpy*ev = ", enthalpy*ev)
-        #print("a = ", a)
-        #print("b = ", b)
-        #print("c = ", c)
-        #print("alpha = ", alpha)
-        #print("beta = ", beta)
-        #print("gamma = ", gamma)
-        #print("volume = ", volume)
-        #print("density = ", density)
-        #print("densityg = ", densityg)
+        #print("cif = ", cif)
+        #print("cifE = ", cifE)
         #print("")
 
 time_elapsed = round(time.time() - time_start, 3)
-print("  Finished reading the ", data_castep, " files in ", time_elapsed, " seconds")
-print("  Data extracted and saved to ", data_castep_out)
+print("  Finished reading the ", data_cif, " and ", data_cifE, " files in ", time_elapsed, " seconds")
+print("  Data extracted and saved to ", data_cif_out)
 print("")
