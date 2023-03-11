@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 
-version = "vCRcastep.2023.03.11.0100"
+version = "vCRcastep.2023.03.11.1200"
 
 print("")
 print("  Running CrystalReader in 'castep' mode, version " + version)
@@ -96,7 +96,7 @@ def progressbar_ETA(current, total, start):
     loadbar = "  [{:{len}}]{:4.0f}%".format(progress*'■',percentage,len=bar_length)
     elapsed = time.time() - start
     eta = elapsed * (total/current - 1)
-    if current > total/5.0 and eta >= 0:
+    if current > total/10 and eta >= 0:
         loadbar += "  |  ETA: {:4.0f}s".format(eta)
     else:
         loadbar += "  |  ETA:  ---"

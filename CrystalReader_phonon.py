@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 
-version = "vCRphonon.2023.03.11.0100"
+version = "vCRphonon.2023.03.11.1200"
 
 print("")
 print("  Running CrystalReader in 'phonon' mode, version " + version)
@@ -103,7 +103,7 @@ def progressbar_ETA(current, total, start):
     loadbar = "  [{:{len}}]{:4.0f}%".format(progress*'■',percentage,len=bar_length)
     elapsed = time.time() - start
     eta = elapsed * (total/current - 1)
-    if current > total/5.0 and eta >= 0:
+    if current > total/10 and eta >= 0:
         loadbar += "  |  ETA: {:4.0f}s".format(eta)
     else:
         loadbar += "  |  ETA:  ---"
@@ -115,13 +115,13 @@ data_directory = 'data'
 data_phonon = 'cc-2_Efield.phonon'
 data_phonon_lines = 144
 data_phonon_out = 'out_phonon.csv'
-data_phonon_header = ['filename', 'IR_1', 'IR_2', 'IR_3', 'E_1', 'E_2', 'E_3', 'E>0.05?', 'E_73', 'E_74', 'E_75', 'E_76', 'Zero_E_Gamma_Point=(E_4++144)/2 /cm^-1', 'Zero_E_Gamma_Point / eV']
+data_phonon_header = ['filename', 'E_1', 'E_2', 'E_3', 'E>0.05?', 'E_73', 'E_74', 'E_75', 'E_76', 'Zero_E_Gamma_Point=(E_4++144)/2 /cm^-1', 'Zero_E_Gamma_Point / eV']
 # Threshold for the energy to be considered greater than zero
 too_big = 0.05 
 
-# Conversion factor from cm^-1 to eV  --------------------- TO BE CHECKED
-cm_ev = 1.0
-print("  eV to kJ/mol conversion factor: ", ev_kjmol, "\n")
+# Conversion factor from cm^-1 to eV
+cm_ev = 1.0 / 8065.54429
+print("  cm^-1 to eV conversion factor: ", cm_ev, "\n")
 
 print("  Reading files...")
 
@@ -154,11 +154,12 @@ with open(data_phonon_out, 'w', newline='') as file:
         file_name = naming(directory)
 
         # Read the file and look for the desired line, return the corresponding lines after the match
+        # The phonon_str[0] is the header, the phonon_str[1] is the first line of data, etc.
         phonon_str = searcher_rows(file_phonon, 'q-pt=', data_phonon_lines)
 
-        Ir_1 = extract_column(phonon_str[1], 2)
-        Ir_2 = extract_column(phonon_str[2], 2)
-        Ir_3 = extract_column(phonon_str[3], 2)
+        #Ir_1 = extract_column(phonon_str[1], 2)
+        #Ir_2 = extract_column(phonon_str[2], 2)
+        #Ir_3 = extract_column(phonon_str[3], 2)
         E_1 = extract_column(phonon_str[1], 1)
         E_2 = extract_column(phonon_str[2], 1)
         E_3 = extract_column(phonon_str[3], 1)
@@ -170,7 +171,7 @@ with open(data_phonon_out, 'w', newline='') as file:
         if (abs(E_1) > too_big) or (abs(E_2) > too_big) or (abs(E_3) > too_big):
             question = 'YES'
         else:
-            question = 'no'
+            question = '-'
         
         ZEGP = 0
         for k in range(4, data_phonon_lines + 1):
@@ -178,7 +179,7 @@ with open(data_phonon_out, 'w', newline='') as file:
         ZEGP = ZEGP/2
         
         # write the data row to the file
-        row = [file_name, Ir_1, Ir_2, Ir_3, E_1, E_2, E_3, question, E_73, E_74, E_75, E_76, ZEGP, ZEGP * cm_ev]
+        row = [file_name, E_1, E_2, E_3, question, E_73, E_74, E_75, E_76, ZEGP, ZEGP * cm_ev]
         writer.writerow(row)
 
 time_elapsed = round(time.time() - time_start, 3)
