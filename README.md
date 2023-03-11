@@ -51,7 +51,7 @@ The program iterates over this set of files, starting to read from the end of th
 * density of the cell, in g/cm^3
 
 
-## Crystalreader_cif
+## CrystalReader_cif
 
 `CrystalReader_cif.py` uses the same folder structure as before, but the files to read are `cc-2-out.cif` and `cc-2_Efield-out.cif`. Again, this behaviour can be modified with the variables `data_cif` and `data_cifE`.
 
@@ -71,7 +71,7 @@ There is a threshold, set by the variable `too_big`, which triggers a note if th
 
 The program iterates over the set of files, and writes the following info to an `out_phonon.csv`:
 
-* name of the parent folder, in xxx-xxx-xxx-xxx format
+* name of the parent folder, in `xxx-xxx-xxx-xxx` format
 * InfraRed activity of the 1st mode
 * IR 2
 * IR 3
@@ -120,3 +120,7 @@ The loop should have the following structure:
         progressbar_ETA(loop, len(directories), time_loop)
         # Loopy things
 ```
+
+If you find this scripts useful, a citation would be greatly appreciated :D  
+*Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader*
+This is free software, and you are welcome to redistribute it under GNU General Public License.
