@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 
-version = "vCRcastep.2023.03.10.1900"
+version = "vCRcastep.2023.03.11.0100"
 
 print("")
 print("  Running CrystalReader in 'castep' mode, version " + version)
@@ -88,6 +88,21 @@ def progressbar(current, total):
     print(loadbar, end='\r')
 
 
+# This function will print a progress bar in the console, as well as the ETA, just for fun
+def progressbar_ETA(current, total, start):
+    bar_length = 50
+    percentage = int((current/total)*100)
+    progress = int((bar_length*current)/total)
+    loadbar = "  [{:{len}}]{:4.0f}%".format(progress*'■',percentage,len=bar_length)
+    elapsed = time.time() - start
+    eta = elapsed * (total/current - 1)
+    if current > total/5.0 and eta >= 0:
+        loadbar += "  |  ETA: {:4.0f}s".format(eta)
+    else:
+        loadbar += "  |  ETA:  ---"
+    print(loadbar, end='\r')
+
+
 # Structure of the data
 data_directory = 'data'
 data_castep = 'cc-2.castep'
@@ -95,8 +110,8 @@ data_castep_out = 'out_castep.csv'
 data_castep_header = ['filename', 'enthalpy / eV', 'enthalpy / kJ/mol', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume / A^3', 'density / amu/A^3', 'density / g/cm^3']
 
 # Define the conversion factor from eV to kJ/mol, SUPPOSING THAT 'enthalpy' IS IN [eV/molecule]
-ev = (1.602176634E-19 / 1000) * 6.02214076E+23
-print("  eV to kJ/mol conversion factor: ", ev, "\n")
+ev_kjmol = (1.602176634E-19 / 1000) * 6.02214076E+23
+print("  eV to kJ/mol conversion factor: ", ev_kjmol, "\n")
 
 print("  Reading files...")
 
@@ -117,12 +132,12 @@ with open(data_castep_out, 'w', newline='') as file:
     writer.writerow(data_castep_header)
 
     # Start the counter for the progress bar
-    i = 0
+    loop = 0
     # Loop through all the folders in the /data path
     for directory in directories:
         # Progress bar, just for fun
-        i+=1
-        progressbar(i, len(directories))
+        loop += 1
+        progressbar_ETA(loop, len(directories), time_start)
 
         # Define the path to the .castep file
         file = os.path.join(path, directory, data_castep)
@@ -150,13 +165,13 @@ with open(data_castep_out, 'w', newline='') as file:
         gamma = extract_float(c_str, 'gamma')
 
         # write the data row to the file
-        row = [file_name, enthalpy, enthalpy*ev, a, b, c, alpha, beta, gamma, volume, density, densityg]
+        row = [file_name, enthalpy, enthalpy*ev_kjmol, a, b, c, alpha, beta, gamma, volume, density, densityg]
         writer.writerow(row)
 
         # Print the data on screen, for debugging purposes
         #print(file_name)
         #print("enthalpy = ", enthalpy)
-        #print("enthalpy*ev = ", enthalpy*ev)
+        #print("enthalpy*ev_kjmol = ", enthalpy*ev_kjmol)
         #print("a = ", a)
         #print("b = ", b)
         #print("c = ", c)
@@ -169,6 +184,7 @@ with open(data_castep_out, 'w', newline='') as file:
         #print("")
 
 time_elapsed = round(time.time() - time_start, 3)
+print("")
 print("  Finished reading the ", data_castep, " files in ", time_elapsed, " seconds")
 print("  Data extracted and saved to ", data_castep_out)
 print("")

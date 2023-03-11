@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 
-version = "vCRcif.2023.03.10.1900"
+version = "vCRcif.2023.03.11.0100"
 
 print("")
 print("  Running CrystalReader in 'cif' mode, version " + version)
@@ -88,6 +88,21 @@ def progressbar(current, total):
     print(loadbar, end='\r')
 
 
+# This function will print a progress bar in the console, as well as the ETA, just for fun
+def progressbar_ETA(current, total, start):
+    bar_length = 50
+    percentage = int((current/total)*100)
+    progress = int((bar_length*current)/total)
+    loadbar = "  [{:{len}}]{:4.0f}%".format(progress*'■',percentage,len=bar_length)
+    elapsed = time.time() - start
+    eta = elapsed * (total/current - 1)
+    if current > total/5.0 and eta >= 0:
+        loadbar += "  |  ETA: {:4.0f}s".format(eta)
+    else:
+        loadbar += "  |  ETA:  ---"
+    print(loadbar, end='\r')
+
+
 # Structure of the data
 data_directory = 'data'
 data_cif = 'cc-2-out.cif'
@@ -114,12 +129,12 @@ with open(data_cif_out, 'w', newline='') as file:
     writer.writerow(data_cif_header)
 
     # Start the counter for the progress bar
-    i = 0
+    loop = 0
     # Loop through all the folders in the /data path
     for directory in directories:
         # Progress bar, just for fun
-        i+=1
-        progressbar(i, len(directories))
+        loop += 1
+        progressbar_ETA(loop, len(directories), time_start)
 
         # Define the path to the .castep file
         file_cif = os.path.join(path, directory, data_cif)
@@ -145,6 +160,7 @@ with open(data_cif_out, 'w', newline='') as file:
         #print("")
 
 time_elapsed = round(time.time() - time_start, 3)
+print("")
 print("  Finished reading the ", data_cif, " and ", data_cifE, " files in ", time_elapsed, " seconds")
 print("  Data extracted and saved to ", data_cif_out)
 print("")
