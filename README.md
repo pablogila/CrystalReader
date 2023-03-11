@@ -22,6 +22,7 @@ To execute the scripts:
 replacing `<script>` with the name of the script you want to execute. This can be any of the following:
 * `CrystalReader_castep.py`, for reading `.castep` files
 * `CrystalReader_cif.py`, for reading `.cif` files
+* `CrystalReader_phonon.py`, for `.phonon` files
 
 For example, to extract data from `.castep` files on Windows PowerShell, you would type:  
 `python CrystalReader_castep.py`
@@ -31,7 +32,7 @@ The behavior and customization of each script is explained in the following sect
 
 ## CrystalReader_castep
 
-The `CrystalReader_castep.py` program recursively reads the `cc-2.castep` files in the nested folders inside the `/data` folder. As for the parent folder, the names of the files are easily modified changing the `data_castep` variable.
+The `CrystalReader_castep.py` program recursively reads the `cc-2.castep` files in the nested folders inside the `/data` folder. As happened for the parent folder, the names of the files are easily modified changing the `data_castep` variable.
 
 Naming example: `data/pnam-p-1-000-000-180-000---400/cc-2.castep`
 
@@ -93,7 +94,7 @@ The scripts use the following functions:
 
 * `searcher(filename, search_value)`. This function reads the `filename` file starting from the end, until it finds a line starting with `search_value`, and then returns the entire line as an output string.
 
-* `searcher_rows(filename, search_value, number_rows)`. Similar to `searcher()`, but returns an array with the matching line at the first position, and the subsequent rows specified by `number_rows` filling the rest of the array.
+* `searcher_rows(filename, search_value, number_rows)`. Similar to `searcher()`, but returns an array with the matching line at the first position, and the subsequent number of lines specified by `number_rows` filling the rest of the array.
 
 * `extract_float(string, name)`. This function extracts the float value of a given `name` variable from a raw `string`, by searching the given string for a matching pattern as `(name + r'\s*=?\s*(-?\d+(?:\.\d+)?(?:[eE][+\-]?\d+)?)')`, where:
   * `\s*=?\s*` matches any whitespace characters, followed by an optional equals sign, followed by any whitespaces
