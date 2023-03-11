@@ -1,6 +1,6 @@
 # CrystalReader
 
-CrystalReader is a set of programs to automate the reading and extraction of information from `.castep`, `.cif` and `.phonon` files, sharing the same premises of reliability and ease of reuse through an easy to read code structure, with the potential to be reused to read any type of text-based data files.
+CrystalReader is a set of programs to automate the reading and extraction of information from `.castep`, `.cif` and `.phonon` files, sharing the same premises of reliability and ease of reuse through an easy to read code structure, with the potential to be reused to process any type of text-based data files.
 
 
 ## Usage
