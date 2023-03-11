@@ -1,6 +1,6 @@
 # CrystalReader
 
-The purpose of this set of programs is to automate the reading and extracting of information from `.castep`, `.cif` and `.phonon` files.
+CrystalReader is a set of programs to automate the reading and extraction of information from `.castep`, `.cif` and `.phonon` files, sharing the same premises of reliability and ease of reuse through an easy to read code structure, with the potential to be reused to read any type of text-based data files.
 
 
 ## Usage
@@ -120,6 +120,7 @@ The loop should have the following structure:
         progressbar_ETA(loop, len(directories), time_loop)
         # Loopy things
 ```
+
 
 If you find this scripts useful, a citation would be greatly appreciated :D  
 *Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader*  
