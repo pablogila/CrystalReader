@@ -122,5 +122,5 @@ The loop should have the following structure:
 ```
 
 If you find this scripts useful, a citation would be greatly appreciated :D  
-*Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader*
+*Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader*  
 This is free software, and you are welcome to redistribute it under GNU General Public License.
