@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 
-version = "vCRphonon.2023.03.11.1200"
+version = "vCRphonon.2023.03.13.1300"
 
 print("")
 print("  Running CrystalReader in 'phonon' mode, version " + version)
@@ -103,10 +103,10 @@ def progressbar_ETA(current, total, start):
     loadbar = "  [{:{len}}]{:4.0f}%".format(progress*'■',percentage,len=bar_length)
     elapsed = time.time() - start
     eta = elapsed * (total/current - 1)
-    if current > total/10 and eta >= 0:
-        loadbar += "  |  ETA: {:4.0f}s".format(eta)
+    if current > total/5 and eta >= 0:
+        loadbar += "  |  ETA: {:5.0f}s".format(eta)
     else:
-        loadbar += "  |  ETA:  ---"
+        loadbar += "  |  ETA: >{:4.0f}s  ".format(eta)
     print(loadbar, end='\r')
 
 
