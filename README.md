@@ -66,9 +66,9 @@ The program iterates over this set of files and writes the relevant info to an `
 
 `CrystalReader_phonon.py` uses the same folder structure. The data files are called `cc-2_Efield.phonon`, and can be modified via the `data_phonon` variable.
 
-The program will read the 144 lines corresponding to the 144 vibration modes; this number can be changed with the `data_phonon_lines` variable.
+The program will read the 144 lines corresponding to the 144 vibration modes; this number can be changed with the `data_lines_phonon` variable.
 
-There is a threshold, set by the variable `too_big`, which triggers a note if the first 3 energies are different from zero.
+There is a threshold, set by the variable `threshold`, which triggers a note if one of the first 3 energies are different from zero.
 
 The program iterates over the set of files, and writes the following info to an `out_phonon.csv`:
 

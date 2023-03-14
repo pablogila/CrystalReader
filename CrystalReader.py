@@ -1,6 +1,6 @@
 """
 
-CrystalReader version 'phonon'. Read and extract data from '.phonon' files.
+CrystalReader Common Functions. Read and extract data from different simulation files.
 Copyright (C) 2023  Pablo Gila-Herranz
 Check the latest version at https://github.com/pablogila/CrystalReader
 Feel free to contact me at pablo.gila.herranz@gmail.com
@@ -20,10 +20,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 
-version = "vCRphonon.2023.03.14.1200"
+version = "vCRcif.2023.03.14.1200"
 
 print("")
-print("  Running CrystalReader in 'phonon' mode, version " + version)
+print("  Running CrystalReader in 'cif' mode, version " + version)
 print("  If you find this code useful, a citation would be greatly appreciated :D")
 print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
 print("  This is free software, and you are welcome to redistribute it under GNU General Public License")
@@ -75,7 +75,7 @@ def extract_str(string, name):
         return match.group(2).strip()
     else:
         return None
-   
+
 
 # This function will extract the string value of a given variable from a raw string
 def extract_column(string, column):
@@ -106,7 +106,7 @@ def searcher(filename, search_value):
     return None
 
 
-# This function will search for a specific string value in a given file, and return the lines following the match
+# This function will search for a specific string value in a given file, and return the following lines after the match
 def searcher_rows(filename, search_value, number_rows):
     with open(filename, 'r') as file:
         # Move the file pointer to the end of the file
@@ -148,97 +148,29 @@ def progressbar_ETA(current, total, start):
     elapsed = time.time() - start
     eta = elapsed * (total/current - 1)
     if current > total/5 and eta >= 0:
-        loadbar += "  |  ETA: {:5.0f}s".format(eta)
+        loadbar += "  |  ETA: {:5.0f}s  ".format(eta)
     else:
         loadbar += "  |  ETA: >{:4.0f}s  ".format(eta)
     print(loadbar, end='\r')
 
 
-
-######################################
-""" PARAMETERS THAT YOU CAN MODIFY """
-######################################
-
-
-data_out_phonon = 'out_phonon.csv'
-data_directory = 'data'
-data_phonon = 'cc-2_Efield.phonon'
-data_lines_phonon = 144
-# Threshold for the energy to be considered greater than zero
-threshold = 0.5
-data_header_phonon = ['filename', 'E_1', 'E_2', 'E_3', 'E>'+threshold+'?', 'E_73', 'E_74', 'E_75', 'E_76', 'Zero_E_Gamma_Point=(E_4++144)/2 /cm^-1', 'Zero_E_Gamma_Point / eV']
-
-# Conversion factor from cm^-1 to eV
-cm_ev = 1.0 / 8065.54429
-
-
-
-#####################################
-""" MAIN SCRIPT FOR .PHONON FILES """
-#####################################
-
-
-print("  cm^-1 to eV conversion factor: ", cm_ev, "\n  Threshold for E>0?: ", threshold, "\n")
-print("  Reading files...")
-
-# Get the absolute path to the directory containing the Python script
-dir_path = os.path.dirname(os.path.realpath(__file__))
-# Specify the path to the directory containing the folders with the .castep files, relative to the script's directory
-path = os.path.join(dir_path, data_directory)
-# Get the names of all the directories in the given path, and store them in a list
-directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
-
-# Open the output file to write the data
-with open(data_out_phonon, 'w', newline='') as file:
-    writer = csv.writer(file)
-    # Write a header row for the CSV file
-    writer.writerow(data_header_phonon)
-
-    # Start a timer and counter for the progress bar
-    time_start = time.time()
-    loop = 0
-    # Loop through all the folders in the /data path
-    for directory in directories:
-        # Progress bar, just for fun
-        loop += 1
-        progressbar_ETA(loop, len(directories), time_start)
-
-        # Define the path to the .castep file
-        file_phonon = os.path.join(path, directory, data_phonon)
-        file_name = naming(directory)
-
-        # Read the file and look for the desired line, return the corresponding lines after the match
-        # The phonon_str[0] is the header, the phonon_str[1] is the first line of data, etc.
-        phonon_str = searcher_rows(file_phonon, 'q-pt=', data_lines_phonon)
-
-        #Ir_1 = extract_column(phonon_str[1], 2)
-        #Ir_2 = extract_column(phonon_str[2], 2)
-        #Ir_3 = extract_column(phonon_str[3], 2)
-        E_1 = extract_column(phonon_str[1], 1)
-        E_2 = extract_column(phonon_str[2], 1)
-        E_3 = extract_column(phonon_str[3], 1)
-        E_73 = extract_column(phonon_str[73], 1)
-        E_74 = extract_column(phonon_str[74], 1)
-        E_75 = extract_column(phonon_str[75], 1)
-        E_76 = extract_column(phonon_str[76], 1)
-
-        # Check if the first energies are greater than the threshold
-        if (abs(E_1) > threshold) or (abs(E_2) > threshold) or (abs(E_3) > threshold):
-            question = 'YES'
-        else:
-            question = 'no'
-        
-        ZEGP = 0
-        for k in range(4, data_lines_phonon + 1):
-            ZEGP += extract_column(phonon_str[k], 1)
-        ZEGP = ZEGP/2
-        
-        # write the data row to the file
-        row = [file_name, E_1, E_2, E_3, question, E_73, E_74, E_75, E_76, ZEGP, ZEGP * cm_ev]
-        writer.writerow(row)
-
-time_elapsed = round(time.time() - time_start, 3)
+# This program asks the user which python script to use, and then runs it
+# The possible options are: CrystalReader_cif.py, CrystalReader_castep.py, CrystalReader_phonon.py
 print("")
-print("  Finished reading the ", data_phonon, " files in ", time_elapsed, " seconds")
-print("  Data extracted and saved to ", data_out_phonon)
+print("  Which crystal structure would you like to read?")
+print("  1. cif")
+print("  2. castep")
+print("  3. phonon")
 print("")
+choice = input("  Enter the number of your choice: ")
+if choice == "1":
+    import CrystalReader_cif
+elif choice == "2":
+    import CrystalReader_castep
+elif choice == "3":
+    import CrystalReader_phonon
+else:
+    print("")
+    print("  Invalid input. Please try again.")
+
+

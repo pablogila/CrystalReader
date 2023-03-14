@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 
-version = "vCRcif.2023.03.13.1300"
+version = "vCRcif.2023.03.14.1200"
 
 print("")
 print("  Running CrystalReader in 'cif' mode, version " + version)
@@ -34,6 +34,12 @@ import re
 import os
 import csv
 import time
+
+
+
+#####################################################
+""" COMMON FUNCTIONS TO ALL CRYSTALREADER SCRIPTS """
+#####################################################
 
 
 # This function will extract the numbers from the name of the parent folder
@@ -51,6 +57,16 @@ def naming(string):
         return None
 
 
+# This function will extract the float value of a given variable from a raw string
+def extract_float(string, name):
+    pattern = re.compile(name + r'\s*=?\s*(-?\d+(?:\.\d+)?(?:[eE][+\-]?\d+)?)')
+    match = pattern.search(string)
+    if match:
+        return float(match.group(1))
+    else:
+        return None
+    
+
 # This function will extract the string value of a given variable from a raw string
 def extract_str(string, name):
     pattern = re.compile(name + r"\s*(=)?\s*['\"](.*?)(?=['\"]|$)")
@@ -59,6 +75,17 @@ def extract_str(string, name):
         return match.group(2).strip()
     else:
         return None
+
+
+# This function will extract the string value of a given variable from a raw string
+def extract_column(string, column):
+    columns = string.split()
+    pattern = r'(-?\d+(?:\.\d+)?(?:[eE][+\-]?\d+)?)'
+    if column < len(columns):
+        match = re.match(pattern, columns[column])
+        if match:
+            return float(match.group(1))
+    return None
 
 
 # This function will search for a specific string value in a given file, and return the corresponding line
@@ -77,6 +104,30 @@ def searcher(filename, search_value):
                     return line
             position -= 1
     return None
+
+
+# This function will search for a specific string value in a given file, and return the following lines after the match
+def searcher_rows(filename, search_value, number_rows):
+    with open(filename, 'r') as file:
+        # Move the file pointer to the end of the file
+        file.seek(0, 2)
+        # Get the position of the file pointer
+        position = file.tell()
+        lines = []
+        while position >= 0 and len(lines) < number_rows+1:
+            file.seek(position)
+            next_char = file.read(1)
+            if next_char == '\n':
+                line = file.readline().strip()
+                if line.startswith(search_value):
+                    lines.append(line)
+                    for i in range(number_rows):
+                        next_line = file.readline().strip()
+                        if next_line:
+                            lines.append(next_line)
+                    break
+            position -= 1
+    return lines[::1]
 
 
 # This function will print a progress bar in the console, just for fun
@@ -103,17 +154,26 @@ def progressbar_ETA(current, total, start):
     print(loadbar, end='\r')
 
 
-# Structure of the data
+
+######################################
+""" PARAMETERS THAT YOU CAN MODIFY """
+######################################
+
+
+data_out_cif = 'out_cif.csv'
 data_directory = 'data'
 data_cif = 'cc-2-out.cif'
 data_cifE = 'cc-2_Efield-out.cif'
-data_cif_out = 'out_cif.csv'
-data_cif_header = ['filename', 'SSG_H_M', 'SSG_H_M-Efield']
+data_header_cif = ['filename', 'SSG_H_M', 'SSG_H_M-Efield']
+
+
+
+##################################
+""" MAIN SCRIPT FOR .CIF FILES """
+##################################
+
 
 print("  Reading files...")
-
-# Start a timer to measure the execution time. Just for fun.
-time_start = time.time()
 
 # Get the absolute path to the directory containing the Python script
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -123,12 +183,13 @@ path = os.path.join(dir_path, data_directory)
 directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
 # Open the output file to write the data
-with open(data_cif_out, 'w', newline='') as file:
+with open(data_out_cif, 'w', newline='') as file:
     writer = csv.writer(file)
     # Write a header row for the CSV file
-    writer.writerow(data_cif_header)
+    writer.writerow(data_header_cif)
 
-    # Start the counter for the progress bar
+    # Start a timer and counter for the progress bar
+    time_start = time.time()
     loop = 0
     # Loop through all the folders in the /data path
     for directory in directories:
@@ -162,5 +223,5 @@ with open(data_cif_out, 'w', newline='') as file:
 time_elapsed = round(time.time() - time_start, 3)
 print("")
 print("  Finished reading the ", data_cif, " and ", data_cifE, " files in ", time_elapsed, " seconds")
-print("  Data extracted and saved to ", data_cif_out)
+print("  Data extracted and saved to ", data_out_cif)
 print("")

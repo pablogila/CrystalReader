@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 
-version = "vCRcastep.2023.03.13.1300"
+version = "vCRcastep.2023.03.14.1200"
 
 print("")
 print("  Running CrystalReader in 'castep' mode, version " + version)
@@ -34,6 +34,12 @@ import re
 import os
 import csv
 import time
+
+
+
+#####################################################
+""" COMMON FUNCTIONS TO ALL CRYSTALREADER SCRIPTS """
+#####################################################
 
 
 # This function will extract the numbers from the name of the parent folder
@@ -61,6 +67,27 @@ def extract_float(string, name):
         return None
 
 
+# This function will extract the string value of a given variable from a raw string
+def extract_str(string, name):
+    pattern = re.compile(name + r"\s*(=)?\s*['\"](.*?)(?=['\"]|$)")
+    match = pattern.search(string)
+    if match:
+        return match.group(2).strip()
+    else:
+        return None
+
+
+# This function will extract the string value of a given variable from a raw string
+def extract_column(string, column):
+    columns = string.split()
+    pattern = r'(-?\d+(?:\.\d+)?(?:[eE][+\-]?\d+)?)'
+    if column < len(columns):
+        match = re.match(pattern, columns[column])
+        if match:
+            return float(match.group(1))
+    return None
+
+
 # This function will search for a specific string value in a given file, and return the corresponding line
 def searcher(filename, search_value):
     with open(filename, 'r') as file:
@@ -77,6 +104,30 @@ def searcher(filename, search_value):
                     return line
             position -= 1
     return None
+
+
+# This function will search for a specific string value in a given file, and return the lines following the match
+def searcher_rows(filename, search_value, number_rows):
+    with open(filename, 'r') as file:
+        # Move the file pointer to the end of the file
+        file.seek(0, 2)
+        # Get the position of the file pointer
+        position = file.tell()
+        lines = []
+        while position >= 0 and len(lines) < number_rows+1:
+            file.seek(position)
+            next_char = file.read(1)
+            if next_char == '\n':
+                line = file.readline().strip()
+                if line.startswith(search_value):
+                    lines.append(line)
+                    for i in range(number_rows):
+                        next_line = file.readline().strip()
+                        if next_line:
+                            lines.append(next_line)
+                    break
+            position -= 1
+    return lines[::1]
 
 
 # This function will print a progress bar in the console, just for fun
@@ -103,20 +154,29 @@ def progressbar_ETA(current, total, start):
     print(loadbar, end='\r')
 
 
-# Structure of the data
+
+######################################
+""" PARAMETERS THAT YOU CAN MODIFY """
+######################################
+
+
+data_out_castep = 'out_castep.csv'
 data_directory = 'data'
 data_castep = 'cc-2.castep'
-data_castep_out = 'out_castep.csv'
-data_castep_header = ['filename', 'enthalpy / eV', 'enthalpy / kJ/mol', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume / A^3', 'density / amu/A^3', 'density / g/cm^3']
+data_header_castep = ['filename', 'enthalpy / eV', 'enthalpy / kJ/mol', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume / A^3', 'density / amu/A^3', 'density / g/cm^3']
 
-# Define the conversion factor from eV to kJ/mol, SUPPOSING THAT 'enthalpy' IS IN [eV/molecule]
+# Conversion factor from eV to kJ/mol, SUPPOSING THAT 'enthalpy' IS IN [eV/molecule]
 ev_kjmol = (1.602176634E-19 / 1000) * 6.02214076E+23
+
+
+
+#####################################
+""" MAIN SCRIPT FOR .CASTEP FILES """
+#####################################
+
+
 print("  eV to kJ/mol conversion factor: ", ev_kjmol, "\n")
-
 print("  Reading files...")
-
-# Start a timer to measure the execution time. Just for fun.
-time_start = time.time()
 
 # Get the absolute path to the directory containing the Python script
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -126,12 +186,13 @@ path = os.path.join(dir_path, data_directory)
 directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
 # Open the output file to write the data
-with open(data_castep_out, 'w', newline='') as file:
+with open(data_out_castep, 'w', newline='') as file:
     writer = csv.writer(file)
     # Write a header row for the CSV file
-    writer.writerow(data_castep_header)
+    writer.writerow(data_header_castep)
 
-    # Start the counter for the progress bar
+    # Start a timer and counter for the progress bar
+    time_start = time.time()
     loop = 0
     # Loop through all the folders in the /data path
     for directory in directories:
@@ -186,5 +247,5 @@ with open(data_castep_out, 'w', newline='') as file:
 time_elapsed = round(time.time() - time_start, 3)
 print("")
 print("  Finished reading the ", data_castep, " files in ", time_elapsed, " seconds")
-print("  Data extracted and saved to ", data_castep_out)
+print("  Data extracted and saved to ", data_out_castep)
 print("")
