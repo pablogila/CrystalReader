@@ -1,5 +1,5 @@
 """
-CrystalReader version 'phonon'. Read and extract data from '.phonon' files.
+CrystalReader 'phonon' script. Read and extract data from '.phonon' files.
 Copyright (C) 2023  Pablo Gila-Herranz
 Check the latest version at https://github.com/pablogila/CrystalReader
 Feel free to contact me at pablo.gila.herranz@gmail.com

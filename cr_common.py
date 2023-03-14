@@ -1,5 +1,5 @@
 """
-CrystalReader Common Functions. Read and extract data from simulation files.
+CrystalReader Common Functions. Read and extract data from different files.
 Copyright (C) 2023  Pablo Gila-Herranz
 
 If you find this code useful, a citation would be greatly appreciated :D
@@ -22,8 +22,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 import re
-#import os
-#import csv
 import time
 
 

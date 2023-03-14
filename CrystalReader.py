@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-version = "vCR.2023.03.14.1730"
+version = "vCR.2023.03.14.2400"
 
 import time
 import cr_common as cr
@@ -29,27 +29,30 @@ print("\n")
 print("  Welcome to CrystalReader version " + version)
 print("  This is free software, and you are welcome to redistribute it under GNU General Public License")
 print("  You should have already introduced the files to read in the corresponding scripts")
-print("  Else check the README.md or the GitHub repository for more information")
+print("  Else check the documentation on https://github.com/pablogila/CrystalReader")
 print("")
 print("  Conversion factors:")
 print("  cm^-1 to eV =", cr.cm_ev())
 print("  eV to kJ/mol =", cr.ev_kjmol())
 print("")
 print("  Enter which files would you like to read:")
-print("  1.  *.cif")
-print("  2.  *.castep")
+print("  1.  *.castep")
+print("  2.  *.cif")
 print("  3.  *.phonon")
 print("  4.  ALL")
 print("")
 choice = input("  > ")
-print("  Reading all files...\n")
-if choice == "1" or choice == "cif" or choice == "CIF":
-    import cr_cif
-elif choice == "2" or choice == "castep" or choice == "CASTEP":
+if choice == "1" or choice == "castep" or choice == "CASTEP":
+    print("  Reading 'castep' files...\n")
     import cr_castep
+elif choice == "2" or choice == "cif" or choice == "CIF":
+    print("  Reading 'cif' files...\n")
+    import cr_cif
 elif choice == "3" or choice == "phonon" or choice == "PHONON":
+    print("  Reading 'phonon' files...\n")
     import cr_phonon
 elif choice == "4" or choice == "all" or choice == "ALL":
+    print("  Reading all files...\n")
     time_all = time.time()
     import cr_cif
     import cr_castep
