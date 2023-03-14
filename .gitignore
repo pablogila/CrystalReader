@@ -8,6 +8,8 @@
 /PBEsol-MP-2x2x2/
 /data/
 /.venv/
+/out/
+/__pycache__/
 *.castep
 *.cif
 *.phonon
