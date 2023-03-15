@@ -115,7 +115,7 @@ The functions used to read the files are defined in `cr_common.py` and are impor
 
 * `naming(string)`. This function reads the name of the folder, and returns it in the `xxx-xxx-xxx-xxx` format. Be aware that if your nested folders follow a different naming, you may want to change the `pattern` variable inside this function.
 
-* `progressbar(current, total)` and `progressbar_ETA(current, total, start)`. These functions give you a hint as to whether or not you can go out and get coffee. The Estimated Time of Arrival (ETA) is usually more reliable after 20% into the loop. The loop should have the following structure:
+* `progressbar(current, total)` and `progressbar_ETA(current, total, start)`. These functions give you a hint as to whether or not you can go out and get a coffee. The Estimated Time of Arrival (ETA) is usually more reliable after 20% into the loop. The loop should have the following structure:
 ``` python
     loop = 0
     time_loop = time.time()
