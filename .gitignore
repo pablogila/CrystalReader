@@ -6,9 +6,13 @@
 *.dat
 *.out
 /PBEsol-MP-2x2x2/
-/data/
+/*data*
+/*DATA*
+/*out*
+/*OUT*
+/*backup*
+/*BACKUP*
 /.venv/
-/out/
 /__pycache__/
 *.castep
 *.cif
