@@ -12,8 +12,11 @@
 /*OUT*
 /*backup*
 /*BACKUP*
+/*test*
+/*TEST*
 /.venv/
 /__pycache__/
 *.castep
 *.cif
 *.phonon
+
