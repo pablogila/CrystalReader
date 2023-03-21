@@ -2,7 +2,7 @@
 CrystalReader 'castep' script. Read and extract data from '.castep' files.
 Copyright (C) 2023  Pablo Gila-Herranz
 Check the latest version at https://github.com/pablogila/CrystalReader
-Feel free to contact me at pablo.gila.herranz_at_gmail.com
+Feel free to contact me at pablo.gila.herranz@gmail.com
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
