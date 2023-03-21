@@ -13,21 +13,14 @@ On GitHub, clic on 'Code', 'Download ZIP', and extract.
 
 Enter the folder and copy inside the data you want to extract, in a subfolder called `/data` ; inside this folder there should be several nested folders containing your data files. Note that the name of this parent folder can be changed from within the individual scripts by modifying the `data_directory` variable, as well as other parameters that you may also need to modify to accommodate your data; such file naming variables are described in more detail in the following sections.
 
-To execute the CrystalReader Launcher:
-* On **Windows PowerShell** or **CMD**  
-`python CrystalReader.py`
-* On **Linux Terminal**  
-`python3 CrystalReader.py`
-
-You will be asked which script to use, or if you prefer, you can run them all to read all the files at once.
-
-If you prefer to execute only one of the scripts:
+To execute CrystalReader, open a terminal and type:
 * On **Windows PowerShell** or **CMD**  
 `python <script>`
 * On **Linux Terminal**  
 `python3 <script>`
 
-Replacing `<script>` with the name of the script you want to execute. This can be any of the following:
+Replacing `<script>` with the name of the CrystalReader script you want to execute. This can be any of the following:
+* `CrystalReader.py`, the main Launcher. You will be asked which script to use, or if you prefer, you can run them all to read all the files at once.
 * `cr_castep.py`, for reading **.castep** files
 * `cr_cif.py`, for reading **.cif** files
 * `cr_phonon.py`, for **.phonon** files
@@ -129,5 +122,5 @@ The functions used to read the files are defined in `cr_common.py` and are impor
 
 
 Please feel free to contact me if you have any questions or suggestions.  
-If you find this scripts useful, a citation would be greatly appreciated :D  
+If you find these scripts useful, a citation would be greatly appreciated :D  
 *Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader*  
