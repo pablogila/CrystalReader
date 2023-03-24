@@ -143,7 +143,7 @@ def progressbar_ETA(current, total, start):
     print(loadbar, end='\r')
 
 
-# Conversion factor from eV to kJ/mol, SUPPOSING THAT 'enthalpy' IS IN [eV/molecule]
+# Conversion factor from eV to kJ/mol, Supposing that the energy is in eV/cell
 def ev_kjmol():
     return ((1.602176634E-19 / 1000) * 6.02214076E+23)
 

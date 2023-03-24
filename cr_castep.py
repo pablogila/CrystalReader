@@ -34,7 +34,7 @@ out_castep = 'out_castep.csv'
 data_directory = 'data'
 data_castep = 'cc-2.castep'
 # If you change the header, make sure to change the columns in the 'row = [...]' line below
-header_castep = ['filename', 'enthalpy / eV', 'enthalpy / kJ/mol', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume / A^3', 'density / amu/A^3', 'density / g/cm^3']
+header_castep = ['filename', 'enthalpy [eV]', 'enthalpy [kJ/mol]', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume [A^3]', 'density [amu/A^3]', 'density [g/cm^3]']
 
 
 

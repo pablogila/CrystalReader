@@ -37,7 +37,7 @@ data_lines_phonon = 144
 # Threshold for the energy to be considered greater than zero
 threshold = 0.1
 # If you change the header, make sure to change the columns in the 'row = [...]' line below
-header_phonon = ['filename', 'E_1', 'E_2', 'E_3', 'E>'+str(threshold)+'?', 'E_73', 'E_74', 'E_75', 'E_76', 'Zero_E_Gamma_Point=(E_4++144)/2 / cm^-1', 'Zero_E_Gamma_Point / eV']
+header_phonon = ['filename', 'E_1', 'E_2', 'E_3', 'E>'+str(threshold)+'?', 'E_73', 'E_74', 'E_75', 'E_76', 'Zero_E_Gamma_Point=(E_4++144)/2 [cm^-1]', 'Zero_E_Gamma_Point [eV]']
 
 
 

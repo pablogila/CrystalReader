@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-version = "vCR.2023.03.14.2400"
+version = "vCR.2023.03.24.1600"
 
 import time
 import cr_common as cr
