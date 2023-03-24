@@ -48,6 +48,8 @@ def naming(string):
 
 # This function will extract the float value of a given variable from a raw string
 def extract_float(string, name):
+    if string == None:
+        return None
     pattern = re.compile(name + r'\s*=?\s*(-?\d+(?:\.\d+)?(?:[eE][+\-]?\d+)?)')
     match = pattern.search(string)
     if match:
@@ -58,6 +60,8 @@ def extract_float(string, name):
 
 # This function will extract the string value of a given variable from a raw string
 def extract_str(string, name):
+    if string == None:
+        return None
     pattern = re.compile(name + r"\s*(=)?\s*['\"](.*?)(?=['\"]|$)")
     match = pattern.search(string)
     if match:
@@ -68,6 +72,8 @@ def extract_str(string, name):
 
 # This function will extract the string value of a given variable from a raw string
 def extract_column(string, column):
+    if string == None:
+        return None
     columns = string.split()
     pattern = r'(-?\d+(?:\.\d+)?(?:[eE][+\-]?\d+)?)'
     if column < len(columns):

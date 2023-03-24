@@ -47,6 +47,7 @@ import os
 import csv
 import time
 import cr_common as cr
+import pandas as pd
 
 
 # Get the absolute path to the directory containing the Python script
@@ -56,67 +57,88 @@ path = os.path.join(dir_path, data_directory)
 # Get the names of all the directories in the given path, and store them in a list
 directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
-# Open the output file to write the data
-with open(out_castep, 'w', newline='') as file:
-    writer = csv.writer(file)
-    # Write a header row for the CSV file
-    writer.writerow(header_castep)
+# Create an empty array to store the data
+rows = []
+rows.append(header_castep)
 
-    # Start a timer and counter for the progress bar
-    time_start = time.time()
-    loop = 0
-    # Loop through all the folders in the /data path
-    for directory in directories:
-        # Progress bar, just for fun
-        loop += 1
-        cr.progressbar_ETA(loop, len(directories), time_start)
+# Start a timer and counter for the progress bar
+time_start = time.time()
+loop = 0
+# Loop through all the folders in the /data path
+for directory in directories:
+    # Progress bar, just for fun
+    loop += 1
+    cr.progressbar_ETA(loop, len(directories), time_start)
 
-        # Define the path to the .castep file
-        file = os.path.join(path, directory, data_castep)
-        file_name = cr.naming(directory)
+    # Define the path to the .castep file
+    file = os.path.join(path, directory, data_castep)
+    file_name = cr.naming(directory)
 
-        # Read the file and look for the desired lines
-        enthalpy_str = cr.searcher(file, 'LBFGS: Final Enthalpy     =')
-        volume_str = cr.searcher(file, 'Current cell volume =')
-        density_str = cr.searcher(file, 'density =')
-        densityg_str = cr.searcher(file, '=')
-        a_str = cr.searcher(file, 'a =')
-        b_str = cr.searcher(file, 'b =')
-        c_str = cr.searcher(file, 'c =')
+    # DEBUGGING
+    #print("reading:   ", file_name)
 
-        # Extract the values from the strings
-        enthalpy = cr.extract_float(enthalpy_str, 'LBFGS: Final Enthalpy')
-        volume = cr.extract_float(volume_str, 'Current cell volume')
-        density = cr.extract_float(density_str, 'density')
-        densityg = cr.extract_float(densityg_str, '')
-        a = cr.extract_float(a_str, 'a')
-        b = cr.extract_float(b_str, 'b')
-        c = cr.extract_float(c_str, 'c')
-        alpha = cr.extract_float(a_str, 'alpha')
-        beta = cr.extract_float(b_str, 'beta')
-        gamma = cr.extract_float(c_str, 'gamma')
+    # Read the file and look for the desired lines
+    enthalpy_str = cr.searcher(file, 'LBFGS: Final Enthalpy     =')
+    volume_str = cr.searcher(file, 'Current cell volume =')
+    density_str = cr.searcher(file, 'density =')
+    densityg_str = cr.searcher(file, '=')
+    a_str = cr.searcher(file, 'a =')
+    b_str = cr.searcher(file, 'b =')
+    c_str = cr.searcher(file, 'c =')
 
-        # write the data row to the file
-        row = [file_name, enthalpy, enthalpy*cr.ev_kjmol(), a, b, c, alpha, beta, gamma, volume, density, densityg]
-        writer.writerow(row)
+    # Extract the values from the strings
+    enthalpy = cr.extract_float(enthalpy_str, 'LBFGS: Final Enthalpy')
+    volume = cr.extract_float(volume_str, 'Current cell volume')
+    density = cr.extract_float(density_str, 'density')
+    densityg = cr.extract_float(densityg_str, '')
+    a = cr.extract_float(a_str, 'a')
+    b = cr.extract_float(b_str, 'b')
+    c = cr.extract_float(c_str, 'c')
+    alpha = cr.extract_float(a_str, 'alpha')
+    beta = cr.extract_float(b_str, 'beta')
+    gamma = cr.extract_float(c_str, 'gamma')
 
-        # Print the data on screen, for debugging purposes
-        #print(file_name)
-        #print("enthalpy = ", enthalpy)
-        #print("enthalpy*cr.ev_kjmol() = ", enthalpy*cr.ev_kjmol())
-        #print("a = ", a)
-        #print("b = ", b)
-        #print("c = ", c)
-        #print("alpha = ", alpha)
-        #print("beta = ", beta)
-        #print("gamma = ", gamma)
-        #print("volume = ", volume)
-        #print("density = ", density)
-        #print("densityg = ", densityg)
-        #print("")
+    if enthalpy == None:
+        enthalpy_ev = None
+    else:
+        enthalpy_ev = enthalpy * cr.ev_kjmol()
+
+    # save the data row to the rows array
+    row = [file_name, enthalpy, enthalpy_ev, a, b, c, alpha, beta, gamma, volume, density, densityg]
+    rows.append(row)
+
+    # Print the data on screen, for DEBUGGING purposes
+    #print("completed: ", file_name)
+    #print("enthalpy = ", enthalpy)
+    #print("enthalpy*cr.ev_kjmol() = ", enthalpy*cr.ev_kjmol())
+    #print("a = ", a)
+    #print("b = ", b)
+    #print("c = ", c)
+    #print("alpha = ", alpha)
+    #print("beta = ", beta)
+    #print("gamma = ", gamma)
+    #print("volume = ", volume)
+    #print("density = ", density)
+    #print("densityg = ", densityg)
+    #print("")
+
+
+print("")
+
+# Create a DataFrame from the list of dictionaries
+df = pd.DataFrame(rows)
+
+# Replace NaN values with an error message. any() is called twice, because it works column-wise
+if pd.isnull(df).any().any():
+    df = df.fillna('ERROR')
+    print("  !!!   COMPLETED WITH ERRORS: SOME VALUES ARE MISSING  !!!")
+
+# Write the DataFrame to a CSV file
+df.to_csv(out_castep, header=False, index=False)
+
 
 time_elapsed = round(time.time() - time_start, 2)
+print("  Finished reading ", data_castep, " files in ", time_elapsed, " seconds")
+print("  Data saved to ", out_castep)
 print("")
-print("  Finished reading the ", data_castep, " files in ", time_elapsed, " seconds")
-print("  Data extracted and saved to ", out_castep)
-print("")
+
