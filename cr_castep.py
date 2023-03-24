@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 print("")
 print("  Running CrystalReader in 'castep' mode...")
-print("  If you find this code useful, a citation would be greatly appreciated :D")
+print("  If you find this code useful, a citation would be awesome :D")
 print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
 
 
@@ -35,7 +35,7 @@ data_directory = 'data'
 data_castep = 'cc-2.castep'
 # If you change the header, make sure to change the columns in the 'row = [...]' line below
 header_castep = ['filename', 'enthalpy [eV]', 'enthalpy [kJ/mol]', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume [A^3]', 'density [amu/A^3]', 'density [g/cm^3]']
-
+error_log = 'errors_castep.txt'
 
 
 #####################################
@@ -44,7 +44,6 @@ header_castep = ['filename', 'enthalpy [eV]', 'enthalpy [kJ/mol]', 'a', 'b', 'c'
 
 
 import os
-import csv
 import time
 import cr_common as cr
 import pandas as pd
@@ -58,6 +57,7 @@ path = os.path.join(dir_path, data_directory)
 directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
 # Create an empty array to store the data
+errors = []
 rows = []
 rows.append(header_castep)
 
@@ -68,14 +68,14 @@ loop = 0
 for directory in directories:
     # Progress bar, just for fun
     loop += 1
-    cr.progressbar_ETA(loop, len(directories), time_start)
+    cr.progressbar(loop, len(directories))
 
     # Define the path to the .castep file
     file = os.path.join(path, directory, data_castep)
     file_name = cr.naming(directory)
 
-    # DEBUGGING
-    #print("reading:   ", file_name)
+    ### DEBUGGING ###
+    #print(file_name)
 
     # Read the file and look for the desired lines
     enthalpy_str = cr.searcher(file, 'LBFGS: Final Enthalpy     =')
@@ -98,17 +98,26 @@ for directory in directories:
     beta = cr.extract_float(b_str, 'beta')
     gamma = cr.extract_float(c_str, 'gamma')
 
+    # Convert enthalpy from eV to kJ/mol
     if enthalpy == None:
         enthalpy_ev = None
     else:
         enthalpy_ev = enthalpy * cr.ev_kjmol()
-
+    
     # save the data row to the rows array
     row = [file_name, enthalpy, enthalpy_ev, a, b, c, alpha, beta, gamma, volume, density, densityg]
     rows.append(row)
 
-    # Print the data on screen, for DEBUGGING purposes
-    #print("completed: ", file_name)
+    # Check if any of the values are missing
+    error = [file_name]
+    for i, var in enumerate(row):
+        if var is None:
+            error.append(header_castep[i])
+    if len(error) > 1:
+        errors.append(error)
+
+    #### DEBUGGING ###
+    #print(file_name)
     #print("enthalpy = ", enthalpy)
     #print("enthalpy*cr.ev_kjmol() = ", enthalpy*cr.ev_kjmol())
     #print("a = ", a)
@@ -122,20 +131,24 @@ for directory in directories:
     #print("densityg = ", densityg)
     #print("")
 
-
 print("")
 
-# Create a DataFrame from the list of dictionaries
 df = pd.DataFrame(rows)
 
-# Replace NaN values with an error message. any() is called twice, because it works column-wise
+# Check for errors. any() is called twice, because it works column-wise
 if pd.isnull(df).any().any():
-    df = df.fillna('ERROR')
-    print("  !!!   COMPLETED WITH ERRORS: SOME VALUES ARE MISSING  !!!")
+    #df = df.fillna('ERROR')
+    print("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print("   COMPLETED WITH ERRORS: THE FOLLOWING VALUES ARE MISSING ")
+    for k in errors:
+        print("  ", k)
+    print("   Error log registered in ", error_log)
+    print("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    log = pd.DataFrame(errors)
+    log.to_csv(error_log, header=False, index=False)
 
 # Write the DataFrame to a CSV file
 df.to_csv(out_castep, header=False, index=False)
-
 
 time_elapsed = round(time.time() - time_start, 2)
 print("  Finished reading ", data_castep, " files in ", time_elapsed, " seconds")
