@@ -36,6 +36,8 @@ data_castep = 'cc-2.castep'
 # If you change the header, make sure to change the columns in the 'row = [...]' line below
 header_castep = ['filename', 'enthalpy [eV]', 'enthalpy [kJ/mol]', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume [A^3]', 'density [amu/A^3]', 'density [g/cm^3]']
 error_log = 'errors_castep.txt'
+bucle_treshold = 5 # seconds for a loop to be considered a warning
+
 
 
 #####################################
@@ -56,12 +58,13 @@ path = os.path.join(dir_path, data_directory)
 # Get the names of all the directories in the given path, and store them in a list
 directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
-# Create an empty array to store the data
+# Empty arrays to store the data
 errors = []
+warnings = []
 rows = []
 rows.append(header_castep)
 
-# Start a timer and counter for the progress bar
+# Start a timer and counter, for the progress bar and warning messages
 time_start = time.time()
 loop = 0
 # Loop through all the folders in the /data path
@@ -69,7 +72,9 @@ for directory in directories:
     # Progress bar, just for fun
     loop += 1
     cr.progressbar(loop, len(directories))
-
+    # Start a timer, to display a warning if it stucks in a particular loop
+    bucle_init = time.time()
+    
     # Define the path to the .castep file
     file = os.path.join(path, directory, data_castep)
     file_name = cr.naming(directory)
@@ -108,13 +113,17 @@ for directory in directories:
     row = [file_name, enthalpy, enthalpy_ev, a, b, c, alpha, beta, gamma, volume, density, densityg]
     rows.append(row)
 
-    # Check if any of the values are missing
+    # ERRORS: Check if any of the values are missing
     error = [file_name]
     for i, var in enumerate(row):
         if var is None:
             error.append(header_castep[i])
     if len(error) > 1:
         errors.append(error)
+    # WARNINGS: Check if a particular loop is taking too long
+    bucle_time = time.time() - bucle_init
+    if bucle_time > bucle_treshold:
+        warnings.append(file_name)
 
     #### DEBUGGING ###
     #print(file_name)
@@ -133,22 +142,27 @@ for directory in directories:
 
 print("")
 
+# Write the DataFrame to a CSV file
 df = pd.DataFrame(rows)
+df.to_csv(out_castep, header=False, index=False)
 
-# Check for errors. any() is called twice, because it works column-wise
-if pd.isnull(df).any().any():
-    #df = df.fillna('ERROR')
+# Leave only the warnings that are not errors, A.K.A. the loops that took too long
+error_files = [error[0] for error in errors]
+warnings = [warning for warning in warnings if warning not in error_files]
+# Write the errors and warnings to a log file, and print them to the console
+if len(errors) > 0:
+    errors.insert(0, "COMPLETED WITH ERRORS: The following values are missing")
+if len(warnings) > 0:
+    warnings.insert(0, "WARNING: The following loops took suspiciously long to complete")
+    errors.append(warnings)
+if len(errors) > 0:
+    log = pd.DataFrame(errors)
+    log.to_csv(error_log, header=False, index=False)
     print("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    print("   COMPLETED WITH ERRORS: THE FOLLOWING VALUES ARE MISSING ")
     for k in errors:
         print("  ", k)
     print("   Error log registered in ", error_log)
     print("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    log = pd.DataFrame(errors)
-    log.to_csv(error_log, header=False, index=False)
-
-# Write the DataFrame to a CSV file
-df.to_csv(out_castep, header=False, index=False)
 
 time_elapsed = round(time.time() - time_start, 2)
 print("  Finished reading ", data_castep, " files in ", time_elapsed, " seconds")
