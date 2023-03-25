@@ -152,24 +152,30 @@ def progressbar_ETA(current, total, start):
 
 # Take the list of missing files as errors and slow loops as warnings, write them to a log file and display in the console
 def errorlog(error_log, errors, warnings):
-    # Remove warnings that resulted in errors, leaving only the loops that took too long yet seemed to work
+    # Remove warnings that resulted in errors, saving in warn[] only the loops that took too long yet seemed to work
     error_files = [error[0] for error in errors]
-    warnings = [warning for warning in warnings if warning not in error_files]
+    warning_files = [warning[0] for warning in warnings]
+    warn = []
+    #warnings = [warning for warning in warning_files if warning not in error_files]
+    for i, warning in enumerate(warning_files):
+        if warning not in error_files:
+            warn.append(warnings[i])
     # Write the errors and warnings to a log file, and print them to the console
     if len(errors) > 0:
         errors.insert(0, "COMPLETED WITH ERRORS:  The following values are missing:")
-    if len(warnings) > 0:
-        warnings.insert(0, "WARNING:  The following files were suspiciously slow to read:")
-        for warning in warnings:
+    if len(warn) > 0:
+        warn.insert(0, "WARNING:  The following files were suspiciously slow to read:")
+        for warning in warn:
             errors.append(warning)
     if len(errors) > 0:
         log = pd.DataFrame(errors)
         log.to_csv(error_log, header=False, index=False)
-        print("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        print("  ---------------------------------------------------------")
         for k in errors:
-            print("  ", k)
-        print("   Error log registered in ", error_log)
-        print("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            print("  "+str(k))
+        print("  Error log registered in ", error_log)
+        print("  DON'T TRUST FILES WITH ERRORS OR WARNINGS, CHECK MANUALLY")
+        print("  ---------------------------------------------------------")
 
 
 # Conversion factor from eV to kJ/mol, Supposing that the energy is in eV/cell

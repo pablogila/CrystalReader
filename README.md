@@ -97,13 +97,13 @@ The program iterates over the set of files, and writes the following info to an 
 
 ## Error Management
 
-If you notice a slowdown in the progress bar, expect that some of your files may be incomplete. The following actions are taken to give you more information about the files you need to check.  
+If you notice a slowdown in the progress bar, expect that some of your files may be incomplete. It is **strongly recommended** to manually check all files marked with an **ERROR** or **WARNING**.  
 
 If a value is not found, an **ERROR** message is displayed with more information.  
 
 If reading a file takes too long, a **WARNING** message is displayed, meaning that even if the data was extracted, it may be incorrect. The threshold for considering a warning is defined by the variable **loop_threshold**, which is 5 seconds by default, and may need to be changed if you are running the scripts on a supercomputer, or in a potato with some wires.
 
-All this information is extracted to an error log, defined by the **error_log** variable.
+All this information is extracted to an error log defined by the **error_log** variable.  
 
 
 ## Common Functions
@@ -139,13 +139,14 @@ The functions used to read the files are defined in `cr_common.py` and are impor
         # Loopy things
 ```  
 
-* `errorlog(error_log, errors, warnings)`. This function manages **errors** and **warnings**, as discussed in the *Error Management* section. For this function to work properly, the following code must be present in the script:  
+* `errorlog(error_log, errors, warnings)`. This function manages **errors** and **warnings**, as discussed in the *Error Management* section. For this function to work properly, the following code must be present in the main loop of the script:  
 
 ``` python
     errors = []
     warnings = []
     rows = []
     time_start = time.time()
+    # Start the main loop to read the files
     for directory in directories:
         loop_init = time.time()
         # Loopy things
@@ -159,9 +160,11 @@ The functions used to read the files are defined in `cr_common.py` and are impor
         if len(error) > 1:
             errors.append(error)
         # WARNINGS: Check if a particular loop takes suspiciously long
-        loop_time = round((time.time() - loop_init), 2)
+        loop_time = round((time.time() - loop_init), 1)
         if loop_time > loop_threshold:
-            warnings.append(str(file_name)+" took "+str(loop_time)+ " seconds")
+            warning_message = "took "+str(loop_time)+"s to read"
+            warning = [file_name, warning_message]
+            warnings.append(warning)
 ```  
 
 * `ev_kjmol()` and `cm_ev()` are the conversion factors used to transform values from eV to kJ/mol and from cm^-1 to eV. 
@@ -170,3 +173,4 @@ The functions used to read the files are defined in `cr_common.py` and are impor
 Please feel free to contact me if you have any questions or suggestions.  
 If you find these scripts useful, a citation would be awesome :D  
 *Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader*  
+

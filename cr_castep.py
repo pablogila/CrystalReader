@@ -121,9 +121,11 @@ for directory in directories:
     if len(error) > 1:
         errors.append(error)
     # WARNINGS: Check if a particular loop takes suspiciously long
-    loop_time = round((time.time() - loop_init), 2)
+    loop_time = round((time.time() - loop_init), 1)
     if loop_time > loop_threshold:
-        warnings.append(str(file_name)+" took "+str(loop_time)+ " seconds")
+        warning_message = "took "+str(loop_time)+"s to read"
+        warning = [file_name, warning_message]
+        warnings.append(warning)
 
     #### DEBUGGING ###
     #print(file_name)
@@ -150,7 +152,7 @@ df.to_csv(out_castep, header=False, index=False)
 cr.errorlog(error_log, errors, warnings)
 
 # Final message   
-time_elapsed = round(time.time() - time_start, 2)
+time_elapsed = round(time.time() - time_start, 1)
 print("  Finished reading ", data_castep, " files in ", time_elapsed, " seconds")
 print("  Data saved to ", out_castep)
 print("")
