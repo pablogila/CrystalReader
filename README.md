@@ -99,11 +99,13 @@ The program iterates over the set of files, and writes the following info to an 
 
 If you notice a slowdown in the progress bar, expect that some of your files may be incomplete. It is **strongly recommended** to manually check all files marked with an **ERROR** or **WARNING**.  
 
-If a value is not found, an **ERROR** message is displayed with more information.  
+If a value is not found, an **ERROR** message will be displayed with information about the corrupt file.
 
-If reading a file takes too long, a **WARNING** message is displayed, meaning that even if the data was extracted, it may be incorrect. The threshold for considering a warning is defined by the variable **loop_threshold**, which is 5 seconds by default, and may need to be changed if you are running the scripts on a supercomputer, or in a potato with some wires.
+If reading a file takes too long, a **WARNING** message is displayed, meaning that even if the data was extracted, it may be incorrect. The threshold for considering a warning is defined by the variable **loop_threshold**, which is 5 seconds by default, and may need to be changed if you are running the scripts on a supercomputer, or in a potato with some cables.  
 
 All this information is extracted to an error log defined by the **error_log** variable.  
+
+Basically, this whole section could be summarized in the following sentence: **Always check the files marked with ERROR or WARNING because they may be corrupted**.
 
 
 ## Common Functions
