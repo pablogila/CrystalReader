@@ -36,7 +36,7 @@ data_castep = 'cc-2.castep'
 # If you change the header, make sure to change the columns in the 'row = [...]' line below
 header_castep = ['filename', 'enthalpy [eV]', 'enthalpy [kJ/mol]', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume [A^3]', 'density [amu/A^3]', 'density [g/cm^3]']
 error_log = 'errors_castep.txt'
-bucle_treshold = 5 # seconds for a loop to be considered a warning
+loop_threshold = 5 # seconds for a loop to be considered a warning
 
 
 
@@ -73,7 +73,7 @@ for directory in directories:
     loop += 1
     cr.progressbar(loop, len(directories))
     # Start a timer, to display a warning if it stucks in a particular loop
-    bucle_init = time.time()
+    loop_init = time.time()
     
     # Define the path to the .castep file
     file = os.path.join(path, directory, data_castep)
@@ -120,10 +120,10 @@ for directory in directories:
             error.append(header_castep[i])
     if len(error) > 1:
         errors.append(error)
-    # WARNINGS: Check if a particular loop is taking too long
-    bucle_time = time.time() - bucle_init
-    if bucle_time > bucle_treshold:
-        warnings.append(file_name)
+    # WARNINGS: Check if a particular loop takes suspiciously long
+    loop_time = round((time.time() - loop_init), 2)
+    if loop_time > loop_threshold:
+        warnings.append(str(file_name)+" took "+str(loop_time)+ " seconds")
 
     #### DEBUGGING ###
     #print(file_name)
@@ -142,28 +142,14 @@ for directory in directories:
 
 print("")
 
-# Write the DataFrame to a CSV file
+# Save the data to a CSV file
 df = pd.DataFrame(rows)
 df.to_csv(out_castep, header=False, index=False)
 
-# Leave only the warnings that are not errors, A.K.A. the loops that took too long
-error_files = [error[0] for error in errors]
-warnings = [warning for warning in warnings if warning not in error_files]
-# Write the errors and warnings to a log file, and print them to the console
-if len(errors) > 0:
-    errors.insert(0, "COMPLETED WITH ERRORS: The following values are missing")
-if len(warnings) > 0:
-    warnings.insert(0, "WARNING: The following loops took suspiciously long to complete")
-    errors.append(warnings)
-if len(errors) > 0:
-    log = pd.DataFrame(errors)
-    log.to_csv(error_log, header=False, index=False)
-    print("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    for k in errors:
-        print("  ", k)
-    print("   Error log registered in ", error_log)
-    print("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+# Display and save errors and warnings
+cr.errorlog(error_log, errors, warnings)
 
+# Final message   
 time_elapsed = round(time.time() - time_start, 2)
 print("  Finished reading ", data_castep, " files in ", time_elapsed, " seconds")
 print("  Data saved to ", out_castep)

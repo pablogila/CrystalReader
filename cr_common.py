@@ -2,7 +2,7 @@
 CrystalReader Common Functions. Read and extract data from different files.
 Copyright (C) 2023  Pablo Gila-Herranz
 
-If you find this code useful, a citation would be greatly appreciated :D
+If you find this code useful, a citation would be awesome :D
 Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader
 Feel free to contact me at pablo.gila.herranz@gmail.com
 
@@ -23,6 +23,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import re
 import time
+import pandas as pd
 
 
 
@@ -147,6 +148,28 @@ def progressbar_ETA(current, total, start):
     else:
         loadbar += "  |  ETA: >{:4.0f}s  ".format(eta)
     print(loadbar, end='\r')
+
+
+# Take the list of missing files as errors and slow loops as warnings, write them to a log file and display in the console
+def errorlog(error_log, errors, warnings):
+    # Remove warnings that resulted in errors, leaving only the loops that took too long yet seemed to work
+    error_files = [error[0] for error in errors]
+    warnings = [warning for warning in warnings if warning not in error_files]
+    # Write the errors and warnings to a log file, and print them to the console
+    if len(errors) > 0:
+        errors.insert(0, "COMPLETED WITH ERRORS:  The following values are missing:")
+    if len(warnings) > 0:
+        warnings.insert(0, "WARNING:  The following files were suspiciously slow to read:")
+        for warning in warnings:
+            errors.append(warning)
+    if len(errors) > 0:
+        log = pd.DataFrame(errors)
+        log.to_csv(error_log, header=False, index=False)
+        print("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        for k in errors:
+            print("  ", k)
+        print("   Error log registered in ", error_log)
+        print("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 
 # Conversion factor from eV to kJ/mol, Supposing that the energy is in eV/cell

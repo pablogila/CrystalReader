@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 print("")
 print("  Running CrystalReader in 'phonon' mode...")
-print("  If you find this code useful, a citation would be greatly appreciated :D")
+print("  If you find this code useful, a citation would be awesome :D")
 print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
 
 

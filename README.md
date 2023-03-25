@@ -3,6 +3,15 @@
 CrystalReader is a program to automate the reading and extraction of information from __*.castep__, __*.cif__ and __*.phonon__ files, built with the premise of reliability and ease of reuse through an easy to read code structure, with the potential to be repurposed to process any type of text-based data files.
 
 
+## Requirements
+
+You will need **Python 3.X**, and the following libraries:
+
+* pandas  
+
+Using a virtual environment such as venv is recommended, but not necessary.  
+
+
 ## Usage
 
 First download the source code, as you prefer:
@@ -86,6 +95,17 @@ The program iterates over the set of files, and writes the following info to an 
 * Zero Energy Gamma Point, eV
 
 
+## Error Management
+
+If you notice a slowdown in the progress bar, expect that some of your files may be incomplete. The following actions are taken to give you more information about the files you need to check.  
+
+If a value is not found, an **ERROR** message is displayed with more information.  
+
+If reading a file takes too long, a **WARNING** message is displayed, meaning that even if the data was extracted, it may be incorrect. The threshold for considering a warning is defined by the variable **loop_threshold**, which is 5 seconds by default, and may need to be changed if you are running the scripts on a supercomputer, or in a potato with some wires.
+
+All this information is extracted to an error log, defined by the **error_log** variable.
+
+
 ## Common Functions
 
 The functions used to read the files are defined in `cr_common.py` and are imported at the beginning of each script. These functions are the following:
@@ -108,7 +128,8 @@ The functions used to read the files are defined in `cr_common.py` and are impor
 
 * `naming(string)`. This function reads the name of the folder, and returns it in the **xxx-xxx-xxx-xxx** format. Be aware that if your nested folders follow a different naming, you may want to change the **pattern** variable inside this function.
 
-* `progressbar(current, total)` and `progressbar_ETA(current, total, start)`. These functions give you a hint as to whether or not you can go out and get a coffee. The Estimated Time of Arrival (ETA) is usually more reliable after 20% into the loop. The loop should have the following structure:
+* `progressbar(current, total)` and `progressbar_ETA(current, total, start)`. These functions give you a hint as to whether or not you can go out and get a coffee. The Estimated Time of Arrival (ETA) is usually more reliable after 20% into the loop. The loop should have the following structure:  
+
 ``` python
     loop = 0
     time_loop = time.time()
@@ -116,11 +137,36 @@ The functions used to read the files are defined in `cr_common.py` and are impor
         loop += 1
         progressbar_ETA(loop, len(directories), time_loop)
         # Loopy things
-```
+```  
+
+* `errorlog(error_log, errors, warnings)`. This function manages **errors** and **warnings**, as discussed in the *Error Management* section. For this function to work properly, the following code must be present in the script:  
+
+``` python
+    errors = []
+    warnings = []
+    rows = []
+    time_start = time.time()
+    for directory in directories:
+        loop_init = time.time()
+        # Loopy things
+        row = [file_name, enthalpy, a, b, ...etc...]
+        rows.append(row)
+        # ERRORS: Check if any of the values are missing
+        error = [file_name]
+        for i, var in enumerate(row):
+            if var is None:
+                error.append(header_castep[i])
+        if len(error) > 1:
+            errors.append(error)
+        # WARNINGS: Check if a particular loop takes suspiciously long
+        loop_time = round((time.time() - loop_init), 2)
+        if loop_time > loop_threshold:
+            warnings.append(str(file_name)+" took "+str(loop_time)+ " seconds")
+```  
 
 * `ev_kjmol()` and `cm_ev()` are the conversion factors used to transform values from eV to kJ/mol and from cm^-1 to eV. 
 
 
 Please feel free to contact me if you have any questions or suggestions.  
-If you find these scripts useful, a citation would be greatly appreciated :D  
+If you find these scripts useful, a citation would be awesome :D  
 *Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader*  
