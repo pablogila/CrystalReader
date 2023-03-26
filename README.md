@@ -5,11 +5,7 @@ CrystalReader is a program to automate the reading and extraction of information
 
 ## Requirements
 
-You will need **Python 3.X**, and the following libraries:
-
-* pandas  
-
-Using a virtual environment such as venv is recommended, but not necessary.  
+CrystalReader runs in **Python 3.X** with **Pandas** installed. The use of a virtual environment such as venv is recommended, but not required. 
 
 
 ## Usage
@@ -103,9 +99,9 @@ If a value is not found, an **ERROR** message will be displayed with information
 
 If reading a file takes too long, a **WARNING** message is displayed, meaning that even if the data was extracted, it may be incorrect. The threshold for considering a warning is defined by the variable **loop_threshold**, which is 5 seconds by default, and may need to be changed if you are running the scripts on a supercomputer, or in a potato with some cables.  
 
-All this information is extracted to an error log defined by the **error_log** variable.  
+All this information is extracted to an error log defined by the `error_log` variable.  
 
-Basically, this whole section could be summarized in the following sentence: **Always check the files marked with ERROR or WARNING because they may be corrupted**.
+Basically, this whole section could be summarized in the following sentence: **Always check the files marked with ERRORS or WARNINGS because they may be corrupted**.
 
 
 ## Common Functions
