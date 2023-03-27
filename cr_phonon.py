@@ -69,12 +69,13 @@ rows.append(header)
 
 # Start a timer and counter, for the progress bar and warning messages
 time_start = time.time()
+bar = time_start
 loop = 0
 # Loop through all the folders in the /data path
 for directory in directories:
     # Progress bar, just for fun
     loop += 1
-    cr.progressbar(loop, len(directories))
+    cr.progressbar(loop, len(directories), bar)
     # Start a timer, to display a warning if it stucks in a particular loop
     loop_init = time.time()
 
@@ -125,6 +126,8 @@ for directory in directories:
         warning_message = "took "+str(loop_time)+"s to read"
         warning = [file_name, warning_message]
         warnings.append(warning)
+        # Stop displaying ETA in the progress bar
+        bar = None
 
 print("")
 

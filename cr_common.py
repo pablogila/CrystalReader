@@ -127,27 +127,31 @@ def searcher_rows(filename, search_value, number_rows):
 
 
 # This function will print a progress bar in the console, just for fun
-def progressbar(current, total):
-    bar_length = 50
-    percentage = int((current/total)*100)
-    progress = int((bar_length*current)/total)
-    loadbar = "  [{:{len}}]{}%".format(progress*'■',percentage,len=bar_length)
-    print(loadbar, end='\r')
+#def progressbar(current, total):
+#    bar_length = 50
+#    percentage = int((current/total)*100)
+#    progress = int((bar_length*current)/total)
+#    loadbar = "  [{:{len}}]{}%".format(progress*'■',percentage,len=bar_length)
+#    print(loadbar, end='\r')
 
 
 # This function will print a progress bar in the console, as well as the ETA, just for fun
-def progressbar_ETA(current, total, start):
+def progressbar(current, total, start):
     bar_length = 50
     percentage = int((current/total)*100)
     progress = int((bar_length*current)/total)
-    loadbar = "  [{:{len}}]{:4.0f}%".format(progress*'■',percentage,len=bar_length)
-    elapsed = time.time() - start
-    eta = elapsed * (total/current - 1)
-    if current > total/5 and eta >= 0:
-        loadbar += "  |  ETA: {:5.0f}s  ".format(eta)
+    if start != None:
+        loadbar = "  [{:{len}}]{:4.0f}%".format(progress*'■',percentage,len=bar_length)
+        elapsed = time.time() - start
+        eta = elapsed * (total/current - 1)
+        if current > total/5 and eta >= 0:
+            loadbar += "    ETA: {:5.0f}s  ".format(eta)
+        else:
+            loadbar += "    ETA: >{:4.0f}s  ".format(eta)
+        print(loadbar, end='\r')
     else:
-        loadbar += "  |  ETA: >{:4.0f}s  ".format(eta)
-    print(loadbar, end='\r')
+        loadbar = "  [{:{len}}]{:4.0f}%                   ".format(progress*'■',percentage,len=bar_length)
+        print(loadbar, end='\r')
 
 
 # Take the list of missing files as errors and slow loops as warnings, write them to a log file and display in the console

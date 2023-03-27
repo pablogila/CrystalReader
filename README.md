@@ -126,7 +126,7 @@ The functions used to read the files are defined in `cr_common.py` and are impor
 
 * `naming(string)`. This function reads the name of the folder, and returns it in the **xxx-xxx-xxx-xxx** format. Be aware that if your nested folders follow a different naming, you may want to change the **pattern** variable inside this function.
 
-* `progressbar(current, total)` and `progressbar_ETA(current, total, start)`. These functions give you a hint as to whether or not you can go out and get a coffee. The Estimated Time of Arrival (ETA) is usually more reliable after 20% into the loop. The loop should have the following structure:  
+* `progressbar(current, total, start)`. This will give you an indication of whether or not you can go out and get a coffee. The Estimated Time of Arrival (ETA) is usually more reliable after 20% into the loop. The ETA will not be displayed if **start** is set to **None**, and will be hidden if an **ERROR** or **WARNING** is found while reading the files. The loop should have the following structure:
 
 ``` python
     loop = 0
@@ -163,6 +163,8 @@ The functions used to read the files are defined in `cr_common.py` and are impor
             warning_message = "took "+str(loop_time)+"s to read"
             warning = [file_name, warning_message]
             warnings.append(warning)
+            # Stop displaying ETA in the progress bar
+            bar = None
 ```  
 
 * `ev_kjmol()` and `cm_ev()` are the conversion factors used to transform values from eV to kJ/mol and from cm^-1 to eV. 
