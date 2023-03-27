@@ -93,7 +93,7 @@ The program iterates over the set of files, and writes the following info to an 
 
 ## Error Management
 
-If you notice a slowdown in the progress bar, expect that some of your files may be incomplete. It is **strongly recommended** to manually check all files marked with an **ERROR** or **WARNING**.  
+If you notice a slowdown while reading the files, expect that your data may be incomplete. It is **strongly recommended** to manually check all files marked with an **ERROR** or **WARNING**.  
 
 If a value is not found, an **ERROR** message will be displayed with information about the corrupt file.
 
@@ -126,7 +126,7 @@ The functions used to read the files are defined in `cr_common.py` and are impor
 
 * `naming(string)`. This function reads the name of the folder, and returns it in the **xxx-xxx-xxx-xxx** format. Be aware that if your nested folders follow a different naming, you may want to change the **pattern** variable inside this function.
 
-* `progressbar(current, total, start)`. This will give you an indication of whether or not you can go out and get a coffee. The Estimated Time of Arrival (ETA) is usually more reliable after 20% into the loop. The ETA will not be displayed if **start** is set to **None**, and will be hidden if an **ERROR** or **WARNING** is found while reading the files. The loop should have the following structure:
+* `progressbar(current, total, start)`. This will give you an indication of whether or not you can go out and get a coffee. The Estimated Time of Arrival (ETA) is usually more reliable after 20% into the loop. The ETA will not be displayed if **start** is set to **False**. If an **ERROR** or **WARNING** is detected, the ETA will be replaced by a warning message. The loop should have the following structure:
 
 ``` python
     loop = 0
@@ -134,7 +134,7 @@ The functions used to read the files are defined in `cr_common.py` and are impor
     for directory in directories:
         loop += 1
         progressbar_ETA(loop, len(directories), time_loop)
-        # Loopy things
+        ### Loopy things ###
 ```  
 
 * `errorlog(error_log, errors, warnings)`. This function manages **errors** and **warnings**, as discussed in the *Error Management* section. For this function to work properly, the following code must be present in the main loop of the script:  
@@ -147,7 +147,7 @@ The functions used to read the files are defined in `cr_common.py` and are impor
     # Start the main loop to read the files
     for directory in directories:
         loop_init = time.time()
-        # Loopy things
+        ### Loopy things ###
         row = [file_name, enthalpy, a, b, ...etc...]
         rows.append(row)
         # ERRORS: Check if any of the values are missing

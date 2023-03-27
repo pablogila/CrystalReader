@@ -126,21 +126,15 @@ def searcher_rows(filename, search_value, number_rows):
     return lines[::1]
 
 
-# This function will print a progress bar in the console, just for fun
-#def progressbar(current, total):
-#    bar_length = 50
-#    percentage = int((current/total)*100)
-#    progress = int((bar_length*current)/total)
-#    loadbar = "  [{:{len}}]{}%".format(progress*'■',percentage,len=bar_length)
-#    print(loadbar, end='\r')
-
-
 # This function will print a progress bar in the console, as well as the ETA, just for fun
 def progressbar(current, total, start):
     bar_length = 50
     percentage = int((current/total)*100)
     progress = int((bar_length*current)/total)
-    if start != None:
+    if start == False:
+        loadbar = "  [{:{len}}]{:4.0f}%                   ".format(progress*'■',percentage,len=bar_length)
+        print(loadbar, end='\r')
+    elif start != None:
         loadbar = "  [{:{len}}]{:4.0f}%".format(progress*'■',percentage,len=bar_length)
         elapsed = time.time() - start
         eta = elapsed * (total/current - 1)
@@ -150,7 +144,7 @@ def progressbar(current, total, start):
             loadbar += "    ETA: >{:4.0f}s  ".format(eta)
         print(loadbar, end='\r')
     else:
-        loadbar = "  [{:{len}}]{:4.0f}%                   ".format(progress*'■',percentage,len=bar_length)
+        loadbar = "  [{:{len}}]{:4.0f}%    Errors detected... ".format(progress*'■',percentage,len=bar_length)
         print(loadbar, end='\r')
 
 

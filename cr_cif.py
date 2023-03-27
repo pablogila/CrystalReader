@@ -73,7 +73,7 @@ loop = 0
 for directory in directories:
     # Progress bar, just for fun
     loop += 1
-    cr.progressbar_ETA(loop, len(directories), bar)
+    cr.progressbar(loop, len(directories), bar)
     # Start a timer, to display a warning if it stucks in a particular loop
     loop_init = time.time()
     
