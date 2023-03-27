@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 print("")
 print("  Running CrystalReader in 'cif' mode...")
-print("  If you find this code useful, a citation would be greatly appreciated :D")
+print("  If you find this code useful, a citation would be awesome :D")
 print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
 
 
@@ -30,12 +30,14 @@ print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pabl
 ######################################
 
 
-out_cif = 'out_cif.csv'
+out = 'out_cif.csv'
 data_directory = 'data'
 data_cif = 'cc-2-out.cif'
 data_cifE = 'cc-2_Efield-out.cif'
 # If you change the header, make sure to change the columns in the 'row = [...]' line below
-header_cif = ['filename', 'SSG_H_M', 'SSG_H_M-Efield']
+header = ['filename', 'SSG_H_M', 'SSG_H_M-Efield']
+out_error = 'errors_cif.txt'
+loop_threshold = 3 # seconds for a loop to be considered a warning
 
 
 
@@ -45,9 +47,9 @@ header_cif = ['filename', 'SSG_H_M', 'SSG_H_M-Efield']
 
 
 import os
-import csv
 import time
 import cr_common as cr
+import pandas as pd
 
 
 # Get the absolute path to the directory containing the Python script
@@ -57,46 +59,71 @@ path = os.path.join(dir_path, data_directory)
 # Get the names of all the directories in the given path, and store them in a list
 directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
-# Open the output file to write the data
-with open(out_cif, 'w', newline='') as file:
-    writer = csv.writer(file)
-    # Write a header row for the CSV file
-    writer.writerow(header_cif)
+# Empty arrays to store the data
+errors = []
+warnings = []
+rows = []
+rows.append(header)
 
-    # Start a timer and counter for the progress bar
-    time_start = time.time()
-    loop = 0
-    # Loop through all the folders in the /data path
-    for directory in directories:
-        # Progress bar, just for fun
-        loop += 1
-        cr.progressbar_ETA(loop, len(directories), time_start)
+# Start a timer and counter, for the progress bar and warning messages
+time_start = time.time()
+loop = 0
+# Loop through all the folders in the /data path
+for directory in directories:
+    # Progress bar, just for fun
+    loop += 1
+    cr.progressbar(loop, len(directories))
+    # Start a timer, to display a warning if it stucks in a particular loop
+    loop_init = time.time()
+    
+    # Define the path to the .cif files
+    file_cif = os.path.join(path, directory, data_cif)
+    file_cifE = os.path.join(path, directory, data_cifE)
+    file_name = cr.naming(directory)
 
-        # Define the path to the .castep file
-        file_cif = os.path.join(path, directory, data_cif)
-        file_cifE = os.path.join(path, directory, data_cifE)
-        file_name = cr.naming(directory)
+    # Read the file and look for the desired lines
+    cif_str = cr.searcher(file_cif, '_symmetry_space_group_name_H_M')
+    cifE_str = cr.searcher(file_cifE, '_symmetry_space_group_name_H_M')
 
-        # Read the file and look for the desired lines
-        cif_str = cr.searcher(file_cif, '_symmetry_space_group_name_H_M')
-        cifE_str = cr.searcher(file_cifE, '_symmetry_space_group_name_H_M')
+    # Extract the values from the strings
+    cif = cr.extract_str(cif_str, '_symmetry_space_group_name_H_M')
+    cifE = cr.extract_str(cifE_str, '_symmetry_space_group_name_H_M')
 
-        # Extract the values from the strings
-        cif = cr.extract_str(cif_str, '_symmetry_space_group_name_H_M')
-        cifE = cr.extract_str(cifE_str, '_symmetry_space_group_name_H_M')
+    # write the data row to the file
+    row = [file_name, cif, cifE]
+    rows.append(row)
 
-        # write the data row to the file
-        row = [file_name, cif, cifE]
-        writer.writerow(row)
+    # ERRORS: Check if any of the values are missing
+    error = [file_name]
+    for i, var in enumerate(row):
+        if var is None:
+            error.append(header[i])
+    if len(error) > 1:
+        errors.append(error)
+    # WARNINGS: Check if a particular loop takes suspiciously long
+    loop_time = round((time.time() - loop_init), 1)
+    if loop_time > loop_threshold:
+        warning_message = "took "+str(loop_time)+"s to read"
+        warning = [file_name, warning_message]
+        warnings.append(warning)
 
-        # Print the data on screen, for debugging purposes
-        #print(file_name)
-        #print("cif = ", cif)
-        #print("cifE = ", cifE)
-        #print("")
+    # Print the data on screen, for debugging purposes
+    #print(file_name)
+    #print("cif = ", cif)
+    #print("cifE = ", cifE)
+    #print("")
 
-time_elapsed = round(time.time() - time_start, 2)
 print("")
+
+# Save the data to a CSV file
+df = pd.DataFrame(rows)
+df.to_csv(out, header=False, index=False)
+
+# Display and save errors and warnings
+cr.errorlog(out_error, errors, warnings)
+
+# Final message  
+time_elapsed = round(time.time() - time_start, 1)
 print("  Finished reading the ", data_cif, " and ", data_cifE, " files in ", time_elapsed, " seconds")
-print("  Data extracted and saved to ", out_cif)
+print("  Data extracted and saved to ", out)
 print("")

@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 print("")
 print("  Running CrystalReader in 'phonon' mode...")
-print("  If you find this code useful, a citation would be greatly appreciated :D")
+print("  If you find this code useful, a citation would be awesome :D")
 print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
 
 
@@ -30,14 +30,16 @@ print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pabl
 ######################################
 
 
-out_phonon = 'out_phonon.csv'
+out = 'out_phonon.csv'
 data_directory = 'data'
 data_phonon = 'cc-2_Efield.phonon'
 data_lines_phonon = 144
 # Threshold for the energy to be considered greater than zero
 threshold = 0.1
 # If you change the header, make sure to change the columns in the 'row = [...]' line below
-header_phonon = ['filename', 'E_1', 'E_2', 'E_3', 'E>'+str(threshold)+'?', 'E_73', 'E_74', 'E_75', 'E_76', 'Zero_E_Gamma_Point=(E_4++144)/2 [cm^-1]', 'Zero_E_Gamma_Point [eV]']
+header = ['filename', 'E_1', 'E_2', 'E_3', 'E>'+str(threshold)+'?', 'E_73', 'E_74', 'E_75', 'E_76', 'Zero_E_Gamma_Point=(E_4++144)/2 [cm^-1]', 'Zero_E_Gamma_Point [eV]']
+out_error = 'errors_phonon.txt'
+loop_threshold = 15 # seconds for a loop to be considered a warning
 
 
 
@@ -47,9 +49,9 @@ header_phonon = ['filename', 'E_1', 'E_2', 'E_3', 'E>'+str(threshold)+'?', 'E_73
 
 
 import os
-import csv
 import time
 import cr_common as cr
+import pandas as pd
 
 
 # Get the absolute path to the directory containing the Python script
@@ -59,57 +61,96 @@ path = os.path.join(dir_path, data_directory)
 # Get the names of all the directories in the given path, and store them in a list
 directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
-# Open the output file to write the data
-with open(out_phonon, 'w', newline='') as file:
-    writer = csv.writer(file)
-    # Write a header row for the CSV file
-    writer.writerow(header_phonon)
+# Empty arrays to store the data
+errors = []
+warnings = []
+rows = []
+rows.append(header)
 
-    # Start a timer and counter for the progress bar
-    time_start = time.time()
-    loop = 0
-    # Loop through all the folders in the /data path
-    for directory in directories:
-        # Progress bar, just for fun
-        loop += 1
-        cr.progressbar_ETA(loop, len(directories), time_start)
+# Start a timer and counter, for the progress bar and warning messages
+time_start = time.time()
+loop = 0
+# Loop through all the folders in the /data path
+for directory in directories:
+    # Progress bar, just for fun
+    loop += 1
+    cr.progressbar(loop, len(directories))
+    # Start a timer, to display a warning if it stucks in a particular loop
+    loop_init = time.time()
 
-        # Define the path to the .castep file
-        file_phonon = os.path.join(path, directory, data_phonon)
-        file_name = cr.naming(directory)
+    # Define the path to the .phonon file
+    file_phonon = os.path.join(path, directory, data_phonon)
+    file_name = cr.naming(directory)
 
-        # Read the file and look for the desired line, return the corresponding lines after the match
-        # The phonon_str[0] is the header, the phonon_str[1] is the first line of data, etc.
-        phonon_str = cr.searcher_rows(file_phonon, 'q-pt=', data_lines_phonon)
+    # Read the file and look for the desired line, return the corresponding lines after the match
+    # The phonon_str[0] is the header, the phonon_str[1] is the first line of data, etc.
+    phonon_str = cr.searcher_rows(file_phonon, 'q-pt=', data_lines_phonon)
 
-        #Ir_1 = cr.extract_column(phonon_str[1], 2)
-        #Ir_2 = cr.extract_column(phonon_str[2], 2)
-        #Ir_3 = cr.extract_column(phonon_str[3], 2)
-        E_1 = cr.extract_column(phonon_str[1], 1)
-        E_2 = cr.extract_column(phonon_str[2], 1)
-        E_3 = cr.extract_column(phonon_str[3], 1)
-        E_73 = cr.extract_column(phonon_str[73], 1)
-        E_74 = cr.extract_column(phonon_str[74], 1)
-        E_75 = cr.extract_column(phonon_str[75], 1)
-        E_76 = cr.extract_column(phonon_str[76], 1)
+    #Ir_1 = cr.extract_column(phonon_str[1], 2)
+    #Ir_2 = cr.extract_column(phonon_str[2], 2)
+    #Ir_3 = cr.extract_column(phonon_str[3], 2)
+    E_1 = cr.extract_column(phonon_str[1], 1)
+    E_2 = cr.extract_column(phonon_str[2], 1)
+    E_3 = cr.extract_column(phonon_str[3], 1)
+    E_73 = cr.extract_column(phonon_str[73], 1)
+    E_74 = cr.extract_column(phonon_str[74], 1)
+    E_75 = cr.extract_column(phonon_str[75], 1)
+    E_76 = cr.extract_column(phonon_str[76], 1)
 
-        # Check if the first energies are greater than the threshold
-        if (abs(E_1) > threshold) or (abs(E_2) > threshold) or (abs(E_3) > threshold):
-            question = 'YES'
-        else:
-            question = 'no'
+    # Check if the first energies are greater than the threshold
+    if (abs(E_1) > threshold) or (abs(E_2) > threshold) or (abs(E_3) > threshold):
+        question = 'YES'
+    else:
+        question = 'no'
         
-        ZEGP = 0
-        for k in range(4, data_lines_phonon + 1):
-            ZEGP += cr.extract_column(phonon_str[k], 1)
-        ZEGP = ZEGP/2
+    ZEGP = 0
+    for k in range(4, data_lines_phonon + 1):
+        ZEGP += cr.extract_column(phonon_str[k], 1)
+    ZEGP = ZEGP/2
         
-        # write the data row to the file
-        row = [file_name, E_1, E_2, E_3, question, E_73, E_74, E_75, E_76, ZEGP, ZEGP * cr.cm_ev()]
-        writer.writerow(row)
+    # write the data row to the file
+    row = [file_name, E_1, E_2, E_3, question, E_73, E_74, E_75, E_76, ZEGP, ZEGP * cr.cm_ev()]
+    rows.append(row)
 
-time_elapsed = round(time.time() - time_start, 2)
+    # ERRORS: Check if any of the values are missing
+    error = [file_name]
+    for i, var in enumerate(row):
+        if var is None:
+            error.append(header[i])
+    if len(error) > 1:
+        errors.append(error)
+    # WARNINGS: Check if a particular loop takes suspiciously long
+    loop_time = round((time.time() - loop_init), 1)
+    if loop_time > loop_threshold:
+        warning_message = "took "+str(loop_time)+"s to read"
+        warning = [file_name, warning_message]
+        warnings.append(warning)
+
 print("")
+
+# Save the data to a CSV file
+df = pd.DataFrame(rows)
+df.to_csv(out, header=False, index=False)
+
+# Display and save errors and warnings
+cr.errorlog(out_error, errors, warnings)
+
+# Final message
+time_elapsed = round(time.time() - time_start, 1)
 print("  Finished reading the ", data_phonon, " files in ", time_elapsed, " seconds")
-print("  Data extracted and saved to ", out_phonon)
+print("  Data extracted and saved to ", out)
 print("")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
