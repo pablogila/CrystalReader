@@ -132,9 +132,12 @@ def progressbar(current, total, start):
     percentage = int((current/total)*100)
     progress = int((bar_length*current)/total)
     if start == False:
-        loadbar = "  [{:{len}}]{:4.0f}%                   ".format(progress*'■',percentage,len=bar_length)
+        loadbar = "  [{:{len}}]{:4.0f}%".format(progress*'■',percentage,len=bar_length)
         print(loadbar, end='\r')
-    elif start != None:
+    elif start == True:
+        loadbar = "  [{:{len}}]{:4.0f}%    Errors detected...".format(progress*'■',percentage,len=bar_length)
+        print(loadbar, end='\r')
+    else:
         loadbar = "  [{:{len}}]{:4.0f}%".format(progress*'■',percentage,len=bar_length)
         elapsed = time.time() - start
         eta = elapsed * (total/current - 1)
@@ -142,9 +145,6 @@ def progressbar(current, total, start):
             loadbar += "    ETA: {:5.0f}s  ".format(eta)
         else:
             loadbar += "    ETA: >{:4.0f}s  ".format(eta)
-        print(loadbar, end='\r')
-    else:
-        loadbar = "  [{:{len}}]{:4.0f}%    Errors detected... ".format(progress*'■',percentage,len=bar_length)
         print(loadbar, end='\r')
 
 

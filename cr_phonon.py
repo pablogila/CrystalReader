@@ -126,8 +126,8 @@ for directory in directories:
         warning_message = "took "+str(loop_time)+"s to read"
         warning = [file_name, warning_message]
         warnings.append(warning)
-        # Stop displaying ETA in the progress bar
-        bar = None
+        # Displays warning in the progress bar
+        bar = True
 
 print("")
 
