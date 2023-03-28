@@ -139,4 +139,3 @@ print("  Finished reading ", data_castep, " files in ", time_elapsed, " seconds"
 print("  Data saved to ", out)
 print("")
 
-

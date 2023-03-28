@@ -20,13 +20,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-version = "vCR.2023.03.28.1845"
-
 import time
 import cr_common as cr
 
 print("\n")
-print("  Welcome to CrystalReader version " + version)
+print("  Welcome to CrystalReader version " + cr.version())
 print("  This is free software, and you are welcome to redistribute it under GNU General Public License")
 print("  You should have already introduced the files to read in the corresponding scripts")
 print("  Else check the documentation on https://github.com/pablogila/CrystalReader")

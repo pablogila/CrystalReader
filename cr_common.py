@@ -27,10 +27,8 @@ import time
 import pandas as pd
 
 
-
-#####################################################
-""" COMMON FUNCTIONS TO ALL CRYSTALREADER SCRIPTS """
-#####################################################
+def version():
+    return "vCR.2023.03.28.2300"
 
 
 # This function will extract the numbers from the name of the parent folder
@@ -183,7 +181,7 @@ def cm_ev():
 
 #######################
 ###  OLD FUNCTIONS  ###
-###  to be removed  ###
+### left for legacy ###
 #######################
 
 
@@ -212,48 +210,4 @@ def errorlog_OLD(error_log, errors, warnings):
         print("  Error log registered in ", error_log)
         print("  DON'T TRUST FILES WITH ERRORS OR WARNINGS, CHECK MANUALLY")
         print("  ---------------------------------------------------------")
-
-
-# This function will search for a specific string value in a given file, and return the corresponding line
-def searcher_OLD(filename, search_value):
-    with open(filename, 'r') as file:
-        # Move the file pointer to the end of the file
-        file.seek(0, 2)
-        # Get the position of the file pointer
-        position = file.tell()
-        while position >= 0:
-            file.seek(position)
-            next_char = file.read(1)
-            if next_char == '\n':
-                line = file.readline().strip()
-                if line.startswith(search_value):
-                    return line
-            position -= 1
-    return None
-
-
-# This function will search for a specific string value in a given file, and return the following lines after the match
-def searcher_rows_OLD(filename, search_value, number_rows):
-    with open(filename, 'r') as file:
-        # Move the file pointer to the end of the file
-        file.seek(0, 2)
-        # Get the position of the file pointer
-        position = file.tell()
-        lines = []
-        while position >= 0 and len(lines) < number_rows+1:
-            file.seek(position)
-
-            next_char = file.read(1)
-            if next_char == '\n':
-                line = file.readline().strip()
-                if line.startswith(search_value):
-                    lines.append(line)
-                    for i in range(number_rows):
-                        next_line = file.readline().strip()
-                        if next_line:
-                            lines.append(next_line)
-                    break
-            position -= 1
-    return lines[::1]
-
 
