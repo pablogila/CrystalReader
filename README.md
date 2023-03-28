@@ -117,7 +117,7 @@ The functions used to read the files are defined in `cr_common.py` and are impor
   * `-?` matches an optional minus sign
   * `\d+` matches one or more digits
   * `(?:\.\d+)?` matches an optional decimal point followed by one or more digits
-  * `(?:[eE][+\-]?\d+)?` matches an optional exponent in scientific notation, which consists of an "e" or "E" character, an optional plus or minus sign, and one or more digits.
+  * `(?:[eE][+\-]?\d+)?` matches an optional exponent in scientific notation, which consists of an "e" or "E" character, an optional plus or minus sign, and one or more digits
 
 &NewLine;
 * `extract_str(string, name)`. Similar to **extract_float()**, but returns string outputs; if the value is between commas it is returned without said commas.
