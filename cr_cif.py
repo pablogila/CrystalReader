@@ -37,7 +37,10 @@ data_cifE = 'cc-2_Efield-out.cif'
 # If you change the header, make sure to change the columns in the 'row = [...]' line below
 header = ['filename', 'SSG_H_M', 'SSG_H_M-Efield']
 out_error = 'errors_cif.txt'
-loop_threshold = 3 # seconds for a loop to be considered a warning
+# Seconds for a loop to be considered as an error
+cry = 5
+# Omit all values from corrupted files
+safemode = True
 
 
 
@@ -61,7 +64,6 @@ directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d
 
 # Empty arrays to store the data
 errors = []
-warnings = []
 rows = []
 rows.append(header)
 
@@ -69,13 +71,13 @@ rows.append(header)
 time_start = time.time()
 bar = time_start
 loop = 0
+
 # Loop through all the folders in the /data path
 for directory in directories:
+
     # Progress bar, just for fun
     loop += 1
     cr.progressbar(loop, len(directories), bar)
-    # Start a timer, to display a warning if it stucks in a particular loop
-    loop_init = time.time()
     
     # Define the path to the .cif files
     file_cif = os.path.join(path, directory, data_cif)
@@ -83,38 +85,27 @@ for directory in directories:
     file_name = cr.naming(directory)
 
     # Read the file and look for the desired lines
-    cif_str = cr.searcher(file_cif, '_symmetry_space_group_name_H_M')
-    cifE_str = cr.searcher(file_cifE, '_symmetry_space_group_name_H_M')
+    cif_str = cr.searcher(file_cif, cry, '_symmetry_space_group_name_H_M')
+    cifE_str = cr.searcher(file_cifE, cry, '_symmetry_space_group_name_H_M')
 
     # Extract the values from the strings
     cif = cr.extract_str(cif_str, '_symmetry_space_group_name_H_M')
     cifE = cr.extract_str(cifE_str, '_symmetry_space_group_name_H_M')
 
-    # write the data row to the file
     row = [file_name, cif, cifE]
-    rows.append(row)
 
     # ERRORS: Check if any of the values are missing
     error = [file_name]
     for i, var in enumerate(row):
         if var is None:
-            error.append(header[i])
-    if len(error) > 1:
-        errors.append(error)
-    # WARNINGS: Check if a particular loop takes suspiciously long
-    loop_time = round((time.time() - loop_init), 1)
-    if loop_time > loop_threshold:
-        warning_message = "took "+str(loop_time)+"s to read"
-        warning = [file_name, warning_message]
-        warnings.append(warning)
-        # Displays warning in the progress bar
-        bar = True
+            errors.append(error)
+            bar = True
+            if safemode == True:
+                row = [file_name]
+            break
 
-    # Print the data on screen, for debugging purposes
-    #print(file_name)
-    #print("cif = ", cif)
-    #print("cifE = ", cifE)
-    #print("")
+    rows.append(row)
+
 
 print("")
 
@@ -123,10 +114,12 @@ df = pd.DataFrame(rows)
 df.to_csv(out, header=False, index=False)
 
 # Display and save errors and warnings
-cr.errorlog(out_error, errors, warnings)
+cr.errorlog(out_error, errors)
 
 # Final message  
 time_elapsed = round(time.time() - time_start, 1)
 print("  Finished reading the ", data_cif, " and ", data_cifE, " files in ", time_elapsed, " seconds")
 print("  Data extracted and saved to ", out)
 print("")
+
+

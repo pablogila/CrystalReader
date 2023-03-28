@@ -21,6 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 
+import os
 import re
 import time
 import pandas as pd
@@ -85,13 +86,17 @@ def extract_column(string, column):
 
 
 # This function will search for a specific string value in a given file, and return the corresponding line
-def searcher(filename, search_value):
+def searcher(filename, time_limit, search_value):
     with open(filename, 'r') as file:
         # Move the file pointer to the end of the file
         file.seek(0, 2)
         # Get the position of the file pointer
         position = file.tell()
+        time_start = time.time() # record the start time
         while position >= 0:
+            # Check if the elapsed time exceeds the specified time limit
+            if time_limit and time.time() - time_start > time_limit:
+                return None
             file.seek(position)
             next_char = file.read(1)
             if next_char == '\n':
@@ -103,14 +108,18 @@ def searcher(filename, search_value):
 
 
 # This function will search for a specific string value in a given file, and return the following lines after the match
-def searcher_rows(filename, search_value, number_rows):
+def searcher_rows(filename, time_limit, search_value, number_rows):
     with open(filename, 'r') as file:
         # Move the file pointer to the end of the file
         file.seek(0, 2)
         # Get the position of the file pointer
         position = file.tell()
         lines = []
+        time_start = time.time() # record the start time
         while position >= 0 and len(lines) < number_rows+1:
+            # Check if the elapsed time exceeds the specified time limit
+            if time_limit and time.time() - time_start > time_limit:
+                return None
             file.seek(position)
             next_char = file.read(1)
             if next_char == '\n':
@@ -149,7 +158,37 @@ def progressbar(current, total, start):
 
 
 # Take the list of missing files as errors and slow loops as warnings, write them to a log file and display in the console
-def errorlog(error_log, errors, warnings):
+def errorlog(error_log, errors):
+    if len(errors) > 0:
+        errors.insert(0, "COMPLETED WITH ERRORS: The following files seem corrupted:")
+        log = pd.DataFrame(errors)
+        log.to_csv(error_log, header=False, index=False)
+        print("  ----------------------------------------------------------")
+        for k in errors:
+            print("  "+str(k))
+        print("  Error log registered in ", error_log)
+        print("  ----------------------------------------------------------")
+
+
+# Conversion factor from eV to kJ/mol, Supposing that the energy is in eV/cell
+def ev_kjmol():
+    return ((1.602176634E-19 / 1000) * 6.02214076E+23)
+
+
+# Conversion factor from cm^-1 to eV
+def cm_ev():
+    return (1.0 / 8065.54429)
+
+
+
+#######################
+###  OLD FUNCTIONS  ###
+###  to be removed  ###
+#######################
+
+
+# Take the list of missing files as errors and slow loops as warnings, write them to a log file and display in the console
+def errorlog_OLD(error_log, errors, warnings):
     # Remove warnings that resulted in errors, saving in warn[] only the loops that took too long yet seemed to work
     error_files = [error[0] for error in errors]
     warning_files = [warning[0] for warning in warnings]
@@ -175,12 +214,46 @@ def errorlog(error_log, errors, warnings):
         print("  ---------------------------------------------------------")
 
 
-# Conversion factor from eV to kJ/mol, Supposing that the energy is in eV/cell
-def ev_kjmol():
-    return ((1.602176634E-19 / 1000) * 6.02214076E+23)
+# This function will search for a specific string value in a given file, and return the corresponding line
+def searcher_OLD(filename, search_value):
+    with open(filename, 'r') as file:
+        # Move the file pointer to the end of the file
+        file.seek(0, 2)
+        # Get the position of the file pointer
+        position = file.tell()
+        while position >= 0:
+            file.seek(position)
+            next_char = file.read(1)
+            if next_char == '\n':
+                line = file.readline().strip()
+                if line.startswith(search_value):
+                    return line
+            position -= 1
+    return None
 
 
-# Conversion factor from cm^-1 to eV
-def cm_ev():
-    return (1.0 / 8065.54429)
+# This function will search for a specific string value in a given file, and return the following lines after the match
+def searcher_rows_OLD(filename, search_value, number_rows):
+    with open(filename, 'r') as file:
+        # Move the file pointer to the end of the file
+        file.seek(0, 2)
+        # Get the position of the file pointer
+        position = file.tell()
+        lines = []
+        while position >= 0 and len(lines) < number_rows+1:
+            file.seek(position)
+
+            next_char = file.read(1)
+            if next_char == '\n':
+                line = file.readline().strip()
+                if line.startswith(search_value):
+                    lines.append(line)
+                    for i in range(number_rows):
+                        next_line = file.readline().strip()
+                        if next_line:
+                            lines.append(next_line)
+                    break
+            position -= 1
+    return lines[::1]
+
 

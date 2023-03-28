@@ -93,24 +93,24 @@ The program iterates over the set of files, and writes the following info to an 
 
 ## Error Management
 
-If you notice a slowdown while reading the files, expect that your data may be incomplete. It is **strongly recommended** to manually check all files marked with an **ERROR** or **WARNING**.  
+Sometimes some of your files may be corrupted, for example, if the simulation was terminated before it was completed. If a value is not found, an **ERROR** message will be displayed with information about the corrupt file. This particular file will be ignored, because even if other variables could be read, they are probably wrong; however, you can still save the rest of the variables from corrupted files by setting the `safemode` parameter to **False**.
 
-If a value is not found, an **ERROR** message will be displayed with information about the corrupt file.
+If a file takes too long to read, it is aborted and an **ERROR** message is displayed. The threshold for considering an error is defined by the variable `cry`, which is usually between 5 and 15 seconds by default, but can be set to **False** to remove the time limit. This variable may need to be changed if you are running the scripts on a supercomputer or in a potato with some wires.  
 
-If reading a file takes too long, a **WARNING** message is displayed, meaning that even if the data was extracted, it may be incorrect. The threshold for considering a warning is defined by the variable **loop_threshold**, which is 5 seconds by default, and may need to be changed if you are running the scripts on a supercomputer, or in a potato with some cables.  
+If a value is not found, an **ERROR** is displayed, regardless of whether the **cry** threshold has been reached or not.  
 
-All this information is extracted to an error log defined by the `error_log` variable.  
+If an error is detected, the relevant information is extracted to an error log defined by the `error_log` variable.  
 
-Basically, this whole section could be summarized in the following sentence: **Always check the files marked with ERRORS or WARNINGS because they may be corrupted**.
+This whole section could be summarized in the following sentence: **Always check the files marked with ERRORS because they may be corrupt**.
 
 
 ## Common Functions
 
 The functions used to read the files are defined in `cr_common.py` and are imported at the beginning of each script. These functions are the following:
 
-* `searcher(filename, search_value)`. This function reads the **filename** file starting from the end, until it finds a line starting with **search_value**, and then returns the entire line as an output string.
+* `searcher(filename, time_limit, search_value)`. This function reads the **filename** file starting from the end, until it finds a line starting with **search_value**, and then returns the entire line as an output string. If the reading takes more than **time_limit** seconds, it will abort and return **None**. This threshold is removed by setting **time_limit** as **False**.
 
-* `searcher_rows(filename, search_value, number_rows)`. Similar to **searcher()**, but returns an array with the matching line at the first position, and the subsequent number of lines specified by **number_rows** filling the rest of the array.
+* `searcher_rows(filename, time_limit, search_value, number_rows)`. Similar to **searcher()**, but returns an array with the matching line at the first position, and the subsequent number of lines specified by **number_rows** filling the rest of the array.
 
 * `extract_float(string, name)`. This function extracts the float value of a given **name** variable from a raw **string**, by searching the given string for a matching pattern as `(name + r'\s*=?\s*(-?\d+(?:\.\d+)?(?:[eE][+\-]?\d+)?)')`, where:
   * `\s*=?\s*` matches any whitespace characters, followed by an optional equals sign, followed by any whitespaces
@@ -126,46 +126,39 @@ The functions used to read the files are defined in `cr_common.py` and are impor
 
 * `naming(string)`. This function reads the name of the folder, and returns it in the **xxx-xxx-xxx-xxx** format. Be aware that if your nested folders follow a different naming, you may want to change the **pattern** variable inside this function.
 
-* `progressbar(current, total, start)`. This will give you an indication of whether or not you can go out and get a coffee. The Estimated Time of Arrival (ETA) is usually more reliable after 20% into the loop. The ETA will not be displayed if **start** is set to **False**. If an **ERROR** or **WARNING** is detected, **start** would be set as **True**, and the ETA will be replaced by a warning message.  
+* `progressbar(current, total, start)`. This will give you an indication of whether or not you can go out and get a coffee. The Estimated Time of Arrival (ETA) is usually more reliable after 20% into the loop. The ETA will not be displayed if **start** is set to **False**. If an **ERROR** is detected, **start** would be set as **True**, and the ETA will be replaced by a warning message.  
 The loop should have the following structure:
 
 ``` python
+    # Start a timer and counter, for the progress bar and warning messages
+    time_start = time.time()
+    bar = time_start
     loop = 0
-    time_loop = time.time()
+    # Loop through all the folders in the /data path
     for directory in directories:
+        # Progress bar, just for fun
         loop += 1
-        progressbar_ETA(loop, len(directories), time_loop)
+        cr.progressbar(loop, len(directories), bar)
         ### Loopy things ###
 ```  
 
-* `errorlog(error_log, errors, warnings)`. This function manages **errors** and **warnings**, as discussed in the *Error Management* section. For this function to work properly, the following code must be present in the main loop of the script:  
+* `errorlog(error_log, errors)`. This function manages **errors**, as discussed in the *Error Management* section. For this function to work properly, the following code must be executed when saving the data rows:  
 
 ``` python
-    errors = []
-    warnings = []
-    rows = []
-    time_start = time.time()
-    # Start the main loop to read the files
-    for directory in directories:
-        loop_init = time.time()
-        ### Loopy things ###
-        row = [file_name, enthalpy, a, b, ...etc...]
-        rows.append(row)
-        # ERRORS: Check if any of the values are missing
-        error = [file_name]
-        for i, var in enumerate(row):
-            if var is None:
-                error.append(header[i])
-        if len(error) > 1:
+
+    row = [file_name, enthalpy, enthalpy_ev, a, b, c, alpha, beta, gamma, volume, density, densityg]
+
+    # ERRORS: Check if any of the values are missing
+    error = [file_name]
+    for i, var in enumerate(row):
+        if var is None:
             errors.append(error)
-        # WARNINGS: Check if a particular loop takes suspiciously long
-        loop_time = round((time.time() - loop_init), 1)
-        if loop_time > loop_threshold:
-            warning_message = "took "+str(loop_time)+"s to read"
-            warning = [file_name, warning_message]
-            warnings.append(warning)
-            # Displays warning in the progress bar
             bar = True
+            if safemode == True:
+                row = [file_name]
+            break
+
+    rows.append(row)
 ```  
 
 * `ev_kjmol()` and `cm_ev()` are the conversion factors used to transform values from eV to kJ/mol and from cm^-1 to eV. 

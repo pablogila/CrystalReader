@@ -39,7 +39,8 @@ threshold = 0.1
 # If you change the header, make sure to change the columns in the 'row = [...]' line below
 header = ['filename', 'E_1', 'E_2', 'E_3', 'E>'+str(threshold)+'?', 'E_73', 'E_74', 'E_75', 'E_76', 'Zero_E_Gamma_Point=(E_4++144)/2 [cm^-1]', 'Zero_E_Gamma_Point [eV]']
 out_error = 'errors_phonon.txt'
-loop_threshold = 15 # seconds for a loop to be considered a warning
+cry = 15 # seconds for a loop to be considered a warning
+safemode = True
 
 
 
@@ -63,7 +64,6 @@ directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d
 
 # Empty arrays to store the data
 errors = []
-warnings = []
 rows = []
 rows.append(header)
 
@@ -71,8 +71,10 @@ rows.append(header)
 time_start = time.time()
 bar = time_start
 loop = 0
+
 # Loop through all the folders in the /data path
 for directory in directories:
+
     # Progress bar, just for fun
     loop += 1
     cr.progressbar(loop, len(directories), bar)
@@ -85,49 +87,55 @@ for directory in directories:
 
     # Read the file and look for the desired line, return the corresponding lines after the match
     # The phonon_str[0] is the header, the phonon_str[1] is the first line of data, etc.
-    phonon_str = cr.searcher_rows(file_phonon, 'q-pt=', data_lines_phonon)
+    phonon_str = cr.searcher_rows(file_phonon, cry, 'q-pt=', data_lines_phonon)
 
-    #Ir_1 = cr.extract_column(phonon_str[1], 2)
-    #Ir_2 = cr.extract_column(phonon_str[2], 2)
-    #Ir_3 = cr.extract_column(phonon_str[3], 2)
-    E_1 = cr.extract_column(phonon_str[1], 1)
-    E_2 = cr.extract_column(phonon_str[2], 1)
-    E_3 = cr.extract_column(phonon_str[3], 1)
-    E_73 = cr.extract_column(phonon_str[73], 1)
-    E_74 = cr.extract_column(phonon_str[74], 1)
-    E_75 = cr.extract_column(phonon_str[75], 1)
-    E_76 = cr.extract_column(phonon_str[76], 1)
+    try:
+
+        #Ir_1 = cr.extract_column(phonon_str[1], 2)
+        #Ir_2 = cr.extract_column(phonon_str[2], 2)
+        #Ir_3 = cr.extract_column(phonon_str[3], 2)
+        E_1 = cr.extract_column(phonon_str[1], 1)
+        E_2 = cr.extract_column(phonon_str[2], 1)
+        E_3 = cr.extract_column(phonon_str[3], 1)
+        E_73 = cr.extract_column(phonon_str[73], 1)
+        E_74 = cr.extract_column(phonon_str[74], 1)
+        E_75 = cr.extract_column(phonon_str[75], 1)
+        E_76 = cr.extract_column(phonon_str[76], 1)
+
+    except:
+        # ERROR:
+        error = [file_name]
+        errors.append(error)
+        bar = True
+        row = [file_name]
+        rows.append(row)
+        continue
 
     # Check if the first energies are greater than the threshold
     if (abs(E_1) > threshold) or (abs(E_2) > threshold) or (abs(E_3) > threshold):
         question = 'YES'
     else:
         question = 'no'
-        
+
     ZEGP = 0
     for k in range(4, data_lines_phonon + 1):
         ZEGP += cr.extract_column(phonon_str[k], 1)
     ZEGP = ZEGP/2
-        
-    # write the data row to the file
-    row = [file_name, E_1, E_2, E_3, question, E_73, E_74, E_75, E_76, ZEGP, ZEGP * cr.cm_ev()]
-    rows.append(row)
 
-    # ERRORS: Check if any of the values are missing
+    row = [file_name, E_1, E_2, E_3, question, E_73, E_74, E_75, E_76, ZEGP, ZEGP * cr.cm_ev()]
+
+    # ERRORS: Check if any of the values are missing. For 'phonon' files in particular it should be handled in the 'except' part, and should not be neccesary. However, we leave it here just in case.
     error = [file_name]
     for i, var in enumerate(row):
         if var is None:
-            error.append(header[i])
-    if len(error) > 1:
-        errors.append(error)
-    # WARNINGS: Check if a particular loop takes suspiciously long
-    loop_time = round((time.time() - loop_init), 1)
-    if loop_time > loop_threshold:
-        warning_message = "took "+str(loop_time)+"s to read"
-        warning = [file_name, warning_message]
-        warnings.append(warning)
-        # Displays warning in the progress bar
-        bar = True
+            errors.append(error)
+            bar = True
+            if safemode == True:
+                row = [file_name]
+            break
+
+    rows.append(row)
+
 
 print("")
 
@@ -136,24 +144,12 @@ df = pd.DataFrame(rows)
 df.to_csv(out, header=False, index=False)
 
 # Display and save errors and warnings
-cr.errorlog(out_error, errors, warnings)
+cr.errorlog(out_error, errors)
 
 # Final message
 time_elapsed = round(time.time() - time_start, 1)
 print("  Finished reading the ", data_phonon, " files in ", time_elapsed, " seconds")
 print("  Data extracted and saved to ", out)
 print("")
-
-
-
-
-
-
-
-
-
-
-
-
 
 
