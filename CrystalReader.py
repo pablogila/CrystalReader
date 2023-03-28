@@ -2,7 +2,7 @@
 CrystalReader Launcher. Read and extract data from simulation files.
 Copyright (C) 2023  Pablo Gila-Herranz
 
-If you find this code useful, a citation would be greatly appreciated :D
+If you find this code useful, a citation would be awesome :D
 Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader
 Feel free to contact me at pablo.gila.herranz@gmail.com
 
@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-version = "vCR.2023.03.27.1500"
+version = "vCR.2023.03.28.1845"
 
 import time
 import cr_common as cr
