@@ -38,7 +38,7 @@ header = ['filename', 'enthalpy [eV]', 'enthalpy [kJ/mol]', 'a', 'b', 'c', 'alph
 out_error = 'errors_castep.txt'
 # Seconds for a loop to be considered as an error
 cry = 5
-# Omit all values from corrupted files
+# Omit, or not, all values from corrupted files
 safemode = True
 
 

@@ -21,14 +21,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 
-import os
 import re
 import time
 import pandas as pd
 
 
+
 def version():
-    return "vCR.2023.03.28.2300"
+    return "vCR.2023.03.30.2130"
+
 
 
 # This function will extract the numbers from the name of the parent folder

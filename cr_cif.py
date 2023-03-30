@@ -39,7 +39,7 @@ header = ['filename', 'SSG_H_M', 'SSG_H_M-Efield']
 out_error = 'errors_cif.txt'
 # Seconds for a loop to be considered as an error
 cry = 5
-# Omit all values from corrupted files
+# Omit, or not, all values from corrupted files
 safemode = True
 
 
