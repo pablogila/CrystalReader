@@ -25,7 +25,7 @@ To execute CrystalReader, open a terminal and type:
 `python3 <script>`
 
 Replacing `<script>` with the name of the CrystalReader script you want to execute. This can be any of the following:
-* `CrystalReader.py`, the main Launcher. You will be asked which script to use, or if you prefer, you can run them all to read all the files at once.
+* `CrystalReader_Launcher.py`, the main Launcher. You will be asked which script to use, or if you prefer, you can run them all to read all the files at once.
 * `cr_castep.py`, for reading **.castep** files
 * `cr_cif.py`, for reading **.cif** files
 * `cr_phonon.py`, for **.phonon** files
