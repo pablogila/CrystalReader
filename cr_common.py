@@ -28,7 +28,7 @@ import pandas as pd
 
 
 def version():
-    return "vCR.2023.04.04.1800"
+    return "vCR.2023.04.05.1345"
 
 
 
@@ -84,30 +84,8 @@ def extract_column(string, column):
     return None
 
 
-# This function will search for a specific string value in a given file, and return the corresponding line
-def searcher(filename, time_limit, search_value):
-    with open(filename, 'r') as file:
-        # Move the file pointer to the end of the file
-        file.seek(0, 2)
-        # Get the position of the file pointer
-        position = file.tell()
-        time_start = time.time() # record the start time
-        while position >= 0:
-            # Check if the elapsed time exceeds the specified time limit
-            if time_limit and time.time() - time_start > time_limit:
-                return None
-            file.seek(position)
-            next_char = file.read(1)
-            if next_char == '\n':
-                line = file.readline().strip()
-                if line.startswith(search_value):
-                    return line
-            position -= 1
-    return None
-
-
-# This function will search for a specific string value in a given file, and return the following lines after the match
-def searcher_rows(filename, time_limit, search_value, number_rows):
+# This function will search for a specific string value in a given file, return the matching line, and optionally also return a specific number of lines following the match
+def searcher(filename, search_value, time_limit=False, number_rows=0):
     with open(filename, 'r') as file:
         # Move the file pointer to the end of the file
         file.seek(0, 2)
@@ -124,6 +102,8 @@ def searcher_rows(filename, time_limit, search_value, number_rows):
             if next_char == '\n':
                 line = file.readline().strip()
                 if line.startswith(search_value):
+                    if number_rows == 0:
+                        return line
                     lines.append(line)
                     for i in range(number_rows):
                         next_line = file.readline().strip()
@@ -131,11 +111,11 @@ def searcher_rows(filename, time_limit, search_value, number_rows):
                             lines.append(next_line)
                     break
             position -= 1
-    return lines[::1]
+    return None if not lines else lines[::1]
 
 
 # This function will print a progress bar in the console, as well as the ETA, just for fun
-def progressbar(current, total, start):
+def progressbar(current, total, start=False):
     bar_length = 50
     percentage = int((current/total)*100)
     progress = int((bar_length*current)/total)
@@ -212,3 +192,24 @@ def errorlog_OLD(error_log, errors, warnings):
         print("  DON'T TRUST FILES WITH ERRORS OR WARNINGS, CHECK MANUALLY")
         print("  ---------------------------------------------------------")
 
+
+# This function will search for a specific string value in a given file, and return the corresponding line
+def searcher_OLD(filename, search_value, time_limit = False):
+    with open(filename, 'r') as file:
+        # Move the file pointer to the end of the file
+        file.seek(0, 2)
+        # Get the position of the file pointer
+        position = file.tell()
+        time_start = time.time() # record the start time
+        while position >= 0:
+            # Check if the elapsed time exceeds the specified time limit
+            if time_limit and time.time() - time_start > time_limit:
+                return None
+            file.seek(position)
+            next_char = file.read(1)
+            if next_char == '\n':
+                line = file.readline().strip()
+                if line.startswith(search_value):
+                    return line
+            position -= 1
+    return None

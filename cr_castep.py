@@ -36,7 +36,7 @@ data_castep = 'cc-2.castep'
 # If you change the header, make sure to change the columns in the 'row = [...]' line below
 header = ['filename', 'enthalpy [eV]', 'enthalpy [kJ/mol]', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume [A^3]', 'density [amu/A^3]', 'density [g/cm^3]']
 out_error = 'errors_castep.txt'
-# Seconds for a loop to be considered as an error
+# Seconds for a loop to be considered as an error. Remove this threshold by setting 'cry = False'
 cry = 5
 # Omit, or not, all values from corrupted files
 safemode = True
@@ -83,13 +83,13 @@ for directory in directories:
     file_name = cr.naming(directory)
 
     # Read the file and look for the desired lines
-    enthalpy_str = cr.searcher(file_castep, cry, 'LBFGS: Final Enthalpy     =')
-    volume_str = cr.searcher(file_castep, cry, 'Current cell volume =')
-    density_str = cr.searcher(file_castep, cry, 'density =')
-    densityg_str = cr.searcher(file_castep, cry, '=')
-    a_str = cr.searcher(file_castep, cry, 'a =')
-    b_str = cr.searcher(file_castep, cry, 'b =')
-    c_str = cr.searcher(file_castep, cry, 'c =')
+    enthalpy_str = cr.searcher(file_castep, 'LBFGS: Final Enthalpy     =', cry)
+    volume_str = cr.searcher(file_castep, 'Current cell volume =', cry)
+    density_str = cr.searcher(file_castep, 'density =', cry)
+    densityg_str = cr.searcher(file_castep, '=', cry)
+    a_str = cr.searcher(file_castep, 'a =', cry)
+    b_str = cr.searcher(file_castep, 'b =', cry)
+    c_str = cr.searcher(file_castep, 'c =', cry)
 
     # Extract the values from the strings
     enthalpy = cr.extract_float(enthalpy_str, 'LBFGS: Final Enthalpy')

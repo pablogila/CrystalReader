@@ -37,7 +37,7 @@ data_cifE = 'cc-2_Efield-out.cif'
 # If you change the header, make sure to change the columns in the 'row = [...]' line below
 header = ['filename', 'SSG_H_M', 'SSG_H_M-Efield']
 out_error = 'errors_cif.txt'
-# Seconds for a loop to be considered as an error
+# Seconds for a loop to be considered as an error. Remove this threshold by setting 'cry = False'
 cry = 5
 # Omit, or not, all values from corrupted files
 safemode = True
@@ -85,8 +85,8 @@ for directory in directories:
     file_name = cr.naming(directory)
 
     # Read the file and look for the desired lines
-    cif_str = cr.searcher(file_cif, cry, '_symmetry_space_group_name_H_M')
-    cifE_str = cr.searcher(file_cifE, cry, '_symmetry_space_group_name_H_M')
+    cif_str = cr.searcher(file_cif, '_symmetry_space_group_name_H_M', cry)
+    cifE_str = cr.searcher(file_cifE, '_symmetry_space_group_name_H_M', cry)
 
     # Extract the values from the strings
     cif = cr.extract_str(cif_str, '_symmetry_space_group_name_H_M')

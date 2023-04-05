@@ -95,7 +95,7 @@ The program iterates over the set of files, and writes the following info to an 
 
 Sometimes some of your files may be corrupted, for example, if the simulation was terminated before it was completed. If a value is not found, an **ERROR** message will be displayed with information about the corrupt file. This particular file will be ignored, because even if other variables could be read, they are probably wrong; however, you can still save the rest of the variables from corrupted files by setting the `safemode` parameter to **False**.
 
-If a file takes too long to read, it is aborted and an **ERROR** message is displayed. The threshold for considering an error is defined by the variable `cry`, which is usually between 5 and 15 seconds by default, but can be set to **False** to remove the time limit. This variable may need to be changed if you are running the scripts on a supercomputer or in a potato with some wires.  
+If a file takes too long to read, it is aborted and an **ERROR** message is displayed. The threshold for considering an error is defined by the variable `cry`, which is usually between 5 and 30 seconds by default, but can be set to **False** to remove the time limit. This variable may need to be changed if you are running the scripts on a supercomputer or in a potato with some wires.  
 
 If a value is not found, an **ERROR** is displayed, regardless of whether the **cry** threshold has been reached or not.  
 
@@ -108,9 +108,7 @@ This whole section could be summarized in the following sentence: **Always check
 
 The functions used to read the files are defined in `cr_common.py` and are imported at the beginning of each script. These functions are the following:
 
-* `searcher(filename, time_limit, search_value)`. This function reads the **filename** file starting from the end, until it finds a line starting with **search_value**, and then returns the entire line as an output string. If the reading takes more than **time_limit** seconds, it will abort and return **None**. This threshold is removed by setting **time_limit** as **False**.
-
-* `searcher_rows(filename, time_limit, search_value, number_rows)`. Similar to **searcher()**, but returns an array with the matching line at the first position, and the subsequent number of lines specified by **number_rows** filling the rest of the array.
+* `searcher(filename, search_value, time_limit=False, number_rows=0)`. This function searches for a line in the specified **filename** that starts with the string **search_value**. It starts searching from the end of the file and moves backwards until it finds a match. Once a match is found, the function returns a string with the entire line that contains the match; optionally, the function can return an array of strings, with additional lines after the match, controlled by the **number_rows** parameter. If the search takes longer than **time_limit** seconds, the function will stop searching and return **None**. If **time_limit** is not specified, the search will continue until a match is found or the entire file has been searched.  
 
 * `extract_float(string, name)`. This function extracts the float value of a given **name** variable from a raw **string**, by searching the given string for a matching pattern as `(name + r'\s*=?\s*(-?\d+(?:\.\d+)?(?:[eE][+\-]?\d+)?)')`, where:
   * `\s*=?\s*` matches any whitespace characters, followed by an optional equals sign, followed by any whitespaces
@@ -126,7 +124,7 @@ The functions used to read the files are defined in `cr_common.py` and are impor
 
 * `naming(string)`. This function reads the name of the folder, and returns it in the **xxx-xxx-xxx-xxx** format. Be aware that if your nested folders follow a different naming, you may want to change the **pattern** variable inside this function.
 
-* `progressbar(current, total, start)`. This will give you an indication of whether or not you can go out and get a coffee. The Estimated Time of Arrival (ETA) is usually more reliable after 20% into the loop. The ETA will not be displayed if **start** is set to **False**. If an **ERROR** is detected, **start** would be set as **True**, and the ETA will be replaced by a warning message.  
+* `progressbar(current, total, start=False)`. This will give you an indication of whether or not you can go out and get a coffee. The Estimated Time of Arrival (ETA) is usually more reliable after 20% into the loop. The ETA will not be displayed if **start** is set to **False**, and since it is its default value, it can be called as `progressbar(current, total)`. If an **ERROR** is detected, **start** would be set as **True**, and the ETA will be replaced by a warning message.  
 The loop should have the following structure:
 
 ``` python

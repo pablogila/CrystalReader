@@ -39,8 +39,8 @@ threshold = 0.1
 # If you change the header, make sure to change the columns in the 'row = [...]' line below
 header = ['filename', 'E_1', 'E_2', 'E_3', 'E>'+str(threshold)+'?', 'E_73', 'E_74', 'E_75', 'E_76', 'Zero_E_Gamma_Point=(E_4++144)/2 [cm^-1]', 'Zero_E_Gamma_Point [eV]']
 out_error = 'errors_phonon.txt'
-# Seconds for a loop to be considered as an error
-cry = 20
+# Seconds for a loop to be considered as an error. Remove this threshold by setting 'cry = False'
+cry = 30
 # Omit, or not, all values from corrupted files
 safemode = True
 
@@ -89,7 +89,7 @@ for directory in directories:
 
     # Read the file and look for the desired line, return the corresponding lines after the match
     # The phonon_str[0] is the header, the phonon_str[1] is the first line of data, etc.
-    phonon_str = cr.searcher_rows(file_phonon, cry, 'q-pt=', data_lines_phonon)
+    phonon_str = cr.searcher(file_phonon, 'q-pt=', cry, data_lines_phonon)
 
     try:
 
