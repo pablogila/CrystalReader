@@ -31,7 +31,7 @@ Replacing `<script>` with the name of the CrystalReader script you want to execu
 * `cr_phonon.py`, for **.phonon** files
 
 For example, to extract data from **.castep** files on Windows PowerShell, you would type:  
-`python CrystalReader_castep.py`
+`python cr_castep.py`
 
 The behavior and customization of each script is explained in the following sections.
 
