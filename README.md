@@ -47,6 +47,8 @@ The program iterates over this set of files, starting to read from the end of th
 * name of the parent folder, in **xxx-xxx-xxx-xxx** format
 * final enthalpy, in eV
 * final enthalpy, in kJ/mol
+* total energy corrected for finite basis set
+* space group of crystal
 * cell parameter a, in Angstroms
 * cell parameter b
 * cell parameter c
@@ -93,7 +95,7 @@ The program iterates over the set of files, and writes the following info to an 
 
 ## Error Management
 
-Sometimes some of your files may be corrupted, for example, if the simulation was terminated before it was completed. If a value is not found, an **ERROR** message will be displayed with information about the corrupt file. This particular file will be ignored, because even if other variables could be read, they are probably wrong; however, you can still save the rest of the variables from corrupted files by setting the `safemode` parameter to **False**.
+Sometimes some of your files may be corrupted, for example, if the simulation was terminated before it was completed. If a value is not found, an **ERROR** message will be displayed with information about the corrupt file. This particular file will be ignored, because even if other variables could be read, they are probably wrong; however, you can still save the rest of the variables from suspicious files by setting the `safemode` parameter to **False**. To avoid false positives, make sure to comment the values that you know are not present in the files.
 
 If a file takes too long to read, it is aborted and an **ERROR** message is displayed. The threshold for considering an error is defined by the variable `cry`, which is usually between 5 and 30 seconds by default, but can be set to **False** to remove the time limit. This variable may need to be changed if you are running the scripts on a supercomputer or in a potato with some wires.  
 

@@ -124,6 +124,7 @@ for directory in directories:
         ZEGP += cr.extract_column(phonon_str[k], 1)
     ZEGP = ZEGP/2
 
+    # Save the values. If you modified the header, make sure to modify this line too
     row = [file_name, E_1, E_2, E_3, question, E_73, E_74, E_75, E_76, ZEGP, ZEGP * cr.cm_ev()]
 
     # ERRORS: Check if any of the values are missing. For 'phonon' files in particular it should be handled in the 'except' part, and should not be neccesary. However, we leave it here just in case.

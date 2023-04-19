@@ -92,6 +92,7 @@ for directory in directories:
     cif = cr.extract_str(cif_str, '_symmetry_space_group_name_H_M')
     cifE = cr.extract_str(cifE_str, '_symmetry_space_group_name_H_M')
 
+    # Save the values. If you modified the header, make sure to modify this line too
     row = [file_name, cif, cifE]
 
     # ERRORS: Check if any of the values are missing
