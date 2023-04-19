@@ -32,14 +32,19 @@ print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pabl
 
 out = 'out_castep.csv'
 data_directory = 'data'
-data_castep = 'cc-2.castep'
-# If you change the header, make sure to change the columns in the 'row = [...]' line below
-header = ['filename', 'enthalpy [eV]', 'enthalpy [kJ/mol]', 'total energy corrected [eV]', 'space group', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume [A^3]', 'density [amu/A^3]', 'density [g/cm^3]']
+#data_castep = 'cc-2.castep'
+data_castep = 'cc-2_PhonDOS.castep'
 out_error = 'errors_castep.txt'
+
+# If you change the header, make sure to change the columns in the 'row = [...]' line below, as well to comment the unnecesary 'searcher' and 'extract' lines. Full header is shown in the next comment for further reference:
+# header = ['filename', 'enthalpy [eV]', 'enthalpy [kJ/mol]', 'total energy corrected [eV]', 'space group', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume [A^3]', 'density [amu/A^3]', 'density [g/cm^3]']
+header = ['filename', 'total energy corrected [eV]', 'space group', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume [A^3]', 'density [amu/A^3]', 'density [g/cm^3]']
+
 # Seconds for a loop to be considered as an error. Remove this threshold by setting 'cry = False'
-cry = 5
+cry = False
+
 # Omit, or not, all values from corrupted files
-safemode = True
+safemode = False
 
 
 
@@ -53,6 +58,9 @@ import time
 import cr_common as cr
 import pandas as pd
 
+
+# To avoid errors if we comment the enthalpy lines
+enthalpy = None
 
 # Get the absolute path to the directory containing the Python script
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -83,7 +91,7 @@ for directory in directories:
     file_name = cr.naming(directory)
 
     # Read the file and look for the desired lines
-    enthalpy_str = cr.searcher(file_castep, 'LBFGS: Final Enthalpy     =', cry)
+    #enthalpy_str = cr.searcher(file_castep, 'LBFGS: Final Enthalpy     =', cry)
     energy_str = cr.searcher(file_castep, 'Total energy corrected for finite basis set =', cry)
     space_group_str = cr.searcher(file_castep, 'Space group of crystal =', cry)
     volume_str = cr.searcher(file_castep, 'Current cell volume =', cry)
@@ -94,7 +102,7 @@ for directory in directories:
     c_str = cr.searcher(file_castep, 'c =', cry)
 
     # Extract the values from the strings
-    enthalpy = cr.extract_float(enthalpy_str, 'LBFGS: Final Enthalpy')
+    #enthalpy = cr.extract_float(enthalpy_str, 'LBFGS: Final Enthalpy')
     energy = cr.extract_float(energy_str, 'Total energy corrected for finite basis set')
     space_group = cr.extract_str(space_group_str, 'Space group of crystal')
     volume = cr.extract_float(volume_str, 'Current cell volume')
@@ -113,8 +121,9 @@ for directory in directories:
     else:
         enthalpy_ev = None
 
-    # Save the values. If you modified the header, make sure to modify this line too
-    row = [file_name, enthalpy, enthalpy_ev, energy, space_group, a, b, c, alpha, beta, gamma, volume, density, density_g]
+    # Save the values. If you modified the header, modify this line too. Full row in the following comment for further reference:
+    # row = [file_name, enthalpy, enthalpy_ev, energy, space_group, a, b, c, alpha, beta, gamma, volume, density, density_g]
+    row = [file_name, energy, space_group, a, b, c, alpha, beta, gamma, volume, density, density_g]
 
     # ERRORS: Check if any of the values are missing
     error = [file_name]

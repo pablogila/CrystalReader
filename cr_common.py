@@ -31,11 +31,9 @@ def version():
     return "vCR.2023.04.05.1345"
 
 
-
-# This function will extract the numbers from the name of the parent folder
 def naming(string):
     # Define a regular expression pattern to match the desired value
-    pattern = r"pnam-p-1-(\d{3})-(\d{3})-(\d{3})-(\d{3})"
+    pattern = r"(?:\w*-?)+(\d{3})-(\d{3})-(\d{3})-(\d{3})"
     # Use the re.search() function to find the first occurrence of the pattern in the string
     match = re.search(pattern, string)
     # Check if a match was found
@@ -213,3 +211,17 @@ def searcher_OLD(filename, search_value, time_limit = False):
                     return line
             position -= 1
     return None
+
+
+def naming_OLD(string):
+    # Define a regular expression pattern to match the desired value
+    pattern = r"pnam-p-1-(\d{3})-(\d{3})-(\d{3})-(\d{3})"
+    # Use the re.search() function to find the first occurrence of the pattern in the string
+    match = re.search(pattern, string)
+    # Check if a match was found
+    if match:
+        # Extract the matched groups and join them with hyphens
+        return "-".join(match.groups())
+    else:
+        # If no match was found, return None
+        return None
