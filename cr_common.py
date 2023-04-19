@@ -61,10 +61,10 @@ def extract_float(string, name):
 def extract_str(string, name):
     if string == None:
         return None
-    pattern = re.compile(name + r"\s*(=)?\s*['\"](.*?)(?=['\"]|$)")
+    pattern = re.compile(name + r"\s*=\s*(\S.*)?$")
     match = pattern.search(string)
     if match:
-        return match.group(2).strip()
+        return match.group(1).strip()
     else:
         return None
 
@@ -224,4 +224,16 @@ def naming_OLD(string):
         return "-".join(match.groups())
     else:
         # If no match was found, return None
+        return None
+    
+
+# This function will extract the string value of a given variable from a raw string
+def extract_str_OLD(string, name):
+    if string == None:
+        return None
+    pattern = re.compile(name + r"\s*(=)?\s*['\"](.*?)(?=['\"]|$)")
+    match = pattern.search(string)
+    if match:
+        return match.group(2).strip()
+    else:
         return None

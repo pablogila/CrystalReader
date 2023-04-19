@@ -41,7 +41,7 @@ out_error = 'errors_castep.txt'
 header = ['filename', 'total energy corrected [eV]', 'space group', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume [A^3]', 'density [amu/A^3]', 'density [g/cm^3]']
 
 # Seconds for a loop to be considered as an error. Remove this threshold by setting 'cry = False'
-cry = False
+cry = 15
 
 # Omit, or not, all values from corrupted files
 safemode = False
@@ -95,8 +95,7 @@ for directory in directories:
     energy_str = cr.searcher(file_castep, 'Total energy corrected for finite basis set =', cry)
     space_group_str = cr.searcher(file_castep, 'Space group of crystal =', cry)
     volume_str = cr.searcher(file_castep, 'Current cell volume =', cry)
-    density_str = cr.searcher(file_castep, 'density =', cry)
-    density_g_str = cr.searcher(file_castep, '=', cry)
+    density_str = cr.searcher(file_castep, 'density =', cry, 1)
     a_str = cr.searcher(file_castep, 'a =', cry)
     b_str = cr.searcher(file_castep, 'b =', cry)
     c_str = cr.searcher(file_castep, 'c =', cry)
@@ -106,8 +105,8 @@ for directory in directories:
     energy = cr.extract_float(energy_str, 'Total energy corrected for finite basis set')
     space_group = cr.extract_str(space_group_str, 'Space group of crystal')
     volume = cr.extract_float(volume_str, 'Current cell volume')
-    density = cr.extract_float(density_str, 'density')
-    density_g = cr.extract_float(density_g_str, '')
+    density = cr.extract_float(density_str[0], 'density')
+    density_g = cr.extract_float(density_str[1], '')
     a = cr.extract_float(a_str, 'a')
     b = cr.extract_float(b_str, 'b')
     c = cr.extract_float(c_str, 'c')
