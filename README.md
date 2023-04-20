@@ -14,35 +14,31 @@ First download the source code, as you prefer:
 * From your **web browser**  
 On GitHub, clic on 'Code', 'Download ZIP', and extract.
 * Using **git**  
-`git clone https://github.com/pablogila/CrystalReader.git`
+`git clone https://github.com/pablogila/CrystalReader.git`  
 
-Enter the folder and copy inside the data you want to extract, in a subfolder called `/data` ; inside this folder there should be several nested folders containing your data files. Note that the name of this parent folder can be changed from within the individual scripts by modifying the `data_directory` variable, as well as other parameters that you may also need to modify to accommodate your data; such file naming variables are described in more detail in the following sections.
+Enter the folder and copy inside the data you want to extract, in a subfolder called **/data** by default; inside this folder there should be several nested folders containing your data files. Note that the name of this parent folder can be changed from within the individual scripts by modifying the `data_directory` variable, as well as other parameters that you may also need to modify to accommodate your data; such file naming variables are described in more detail in the following sections.  
 
-To execute CrystalReader, open a terminal and type:
+`CrystalReader.py` is the main Launcher, to call the other scripts in a batch job. Notice that `run_at_import` must be set to false in the rest of the scripts. To execute CrystalReader, open a terminal and type:  
 * On **Windows PowerShell** or **CMD**  
-`python <script>`
+`python CrystalReader.py`
 * On **Linux Terminal**  
-`python3 <script>`
+`python3 CrystalReader.py`
 
-Replacing `<script>` with the name of the CrystalReader script you want to execute. This can be any of the following:
-* `CrystalReader_Launcher.py`, the main Launcher. You will be asked which script to use, or if you prefer, you can run them all to read all the files at once.
+You could also execute the individual scripts, by previously setting `run_at_import = True`. The individual scripts are: 
 * `cr_castep.py`, for reading **.castep** files
 * `cr_cif.py`, for reading **.cif** files
 * `cr_phonon.py`, for **.phonon** files
 
-For example, to extract data from **.castep** files on Windows PowerShell, you would type:  
-`python cr_castep.py`
-
-The behavior and customization of each script is explained in the following sections.
+The behavior and customization of each script is explained in the following sections.  
 
 
 ## For **.castep** files
 
-The `cr_castep.py` script recursively reads the castep files in the nested folders inside the `/data` folder. The names of the files must be set via the `data_castep` variable, for example as `cc-2.castep`, etc.
+The `cr_castep.py` script recursively reads the castep files in the nested folders inside the `data_directory` folder. The names of the files must be set via the `data_castep` variable, for example as **cc-2.castep**, etc.  
 
-Naming example: **data/pnam-p-1-000-000-180-000---400/cc-2.castep**
+Naming example: **data/pnam-p-1-000-000-180-000---400/cc-2.castep**  
 
-The program iterates over this set of files, starting to read from the end of the file, and writes the relevant data to an `out_castep.csv`, line by line, on each iteration. The columns written contain the following data:
+The program iterates over this set of files, starting to read from the end of the file, and writes the relevant data to an **out_castep.csv**, line by line, on each iteration. The columns written contain the following data:  
 
 * name of the parent folder, in **xxx-xxx-xxx-xxx** format
 * final enthalpy, in eV
@@ -62,9 +58,9 @@ The program iterates over this set of files, starting to read from the end of th
 
 ## For **.cif** files
 
-`cr_cif.py` uses the same folder structure as before, but the files to read are set with the variables `data_cif` and `data_cifE`; their current values are `cc-2-out.cif` and `cc-2_Efield-out.cif`.
+`cr_cif.py` uses the same folder structure as before, but the files to read are set with the variables `data_cif`; its default value is `cc-2-out.cif`.  
 
-The program iterates over this set of files and writes the relevant info to an `out_cif.csv`, containing the following data:
+The program iterates over this set of files and writes the relevant info to an **out_cif.csv**, containing the following data:  
 * name of the parent folder, in **xxx-xxx-xxx-xxx** format
 * symmetry_space_group_name_H_M from the normal cif
 * symmetry_space_group_name_H_M from the Efield cif
@@ -72,13 +68,13 @@ The program iterates over this set of files and writes the relevant info to an `
 
 ## For **.phonon** files
 
-`cr_phonon.py` uses the same folder structure. The data files are modified via the `data_phonon` variable, and is currently set to `cc-2_Efield.phonon`.
+`cr_phonon.py` uses the same folder structure. The data files are modified via the `data_phonon` variable, and is currently set to **cc-2_Efield.phonon**.  
 
-The program will read the 144 lines corresponding to the 144 vibration modes; this number can be changed with the `data_lines_phonon` variable.
+The program will read the 144 lines corresponding to the 144 vibration modes; this number can be changed with the `data_lines_phonon` variable.  
 
-There is a threshold, set by the variable `threshold`, which triggers a note if one of the first 3 energies are different from zero.
+There is a threshold, set by the variable `threshold`, which triggers a note if one of the first 3 energies are different from zero.  
 
-The program iterates over the set of files, and writes the following info to an `out_phonon.csv`:
+The program iterates over the set of files, and writes the following info to an **out_phonon.csv**:  
 
 * name of the parent folder, in **xxx-xxx-xxx-xxx** format
 * Energy of the 1st mode, in cm^-1
@@ -95,7 +91,7 @@ The program iterates over the set of files, and writes the following info to an 
 
 ## Error Management
 
-Sometimes some of your files may be corrupted, for example, if the simulation was terminated before it was completed. If a value is not found, an **ERROR** message will be displayed with information about the corrupt file. This particular file will be ignored, because even if other variables could be read, they are probably wrong; however, you can still save the rest of the variables from suspicious files by setting the `safemode` parameter to **False**. To avoid false positives, make sure to comment the values that you know are not present in the files.
+Sometimes some of your files may be corrupted, for example, if the simulation was terminated before it was completed. If a value is not found, an **ERROR** message will be displayed with information about the corrupt file. This particular file will be ignored, because even if other variables could be read, they are probably wrong; however, you can still save the rest of the variables from suspicious files by setting the `safemode = False`. To avoid false positives, make sure to comment the values that you know are not present in the files.  
 
 If a file takes too long to read, it is aborted and an **ERROR** message is displayed. The threshold for considering an error is defined by the variable `cry`, which is usually between 5 and 30 seconds by default, but can be set to **False** to remove the time limit. This variable may need to be changed if you are running the scripts on a supercomputer or in a potato with some wires.  
 
@@ -103,12 +99,12 @@ If a value is not found, an **ERROR** is displayed, regardless of whether the **
 
 If an error is detected, the relevant information is extracted to an error log defined by the `error_log` variable.  
 
-This whole section could be summarized in the following sentence: **Always check the files marked with ERRORS because they may be corrupt**.
+This whole section could be summarized in the following sentence: **Always check the files marked with ERRORS because they may be corrupt**.  
 
 
 ## Common Functions
 
-The functions used to read the files are defined in `cr_common.py` and are imported at the beginning of each script. These functions are the following:
+The functions used to read the files are defined in `cr_common.py` and are imported at the beginning of each script. These functions are the following:  
 
 * `searcher(filename, search_value, time_limit=False, number_rows=0)`. This function searches for a line in the specified **filename** that starts with the string **search_value**. It starts searching from the end of the file and moves backwards until it finds a match. Once a match is found, the function returns a string with the entire line that contains the match; optionally, the function can return an array of strings, with additional lines after the match, controlled by the **number_rows** parameter. If the search takes longer than **time_limit** seconds, the function will stop searching and return **None**. If **time_limit** is not specified, the search will continue until a match is found or the entire file has been searched.  
 
@@ -117,14 +113,16 @@ The functions used to read the files are defined in `cr_common.py` and are impor
   * `-?` matches an optional minus sign
   * `\d+` matches one or more digits
   * `(?:\.\d+)?` matches an optional decimal point followed by one or more digits
-  * `(?:[eE][+\-]?\d+)?` matches an optional exponent in scientific notation, which consists of an "e" or "E" character, an optional plus or minus sign, and one or more digits
+  * `(?:[eE][+\-]?\d+)?` matches an optional exponent in scientific notation, which consists of an "e" or "E" character, an optional plus or minus sign, and one or more digits  
 
 &NewLine;
-* `extract_str(string, name)`. Similar to **extract_float()**, but returns string outputs.
+* `extract_str(string, name)`. Similar to **extract_float()**, but returns string outputs.  
 
-* `extract_column(string, column)`. Similar to **extract_float** and **extract_str**. It can extract specific columns from a row given as **string**, with **column** being 0, 1, 2...
+* `extract_str_commas(string, name)`. Similar to **extract_str()**, for when the string has commas: `" '`.  
 
-* `naming(string)`. This function reads the name of the folder, and returns it in the **xxx-xxx-xxx-xxx** format. Be aware that if your nested folders follow a different naming, you may want to change the **pattern** variable inside this function.
+* `extract_column(string, column)`. Similar to **extract_float** and **extract_str**. It can extract specific columns from a row given as **string**, with **column** being 0, 1, 2...  
+
+* `naming(string)`. This function reads the name of the folder, and returns it in the **xxx-xxx-xxx-xxx** format. Be aware that if your nested folders follow a different naming, you may want to change the **pattern** variable inside this function.  
 
 * `progressbar(current, total, start=False)`. This will give you an indication of whether or not you can go out and get a coffee. The Estimated Time of Arrival (ETA) is usually more reliable after 20% into the loop. The ETA will not be displayed if **start** is set to **False**, and since it is its default value, it can be called as `progressbar(current, total)`. If an **ERROR** is detected, **start** would be set as **True**, and the ETA will be replaced by a warning message.  
 The loop should have the following structure:
@@ -161,7 +159,7 @@ The loop should have the following structure:
     rows.append(row)
 ```  
 
-* `ev_kjmol()` and `cm_ev()` are the conversion factors used to transform values from eV to kJ/mol and from cm^-1 to eV. 
+* `ev_kjmol()` and `cm_ev()` are the conversion factors used to transform values from eV to kJ/mol and from cm^-1 to eV.  
 
 
 Please feel free to contact me if you have any questions or suggestions.  

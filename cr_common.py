@@ -1,10 +1,11 @@
 """
 CrystalReader Common Functions. Read and extract data from different files.
 Copyright (C) 2023  Pablo Gila-Herranz
+Check the latest version at https://github.com/pablogila/CrystalReader
+Feel free to contact me at pablo.gila.herranz@gmail.com
 
 If you find this code useful, a citation would be awesome :D
 Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader
-Feel free to contact me at pablo.gila.herranz@gmail.com
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,16 +22,19 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 
+
+def version():
+    return "vCR.2023.04.20.1830"
+
+
+
 import re
 import time
 import pandas as pd
 
 
 
-def version():
-    return "vCR.2023.04.20.1130"
-
-
+# This function will extract the name of the file from a raw string, in the xxx-xxx-xxx-xxx format
 def naming(string):
     # Define a regular expression pattern to match the desired value
     pattern = r"(?:\w*-?)+(\d{3})-(\d{3})-(\d{3})-(\d{3})"
@@ -65,6 +69,18 @@ def extract_str(string, name):
     match = pattern.search(string)
     if match:
         return match.group(1).strip()
+    else:
+        return None
+
+
+# Similar to extract_str(). If the value is between commas it is returned without said commas
+def extract_str_commas(string, name):
+    if string == None:
+        return None
+    pattern = re.compile(name + r"\s*(=)?\s*['\"](.*?)(?=['\"]|$)")
+    match = pattern.search(string)
+    if match:
+        return match.group(2).strip()
     else:
         return None
 
@@ -224,17 +240,5 @@ def naming_OLD(string):
         return "-".join(match.groups())
     else:
         # If no match was found, return None
-        return None
-    
-
-# This function will extract the string value of a given variable from a raw string. if the value is between commas it is returned without said commas
-def extract_str_OLD(string, name):
-    if string == None:
-        return None
-    pattern = re.compile(name + r"\s*(=)?\s*['\"](.*?)(?=['\"]|$)")
-    match = pattern.search(string)
-    if match:
-        return match.group(2).strip()
-    else:
         return None
 
