@@ -68,5 +68,7 @@ phonon.main('data_pbe-d3', 'cc-2_PhonDOS.phonon', 'out_phonon_pbe-d3.csv', 'erro
 
 
 
-print("\n  All jobs finished in", round(time.time() - time_start, 2), "seconds\n")
+print("")
+print("  All jobs finished in", round(time.time() - time_start, 2), "seconds\n")
+print("")
 
