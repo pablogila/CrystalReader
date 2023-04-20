@@ -18,8 +18,15 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+
+import os
+import time
+import cr_common as cr
+import pandas as pd
+
+
 print("")
-print("  Running CrystalReader in 'phonon' mode...")
+print("  Running CrystalReader", cr.version(), "in 'phonon' mode...")
 print("  If you find this code useful, a citation would be awesome :D")
 print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
 
@@ -33,12 +40,17 @@ print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pabl
 out = 'out_phonon.csv'
 data_directory = 'data'
 data_phonon = 'cc-2_Efield.phonon'
+out_error = 'errors_phonon.txt'
+
+# Number of phonon lines to read plus one
 data_lines_phonon = 144
 # Threshold for the energy to be considered greater than zero
 threshold = 0.1
-# If you change the header, make sure to change the columns in the 'row = [...]' line below
+
+# If you change the header, make sure to change the columns in the 'row = [...]' line, as well to comment the unnecesary 'searcher' and 'extract' lines. Full header is shown in the next comment for further reference:
+# header = ['filename', Ir_1, Ir_2, Ir_3, 'E_1', 'E_2', 'E_3', 'E>'+str(threshold)+'?', 'E_73', 'E_74', 'E_75', 'E_76', 'Zero_E_Gamma_Point=(E_4++144)/2 [cm^-1]', 'Zero_E_Gamma_Point [eV]']
 header = ['filename', 'E_1', 'E_2', 'E_3', 'E>'+str(threshold)+'?', 'E_73', 'E_74', 'E_75', 'E_76', 'Zero_E_Gamma_Point=(E_4++144)/2 [cm^-1]', 'Zero_E_Gamma_Point [eV]']
-out_error = 'errors_phonon.txt'
+
 # Seconds for a loop to be considered as an error. Remove this threshold by setting 'cry = False'
 cry = 30
 # Omit, or not, all values from corrupted files
@@ -49,12 +61,6 @@ safemode = True
 #####################################
 """ MAIN SCRIPT FOR .PHONON FILES """
 #####################################
-
-
-import os
-import time
-import cr_common as cr
-import pandas as pd
 
 
 # Get the absolute path to the directory containing the Python script
@@ -124,7 +130,8 @@ for directory in directories:
         ZEGP += cr.extract_column(phonon_str[k], 1)
     ZEGP = ZEGP/2
 
-    # Save the values. If you modified the header, make sure to modify this line too
+    # Save the values. If you modified the header, modify this line too. Full row in the following comment for further reference:
+    # row = [file_name, Ir_1, Ir_2, Ir_3, E_1, E_2, E_3, question, E_73, E_74, E_75, E_76, ZEGP, ZEGP * cr.cm_ev()]
     row = [file_name, E_1, E_2, E_3, question, E_73, E_74, E_75, E_76, ZEGP, ZEGP * cr.cm_ev()]
 
     # ERRORS: Check if any of the values are missing. For 'phonon' files in particular it should be handled in the 'except' part, and should not be neccesary. However, we leave it here just in case.
@@ -154,5 +161,4 @@ time_elapsed = round(time.time() - time_start, 1)
 print("  Finished reading the ", data_phonon, " files in ", time_elapsed, " seconds")
 print("  Data extracted and saved to ", out)
 print("")
-
 

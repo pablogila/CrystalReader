@@ -18,8 +18,15 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+
+import os
+import time
+import cr_common as cr
+import pandas as pd
+
+
 print("")
-print("  Running CrystalReader in 'castep' mode...")
+print("  Running CrystalReader", cr.version(), "in 'castep' mode...")
 print("  If you find this code useful, a citation would be awesome :D")
 print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
 
@@ -36,27 +43,20 @@ data_directory = 'data'
 data_castep = 'cc-2_PhonDOS.castep'
 out_error = 'errors_castep.txt'
 
-# If you change the header, make sure to change the columns in the 'row = [...]' line below, as well to comment the unnecesary 'searcher' and 'extract' lines. Full header is shown in the next comment for further reference:
+# If you change the header, make sure to change the columns in the 'row = [...]' line, as well to comment the unnecesary 'searcher' and 'extract' lines. Full header is shown in the next comment for further reference:
 # header = ['filename', 'enthalpy [eV]', 'enthalpy [kJ/mol]', 'total energy corrected [eV]', 'space group', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume [A^3]', 'density [amu/A^3]', 'density [g/cm^3]']
 header = ['filename', 'total energy corrected [eV]', 'space group', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume [A^3]', 'density [amu/A^3]', 'density [g/cm^3]']
 
 # Seconds for a loop to be considered as an error. Remove this threshold by setting 'cry = False'
-cry = 15
-
+cry = 5
 # Omit, or not, all values from corrupted files
-safemode = False
+safemode = True
 
 
 
 #####################################
 """ MAIN SCRIPT FOR .CASTEP FILES """
 #####################################
-
-
-import os
-import time
-import cr_common as cr
-import pandas as pd
 
 
 # To avoid errors if we comment the enthalpy lines
@@ -93,7 +93,7 @@ for directory in directories:
     # Read the file and look for the desired lines
     #enthalpy_str = cr.searcher(file_castep, 'LBFGS: Final Enthalpy     =', cry)
     energy_str = cr.searcher(file_castep, 'Total energy corrected for finite basis set =', cry)
-    space_group_str = cr.searcher(file_castep, 'Space group of crystal =', cry)
+    space_group_str = cr.searcher(file_castep, 'Space group of crystal =', cry).replace(',','.')
     volume_str = cr.searcher(file_castep, 'Current cell volume =', cry)
     density_str = cr.searcher(file_castep, 'density =', cry, 1)
     a_str = cr.searcher(file_castep, 'a =', cry)

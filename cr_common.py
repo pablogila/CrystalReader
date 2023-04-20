@@ -28,7 +28,7 @@ import pandas as pd
 
 
 def version():
-    return "vCR.2023.04.05.1345"
+    return "vCR.2023.04.20.1130"
 
 
 def naming(string):
@@ -227,7 +227,7 @@ def naming_OLD(string):
         return None
     
 
-# This function will extract the string value of a given variable from a raw string
+# This function will extract the string value of a given variable from a raw string. if the value is between commas it is returned without said commas
 def extract_str_OLD(string, name):
     if string == None:
         return None
@@ -237,3 +237,4 @@ def extract_str_OLD(string, name):
         return match.group(2).strip()
     else:
         return None
+

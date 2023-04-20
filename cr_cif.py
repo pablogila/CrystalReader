@@ -18,8 +18,15 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+
+import os
+import time
+import cr_common as cr
+import pandas as pd
+
+
 print("")
-print("  Running CrystalReader in 'cif' mode...")
+print("  Running CrystalReader", cr.version(), "in 'cif' mode...")
 print("  If you find this code useful, a citation would be awesome :D")
 print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
 
@@ -34,9 +41,12 @@ out = 'out_cif.csv'
 data_directory = 'data'
 data_cif = 'cc-2-out.cif'
 data_cifE = 'cc-2_Efield-out.cif'
-# If you change the header, make sure to change the columns in the 'row = [...]' line below
-header = ['filename', 'SSG_H_M', 'SSG_H_M-Efield']
 out_error = 'errors_cif.txt'
+
+# If you change the header, make sure to change the columns in the 'row = [...]' line, as well to comment the unnecesary 'searcher' and 'extract' lines. Full header is shown in the next comment for further reference:
+# header = ['filename', 'SSG_H_M', 'SSG_H_M-Efield']
+header = ['filename', 'SSG_H_M', 'SSG_H_M-Efield']
+
 # Seconds for a loop to be considered as an error. Remove this threshold by setting 'cry = False'
 cry = 5
 # Omit, or not, all values from corrupted files
@@ -47,12 +57,6 @@ safemode = True
 ##################################
 """ MAIN SCRIPT FOR .CIF FILES """
 ##################################
-
-
-import os
-import time
-import cr_common as cr
-import pandas as pd
 
 
 # Get the absolute path to the directory containing the Python script
@@ -92,7 +96,8 @@ for directory in directories:
     cif = cr.extract_str(cif_str, '_symmetry_space_group_name_H_M')
     cifE = cr.extract_str(cifE_str, '_symmetry_space_group_name_H_M')
 
-    # Save the values. If you modified the header, make sure to modify this line too
+    # Save the values. If you modified the header, modify this line too. Full row in the following comment for further reference:
+    # row = [file_name, cif, cifE]
     row = [file_name, cif, cifE]
 
     # ERRORS: Check if any of the values are missing
@@ -122,5 +127,4 @@ time_elapsed = round(time.time() - time_start, 1)
 print("  Finished reading the ", data_cif, " and ", data_cifE, " files in ", time_elapsed, " seconds")
 print("  Data extracted and saved to ", out)
 print("")
-
 

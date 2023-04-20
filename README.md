@@ -38,7 +38,7 @@ The behavior and customization of each script is explained in the following sect
 
 ## For **.castep** files
 
-The `cr_castep.py` script recursively reads the `cc-2.castep` files in the nested folders inside the `/data` folder. As was mentioned for the parent folder, the names of the files are easily modified changing the `data_castep` variable.
+The `cr_castep.py` script recursively reads the castep files in the nested folders inside the `/data` folder. The names of the files must be set via the `data_castep` variable, for example as `cc-2.castep`, etc.
 
 Naming example: **data/pnam-p-1-000-000-180-000---400/cc-2.castep**
 
@@ -62,7 +62,7 @@ The program iterates over this set of files, starting to read from the end of th
 
 ## For **.cif** files
 
-`cr_cif.py` uses the same folder structure as before, but the files to read are `cc-2-out.cif` and `cc-2_Efield-out.cif`. Again, this behaviour can be modified with the variables `data_cif` and `data_cifE`.
+`cr_cif.py` uses the same folder structure as before, but the files to read are set with the variables `data_cif` and `data_cifE`; their current values are `cc-2-out.cif` and `cc-2_Efield-out.cif`.
 
 The program iterates over this set of files and writes the relevant info to an `out_cif.csv`, containing the following data:
 * name of the parent folder, in **xxx-xxx-xxx-xxx** format
@@ -72,7 +72,7 @@ The program iterates over this set of files and writes the relevant info to an `
 
 ## For **.phonon** files
 
-`cr_phonon.py` uses the same folder structure. The data files are called `cc-2_Efield.phonon`, and can be modified via the `data_phonon` variable.
+`cr_phonon.py` uses the same folder structure. The data files are modified via the `data_phonon` variable, and is currently set to `cc-2_Efield.phonon`.
 
 The program will read the 144 lines corresponding to the 144 vibration modes; this number can be changed with the `data_lines_phonon` variable.
 
@@ -120,7 +120,7 @@ The functions used to read the files are defined in `cr_common.py` and are impor
   * `(?:[eE][+\-]?\d+)?` matches an optional exponent in scientific notation, which consists of an "e" or "E" character, an optional plus or minus sign, and one or more digits
 
 &NewLine;
-* `extract_str(string, name)`. Similar to **extract_float()**, but returns string outputs; if the value is between commas it is returned without said commas.
+* `extract_str(string, name)`. Similar to **extract_float()**, but returns string outputs.
 
 * `extract_column(string, column)`. Similar to **extract_float** and **extract_str**. It can extract specific columns from a row given as **string**, with **column** being 0, 1, 2...
 
