@@ -135,3 +135,4 @@ def main(data_directory='data', data_cif='cc-2-out.cif', out='out_cif.csv', out_
 
 if run_at_import:
     main()
+

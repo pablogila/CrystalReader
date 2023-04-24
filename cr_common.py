@@ -31,6 +31,9 @@ def version():
 import re
 import time
 import pandas as pd
+import cr_castep as castep
+import cr_cif as cif
+import cr_phonon as phonon
 
 
 
@@ -161,6 +164,29 @@ def errorlog(error_log, errors):
             print("  "+str(k))
         print("  Error log registered in ", error_log)
         print("  ----------------------------------------------------------")
+
+
+# This function will read the input file and execute the batch jobs
+def jobs(file):
+    with open(file, 'r') as f:
+        lines = f.readlines()
+    for line in lines[1:]:
+        line = line.split(',')
+        line = [x.strip() for x in line]
+        if line[0] == '':
+            continue
+        elif line[0] == 'cif' or line[0] == 'CIF':
+            cif.main(line[1], line[2], line[3], line[4])
+        elif line[0] == 'castep' or line[0] == 'CASTEP':
+            castep.main(line[1], line[2], line[3], line[4])
+        elif line[0] == 'phonon' or line[0] == 'PHONON':
+            phonon.main(line[1], line[2], line[3], line[4])
+        else:
+            print("")
+            print("  ERROR:  Unknown job. Check this line:")
+            print('  ',line)
+            print("  Skipping...\n")
+            continue
 
 
 # Conversion factor from eV to kJ/mol, Supposing that the energy is in eV/cell

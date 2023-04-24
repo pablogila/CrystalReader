@@ -22,50 +22,51 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 
-import cr_common as cr
-import cr_castep as castep
-import cr_cif as cif
-import cr_phonon as phonon
-import time
+try:
+    import time
+    import cr_common as cr
+    #import cr_castep as castep
+    #import cr_cif as cif
+    #import cr_phonon as phonon
+except:
+    print("")
+    print("  ERROR:  Could not import the required modules.")
+    print("  Check the documentation on https://github.com/pablogila/CrystalReader")
+    print("  Exiting...")
+    print("")
+    exit()
+
+
+job_file = 'CrystalReader_JOBS.txt'
 
 
 print("\n")
 print("  Welcome to CrystalReader version " + cr.version())
 print("  This is free software, and you are welcome to redistribute it under GNU General Public License")
-print("  You should have already configured the batch job and the corresponding scripts")
+print("  You should have already configured the '" + job_file + "' batch file and the corresponding scripts")
 print("  Else check the documentation on https://github.com/pablogila/CrystalReader")
 print("")
-print("  Conversion factors:")
-print("  cm^-1 to eV =", cr.cm_ev())
-print("  eV to kJ/mol =", cr.ev_kjmol())
-print("")
+#print("  Conversion factors:")
+#print("  cm^-1 to eV =", cr.cm_ev())
+#print("  eV to kJ/mol =", cr.ev_kjmol())
+#print("")
 time_start = time.time()
 
 
+cr.jobs(job_file)
+
+
 ##############################################################
-#             EXAMPLES FOR CALLING THE SCRIPTS
+#  EXAMPLES FOR CALLING THE SCRIPTS WITHOUT A BATCH JOB FILE
 ##############################################################
-# Default values are listed in the examples.
+# First, uncomment the import castep, cif and phonon lines at the top of this file
+# Default values to call are listed in the examples. This follows the same structure as the batch job file.
 # Other parameters can be modified from within the scripts.
 #
 # castep.main(data_directory='data', data_castep='cc-2.castep', out='out_castep.csv', out_error='errors_castep.txt')
 # cif.main(data_directory='data', data_cif='cc-2-out.cif', out='out_cif.csv', out_error='errors_cif.txt')
 # phonon.main(data_directory='data', data_phonon='cc-2_PhonDOS.phonon', out='out_phonon.csv', out_error='errors_phonon.txt')
 ##############################################################
-
-
-
-cif.main('data_PBEsol-MP-2x2x2', 'cc-2-out.cif', 'out_cif_PBEsol-MP-2x2x2.csv', 'errors_cif_PBEsol-MP-2x2x2.txt')
-#cif.main('data_PBEsol-MP-2x2x2', 'cc-2_Efield-out.cif', 'out_cif-Efield_PBEsol-MP-2x2x2.csv', 'errors_cif-Efield_PBEsol-MP-2x2x2.txt')
-
-castep.main('data_pbe-d3', 'cc-2_PhonDOS.castep', 'out_castep_pbe-d3.csv', 'errors_castep_pbe-d3.txt')
-#castep.main('data_pbe-ts', 'cc-2_PhonDOS.castep', 'out_castep_pbe-ts.csv', 'errors_castep_pbe-ts.txt')
-#castep.main('data_rscan', 'cc-2_PhonDOS.castep', 'out_castep_rscan.csv', 'errors_castep_rscan.txt')
-
-phonon.main('data_pbe-d3', 'cc-2_PhonDOS.phonon', 'out_phonon_pbe-d3.csv', 'errors_phonon_pbe-d3.txt')
-#phonon.main('data_pbe-ts', 'cc-2_PhonDOS.phonon', 'out_phonon_pbe-ts.csv', 'errors_phonon_pbe-ts.txt')
-#phonon.main('data_rscan', 'cc-2_PhonDOS.phonon', 'out_phonon_rscan.csv', 'errors_phonon_rscan.txt')
-
 
 
 print("")

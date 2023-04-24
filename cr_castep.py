@@ -159,3 +159,4 @@ def main(data_directory='data', data_castep='cc-2.castep', out='out_castep.csv',
 
 if run_at_import:
     main()
+
