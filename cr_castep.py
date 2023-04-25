@@ -31,19 +31,26 @@ import pandas as pd
 ##################################################################
 # Run the main script for *.castep files at execution. Set to False to import the functions as a module.
 run_at_import = False
+# Rename the file_name in the xxx-xxx-xxx-xxx format, set to False to keep the original name
+rename_files = False
 # Main program for reading castep files. 
 def main(data_directory='data', data_castep='cc-2.castep', out='out_castep.csv', out_error='errors_castep.txt'):
-    # Seconds for a loop to be considered as an error. Remove this threshold by setting 'cry = False'
+    # Seconds for a loop to be considered as an error (a.k.a. seconds for me to cry). Remove this threshold by setting 'cry = False'
     cry = 5
     # Omit, or not, all values from corrupted files
-    safemode = True
+    safemode = False
     # IF YOU CHANGE THE HEADER, make sure to change the columns in the 'row = [...]' line, as well to comment the unnecesary 'searcher' and 'extract' lines. Full header is shown in the next comment for further reference:
     # header = ['filename', 'enthalpy [eV]', 'enthalpy [kJ/mol]', 'total energy corrected [eV]', 'space group', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume [A^3]', 'density [amu/A^3]', 'density [g/cm^3]']
     header = ['filename', 'total energy corrected [eV]', 'space group', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume [A^3]', 'density [amu/A^3]', 'density [g/cm^3]']
 ##################################################################
 
     print("")
-    print("  Running CrystalReader", cr.version(), "in 'castep' mode...")
+    if run_at_import == False:
+        print("  Running CrystalReader in 'castep' mode...")
+    if run_at_import == True:
+        print("  Running CrystalReader", cr.version(), "in 'castep' mode...")
+        print("  If you find this code useful, a citation would be awesome :D")
+        print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
     print("")
     print("  data directory:      ", data_directory)
     print("  data files:          ", data_castep)
@@ -53,8 +60,9 @@ def main(data_directory='data', data_castep='cc-2.castep', out='out_castep.csv',
     print("  safemode:            ", safemode)
     print("")
 
-    # To avoid errors if we comment the enthalpy lines
+    # Set some values to avoid stupid errors if we comment some lines:
     enthalpy = None
+    space_group_str = None
 
     # Get the absolute path to the directory containing the Python script
     dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -82,17 +90,25 @@ def main(data_directory='data', data_castep='cc-2.castep', out='out_castep.csv',
         
         # Define the path to the .castep file
         file_castep = os.path.join(path, directory, data_castep)
-        file_name = cr.naming(directory)
+        # Rename, or not, the file_name in the xxx-xxx-xxx-xxx format
+        if rename_files == True:
+            file_name = cr.naming(directory)
+        else:
+            file_name = directory
 
         # Read the file and look for the desired lines
         #enthalpy_str = cr.searcher(file_castep, 'LBFGS: Final Enthalpy     =', cry)
         energy_str = cr.searcher(file_castep, 'Total energy corrected for finite basis set =', cry)
-        space_group_str = cr.searcher(file_castep, 'Space group of crystal =', cry).replace(',','.')
+        space_group_str = cr.searcher(file_castep, 'Space group of crystal =', cry)
         volume_str = cr.searcher(file_castep, 'Current cell volume =', cry)
         density_str = cr.searcher(file_castep, 'density =', cry, 1)
         a_str = cr.searcher(file_castep, 'a =', cry)
         b_str = cr.searcher(file_castep, 'b =', cry)
         c_str = cr.searcher(file_castep, 'c =', cry)
+
+        # Avoid little stupid errors
+        if space_group_str != None:
+            space_group_str = space_group_str.replace(',','.')
 
         # Extract the values from the strings
         #enthalpy = cr.extract_float(enthalpy_str, 'LBFGS: Final Enthalpy')

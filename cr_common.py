@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 def version():
-    return "vCR.2023.04.20.1830"
+    return "vCR.2023.04.25.2000"
 
 
 
@@ -87,7 +87,7 @@ def extract_str_commas(string, name):
 
 # This function will extract the string value of a given variable from a raw string
 def extract_column(string, column):
-    if string == None:
+    if string is None:
         return None
     columns = string.split()
     pattern = r'(-?\d+(?:\.\d+)?(?:[eE][+\-]?\d+)?)'
@@ -153,57 +153,77 @@ def progressbar(current, total, start=False):
 # Take the list of missing files as errors and slow loops as warnings, write them to a log file and display in the console
 def errorlog(error_log, errors):
     if len(errors) > 0:
-        errors.insert(0, "COMPLETED WITH ERRORS: The following files seem corrupted:")
         log = pd.DataFrame(errors)
         log.to_csv(error_log, header=False, index=False)
-        print("  ----------------------------------------------------------")
+        print("  ------------------------------------------------------------")
+        print("  COMPLETED WITH ERRORS: Some values are missing")
+        print("  (Hint: If you see too many errors, maybe you forgot")
+        print("  to modify the header and row inside the scripts)")
+        print("  Missing values in the following files:")
         for k in errors:
             print("  "+str(k))
-        print("  Error log registered in ", error_log)
-        print("  ----------------------------------------------------------")
+        print("  Suspicious files were registered in ", error_log)
+        print("  ------------------------------------------------------------")
 
 
 # This function will read the input file and execute the batch jobs
-def jobs(file):
-    with open(file, 'r') as f:
-        lines = f.readlines()
-    for line in lines[0:]:
-        line = line.split(',')
-        line = [x.strip() for x in line]
-        if line[0].startswith('#') or line[0] == '':
-            continue
-        elif line[0] == 'cif' or line[0] == 'CIF':
-            cif.main(line[1], line[2], line[3], line[4])
-        elif line[0] == 'castep' or line[0] == 'CASTEP':
-            castep.main(line[1], line[2], line[3], line[4])
-        elif line[0] == 'phonon' or line[0] == 'PHONON':
-            phonon.main(line[1], line[2], line[3], line[4])
-        else:
+def jobs(job_file):
+    try:
+        is_file_empty = True
+        with open(job_file, 'r') as f:
+            lines = f.readlines()
+        for line in lines[0:]:
+            line = line.split(',')
+            line = [x.strip() for x in line]
+            if line[0].startswith('#') or line[0] == '':
+                continue
+            elif line[0] == 'cif' or line[0] == 'CIF':
+                is_file_empty = False
+                cif.main(line[1], line[2], line[3], line[4])
+            elif line[0] == 'castep' or line[0] == 'CASTEP':
+                castep.main(line[1], line[2], line[3], line[4])
+                is_file_empty = False
+            elif line[0] == 'phonon' or line[0] == 'PHONON':
+                phonon.main(line[1], line[2], line[3], line[4])
+                is_file_empty = False
+            else:
+                print("")
+                print("  ------------------------------------------------------------")
+                print("  ERROR:  Unknown job. Check this line:")
+                print(' ',line)
+                print("  Skipping to the next job...")
+                print("  ------------------------------------------------------------")
+                print("")
+                continue
+        if is_file_empty:
             print("")
-            print("  ----------------------------------------------------------")
-            print("  ERROR:  Unknown job. Check this line:")
-            print(' ',line)
-            print("  Skipping to the next job...")
-            print("  ----------------------------------------------------------")
-            print("")
-            continue
-
-
-def create_job_file(job_file):
-    with open(job_file, 'w') as f:
-        f.write("# ----------------------------------------------------------------------------------------------\n")
-        f.write("# CrystalReader Batch Job File\n")
-        f.write("# Copyright (C) 2023  Pablo Gila-Herranz\n")
-        f.write("# If you find this code useful, a citation would be awesome :D\n")
-        f.write("# Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader\n")
-        f.write("# This is free software, and you are welcome to redistribute it under GNU General Public License\n")
-        f.write("#\n")
-        f.write("# Format of the CrystalReader Batch Job File:\n")
-        f.write("# Job(=castep/cif/phonon), DataFolder, DataFiles, OutFile, ErrorLogFile\n")
-        f.write("#\n")
-        f.write("# Example:\n")
-        f.write("# phonon, data_rscan, rscan.phonon, out_phonon_rscan.csv, errors_phonon_rscan.txt\n")
-        f.write("# ----------------------------------------------------------------------------------------------\n")
+            print("  ------------------------------------------------------------")
+            print("  WARNING:  '" + job_file + "' batch job file was found,")
+            print("  but it is empty. Please fill it and try again.")
+            print("  ------------------------------------------------------------")
+            print("\n")
+            exit()
+    except FileNotFoundError:
+        with open(job_file, 'w') as f:
+            f.write("# ----------------------------------------------------------------------------------------------\n")
+            f.write("# CrystalReader Batch Job File\n")
+            f.write("# Copyright (C) 2023  Pablo Gila-Herranz\n")
+            f.write("# If you find this code useful, a citation would be awesome :D\n")
+            f.write("# Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader\n")
+            f.write("# This is free software, and you are welcome to redistribute it under GNU General Public License\n")
+            f.write("#\n")
+            f.write("# Write here all the CrystalReader jobs that you want to execute, following this format:\n")
+            f.write("# Job(=castep/cif/phonon), DataFolder, DataFiles, OutFile, ErrorLogFile\n")
+            f.write("#\n")
+            f.write("# Example:\n")
+            f.write("# phonon, data_rscan, rscan.phonon, out_phonon_rscan.csv, errors_phonon_rscan.txt\n")
+            f.write("# ----------------------------------------------------------------------------------------------\n")
+        print("")
+        print("  First time running CrystalReader, huh?")
+        print("  The batch job file was not found, so an empty one called")
+        print("  '" + job_file + "' was created with examples")
+        print("\n")
+        exit()
 
 
 # Conversion factor from eV to kJ/mol, Supposing that the energy is in eV/cell
@@ -242,12 +262,12 @@ def errorlog_OLD(error_log, errors, warnings):
     if len(errors) > 0:
         log = pd.DataFrame(errors)
         log.to_csv(error_log, header=False, index=False)
-        print("  ---------------------------------------------------------")
+        print("  -----------------------------------------------------------")
         for k in errors:
             print("  "+str(k))
         print("  Error log registered in ", error_log)
         print("  DON'T TRUST FILES WITH ERRORS OR WARNINGS, CHECK MANUALLY")
-        print("  ---------------------------------------------------------")
+        print("  -----------------------------------------------------------")
 
 
 # This function will search for a specific string value in a given file, and return the corresponding line

@@ -32,38 +32,38 @@ try:
     # import cr_phonon as phonon
 except:
     print("")
-    print("  ----------------------------------------------------------")
+    print("  ------------------------------------------------------------")
     print("  ERROR:  Could not import the CrystalReader modules.")
     print("  Read the docs at https://github.com/pablogila/CrystalReader")
     print("  Closing...")
-    print("  ----------------------------------------------------------")
+    print("  ------------------------------------------------------------")
     print("")
     exit()
 try:
     import pandas as pd
 except:
     print("")
-    print("  ----------------------------------------------------------")
+    print("  ------------------------------------------------------------")
     print("  ERROR:  Could not import the pandas module")
     print("  Perform 'pip install --user pandas' to install it")
     print("  Closing...")
-    print("  ----------------------------------------------------------")
+    print("  ------------------------------------------------------------")
     print("")
     exit()
 
 
 
 print("\n")
-print("  -----------------------------------------------------------------------")
+print("  --------------------------------------------------------------------------")
 print("  Welcome to CrystalReader version " + cr.version())
 print("  This is free software, and you are welcome to")
 print("  redistribute it under GNU General Public License.")
-print("  You should have already configured the '" + job_file + "'")
-print("  batch file and the corresponding scripts, else check the documentation.")
-print("  -----------------------------------------------------------------------")
+print("  You should have already configured the '" + job_file + "' batch file")
+print("  and the data headers in the scripts, else check the documentation.")
+print("  --------------------------------------------------------------------------")
 print("  If you find this code useful, a citation would be awesome :D")
 print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
-print("  -----------------------------------------------------------------------")
+print("  --------------------------------------------------------------------------")
 print("")
 #print("  Conversion factors:")
 #print("  cm^-1 to eV =", cr.cm_ev())
@@ -72,17 +72,7 @@ print("")
 time_start = time.time()
 
 
-try:
-    cr.jobs(job_file)
-except:
-    cr.create_job_file(job_file)
-    print("")
-    print("  ----------------------------------------------------------")
-    print("  ERROR:  Could not find the batch job file")
-    print("  A '" + job_file + "' file was created with examples")
-    print("  ----------------------------------------------------------")
-    print("\n")
-    exit()
+cr.jobs(job_file)
 
 
 ##############################################################

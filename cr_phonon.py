@@ -31,12 +31,14 @@ import pandas as pd
 ##################################################################
 # Run the main script for *.phonon files at execution. Set to False to import the functions as a module.
 run_at_import = False
+# Rename the file_name in the xxx-xxx-xxx-xxx format; set to False to keep the original name
+rename_files = False
 # Main program for reading phonon files. 
 def main(data_directory='data', data_phonon='cc-2_Efield.phonon', out='out_phonon.csv', out_error='errors_phonon.txt'):
-    # Seconds for a loop to be considered as an error. Remove this threshold by setting 'cry = False'
-    cry = 25
+    # Seconds for a loop to be considered as an error (a.k.a. seconds for me to cry). Remove this threshold by setting 'cry = False'
+    cry = 30
     # Omit, or not, all values from corrupted files
-    safemode = True
+    safemode = False
     # Number of phonon lines to read plus one
     data_lines_phonon = 144
     # Threshold for the energy to be considered greater than zero
@@ -47,7 +49,12 @@ def main(data_directory='data', data_phonon='cc-2_Efield.phonon', out='out_phono
 ##################################################################
 
     print("")
-    print("  Running CrystalReader", cr.version(), "in 'phonon' mode...")
+    if run_at_import == False:
+        print("  Running CrystalReader in 'castep' mode...")
+    if run_at_import == True:
+        print("  Running CrystalReader", cr.version(), "in 'castep' mode...")
+        print("  If you find this code useful, a citation would be awesome :D")
+        print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
     print("")
     print("  data directory:      ", data_directory)
     print("  data files:          ", data_phonon)
@@ -85,7 +92,12 @@ def main(data_directory='data', data_phonon='cc-2_Efield.phonon', out='out_phono
 
         # Define the path to the .phonon file
         file_phonon = os.path.join(path, directory, data_phonon)
-        file_name = cr.naming(directory)
+
+        # Rename, or not, the file_name in the xxx-xxx-xxx-xxx format
+        if rename_files == True:
+            file_name = cr.naming(directory)
+        else:
+            file_name = directory
 
         # Read the file and look for the desired line, return the corresponding lines after the match
         # The phonon_str[0] is the header, the phonon_str[1] is the first line of data, etc.

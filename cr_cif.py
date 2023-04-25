@@ -31,12 +31,14 @@ import pandas as pd
 ##################################################################
 # Run the main script for *.cif files at execution. Set to False to import the functions as a module.
 run_at_import = False
+# Rename the file_name in the xxx-xxx-xxx-xxx format, set to False to keep the original name
+rename_files = False
 # Main program for reading cif files. 
 def main(data_directory='data', data_cif='cc-2-out.cif', out='out_cif.csv', out_error='errors_cif.txt'):
-    # Seconds for a loop to be considered as an error. Remove this threshold by setting 'cry = False'
+    # Seconds for a loop to be considered as an error (a.k.a. seconds for me to cry). Remove this threshold by setting 'cry = False'
     cry = 5
     # Omit, or not, all values from corrupted files
-    safemode = True
+    safemode = False
     # IF YOU CHANGE THE HEADER, make sure to change the columns in the 'row = [...]' line, as well to comment the unnecesary 'searcher' and 'extract' lines. Full header is shown in the next comment for further reference:
     # header = ['filename', 'SSG_H_M', 'SSG_H_M-Efield']
     header = ['filename', 'SSG_H_M']
@@ -44,7 +46,12 @@ def main(data_directory='data', data_cif='cc-2-out.cif', out='out_cif.csv', out_
 ##################################################################
 
     print("")
-    print("  Running CrystalReader", cr.version(), "in 'cif' mode...")
+    if run_at_import == False:
+        print("  Running CrystalReader in 'castep' mode...")
+    if run_at_import == True:
+        print("  Running CrystalReader", cr.version(), "in 'castep' mode...")
+        print("  If you find this code useful, a citation would be awesome :D")
+        print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
     print("")
     print("  data directory:      ", data_directory)
     print("  data files:          ", data_cif)
@@ -80,8 +87,14 @@ def main(data_directory='data', data_cif='cc-2-out.cif', out='out_cif.csv', out_
         
         # Define the path to the .cif files
         file_cif = os.path.join(path, directory, data_cif)
-        file_name = cr.naming(directory)
-        #file_cifE = os.path.join(path, directory, data_cifE)
+
+        # Rename, or not, the file_name in the xxx-xxx-xxx-xxx format
+        if rename_files == True:
+            file_name = cr.naming(directory)
+            #file_cifE = os.path.join(path, directory, data_cifE)
+        else:
+            file_name = directory
+            #file_cifE = directory
 
         # Read the file and look for the desired lines
         cif_str = cr.searcher(file_cif, '_symmetry_space_group_name_H_M', cry)
