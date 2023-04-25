@@ -1,9 +1,6 @@
 """
 CrystalReader Launcher. Read and extract data from different files.
 Copyright (C) 2023  Pablo Gila-Herranz
-Check the latest version at https://github.com/pablogila/CrystalReader
-Feel free to contact me at pablo.gila.herranz@gmail.com
-
 If you find this code useful, a citation would be awesome :D
 Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader
 
@@ -22,29 +19,51 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 
-try:
-    import time
-    import cr_common as cr
-    #import cr_castep as castep
-    #import cr_cif as cif
-    #import cr_phonon as phonon
-except:
-    print("")
-    print("  ERROR:  Could not import the required modules.")
-    print("  Check the documentation on https://github.com/pablogila/CrystalReader")
-    print("  Exiting...")
-    print("")
-    exit()
-
 
 job_file = 'CrystalReader_JOBS.txt'
 
 
+
+import time
+try:
+    import cr_common as cr
+    # import cr_castep as castep
+    # import cr_cif as cif
+    # import cr_phonon as phonon
+except:
+    print("")
+    print("  ----------------------------------------------------------")
+    print("  ERROR:  Could not import the CrystalReader modules.")
+    print("  Read the docs at https://github.com/pablogila/CrystalReader")
+    print("  Closing...")
+    print("  ----------------------------------------------------------")
+    print("")
+    exit()
+try:
+    import pandas as pd
+except:
+    print("")
+    print("  ----------------------------------------------------------")
+    print("  ERROR:  Could not import the pandas module")
+    print("  Perform 'pip install --user pandas' to install it")
+    print("  Closing...")
+    print("  ----------------------------------------------------------")
+    print("")
+    exit()
+
+
+
 print("\n")
+print("  -----------------------------------------------------------------------")
 print("  Welcome to CrystalReader version " + cr.version())
-print("  This is free software, and you are welcome to redistribute it under GNU General Public License")
-print("  You should have already configured the '" + job_file + "' batch file and the corresponding scripts")
-print("  Else check the documentation on https://github.com/pablogila/CrystalReader")
+print("  This is free software, and you are welcome to")
+print("  redistribute it under GNU General Public License.")
+print("  You should have already configured the '" + job_file + "'")
+print("  batch file and the corresponding scripts, else check the documentation.")
+print("  -----------------------------------------------------------------------")
+print("  If you find this code useful, a citation would be awesome :D")
+print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
+print("  -----------------------------------------------------------------------")
 print("")
 #print("  Conversion factors:")
 #print("  cm^-1 to eV =", cr.cm_ev())
@@ -53,7 +72,17 @@ print("")
 time_start = time.time()
 
 
-cr.jobs(job_file)
+try:
+    cr.jobs(job_file)
+except:
+    cr.create_job_file(job_file)
+    print("")
+    print("  ----------------------------------------------------------")
+    print("  ERROR:  Could not find the batch job file")
+    print("  A '" + job_file + "' file was created with examples")
+    print("  ----------------------------------------------------------")
+    print("\n")
+    exit()
 
 
 ##############################################################
@@ -70,6 +99,6 @@ cr.jobs(job_file)
 
 
 print("")
-print("  All jobs finished in", round(time.time() - time_start, 2), "seconds\n")
+print("  All jobs finished in", round(time.time() - time_start, 1), "seconds\n")
 print("")
 

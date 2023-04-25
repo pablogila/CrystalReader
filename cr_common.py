@@ -1,9 +1,6 @@
 """
 CrystalReader Common Functions. Read and extract data from different files.
 Copyright (C) 2023  Pablo Gila-Herranz
-Check the latest version at https://github.com/pablogila/CrystalReader
-Feel free to contact me at pablo.gila.herranz@gmail.com
-
 If you find this code useful, a citation would be awesome :D
 Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader
 
@@ -170,10 +167,10 @@ def errorlog(error_log, errors):
 def jobs(file):
     with open(file, 'r') as f:
         lines = f.readlines()
-    for line in lines[1:]:
+    for line in lines[0:]:
         line = line.split(',')
         line = [x.strip() for x in line]
-        if line[0] == '':
+        if line[0].startswith('#') or line[0] == '':
             continue
         elif line[0] == 'cif' or line[0] == 'CIF':
             cif.main(line[1], line[2], line[3], line[4])
@@ -183,10 +180,30 @@ def jobs(file):
             phonon.main(line[1], line[2], line[3], line[4])
         else:
             print("")
+            print("  ----------------------------------------------------------")
             print("  ERROR:  Unknown job. Check this line:")
-            print('  ',line)
-            print("  Skipping...\n")
+            print(' ',line)
+            print("  Skipping to the next job...")
+            print("  ----------------------------------------------------------")
+            print("")
             continue
+
+
+def create_job_file(job_file):
+    with open(job_file, 'w') as f:
+        f.write("# ----------------------------------------------------------------------------------------------\n")
+        f.write("# CrystalReader Batch Job File\n")
+        f.write("# Copyright (C) 2023  Pablo Gila-Herranz\n")
+        f.write("# If you find this code useful, a citation would be awesome :D\n")
+        f.write("# Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader\n")
+        f.write("# This is free software, and you are welcome to redistribute it under GNU General Public License\n")
+        f.write("#\n")
+        f.write("# Format of the CrystalReader Batch Job File:\n")
+        f.write("# Job(=castep/cif/phonon), DataFolder, DataFiles, OutFile, ErrorLogFile\n")
+        f.write("#\n")
+        f.write("# Example:\n")
+        f.write("# phonon, data_rscan, rscan.phonon, out_phonon_rscan.csv, errors_phonon_rscan.txt\n")
+        f.write("# ----------------------------------------------------------------------------------------------\n")
 
 
 # Conversion factor from eV to kJ/mol, Supposing that the energy is in eV/cell

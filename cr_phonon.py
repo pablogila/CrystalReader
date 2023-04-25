@@ -1,9 +1,6 @@
 """
 CrystalReader 'phonon' script. Read and extract data from '.phonon' files.
 Copyright (C) 2023  Pablo Gila-Herranz
-Check the latest version at https://github.com/pablogila/CrystalReader
-Feel free to contact me at pablo.gila.herranz@gmail.com
-
 If you find this code useful, a citation would be awesome :D
 Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader
 
@@ -51,8 +48,6 @@ def main(data_directory='data', data_phonon='cc-2_Efield.phonon', out='out_phono
 
     print("")
     print("  Running CrystalReader", cr.version(), "in 'phonon' mode...")
-    print("  If you find this code useful, a citation would be awesome :D")
-    print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
     print("")
     print("  data directory:      ", data_directory)
     print("  data files:          ", data_phonon)
