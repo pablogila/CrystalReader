@@ -52,7 +52,7 @@ The first time running CrystalReader, it will create an empty batch jobs file, c
 
 `Format, DataFolder, DataFiles`  
 
-The names for the output file and the error log will be generated automatically as `out/errors_DataFolder_DataFiles.csv/txt`, but you can specify them if you want to, as follows:  
+The names for the output file and the error log will be generated automatically as `out_DataFolder_DataFiles.csv` and `errors_DataFolder_DataFiles.txt`, but you can specify them if you want to, as follows:  
 
 `Format, DataFolder, DataFiles, Output, ErrorLog`  
 
