@@ -177,15 +177,23 @@ def jobs(job_file):
             line = [x.strip() for x in line]
             if line[0].startswith('#') or line[0] == '':
                 continue
-            elif line[0] == 'cif' or line[0] == 'CIF':
+            if (line[0] == 'cif' or line[0] == 'CIF' or line[0] == 'castep' or line[0] == 'CASTEP' or line[0] == 'phonon' or line[0] == 'PHONON') and (len(line) >= 3):
                 is_file_empty = False
-                cif.main(line[1], line[2], line[3], line[4])
-            elif line[0] == 'castep' or line[0] == 'CASTEP':
-                castep.main(line[1], line[2], line[3], line[4])
-                is_file_empty = False
-            elif line[0] == 'phonon' or line[0] == 'PHONON':
-                phonon.main(line[1], line[2], line[3], line[4])
-                is_file_empty = False
+                if len(line) <= 3:
+                    errors = 'errors_' + line[1] + '_' + line[2] + '.txt'
+                    out = 'out_' + line[1] + '_' + line[2] + '.csv'
+                else:
+                    out = line[3]
+                    if len(line) <= 4:
+                        errors = 'errors_' + line[1] + '_' + line[2] + '.txt'
+                    else:
+                        errors = line[4]
+                if line[0] == 'cif' or line[0] == 'CIF':
+                    cif.main(line[1], line[2], out, errors)
+                if line[0] == 'castep' or line[0] == 'CASTEP':
+                    castep.main(line[1], line[2], out, errors)
+                if line[0] == 'phonon' or line[0] == 'PHONON':
+                    phonon.main(line[1], line[2], out, errors)
             else:
                 print("")
                 print("  ------------------------------------------------------------")
@@ -213,15 +221,19 @@ def jobs(job_file):
             f.write("# This is free software, and you are welcome to redistribute it under GNU General Public License\n")
             f.write("#\n")
             f.write("# Write here all the CrystalReader jobs that you want to execute, following this format:\n")
-            f.write("# Job(=castep/cif/phonon), DataFolder, DataFiles, OutFile, ErrorLogFile\n")
+            f.write("# Job(=castep/cif/phonon), DataFolder, DataFiles\n")
+            f.write("# Additionally, you can also add the desired names for the output file and the error log:\n")
+            f.write("# Job, DataFolder, DataFiles, Output, ErrorLog\n")
             f.write("#\n")
             f.write("# Example:\n")
-            f.write("# phonon, data_rscan, rscan.phonon, out_phonon_rscan.csv, errors_phonon_rscan.txt\n")
+            f.write("# phonon, data_rscan, rscan.phonon, out.csv, errors.csv\n")
             f.write("# ----------------------------------------------------------------------------------------------\n")
         print("")
+        print("  ------------------------------------------------------------")
         print("  First time running CrystalReader, huh?")
         print("  The batch job file was not found, so an empty one called")
         print("  '" + job_file + "' was created with examples")
+        print("  ------------------------------------------------------------")
         print("\n")
         exit()
 

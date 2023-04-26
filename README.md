@@ -50,7 +50,11 @@ To execute CrystalReader, open a terminal and write:
 
 The first time running CrystalReader, it will create an empty batch jobs file, called `CrystalReader_JOBS.txt`. Inside this file, you have to write the jobs that you want to execute, one per line. Each job is a string of the form:  
 
-`Job(=castep/cif/phonon), DataFolder, DataFiles, OutFile, ErrorLogFile`  
+`Job(=castep/cif/phonon), DataFolder, DataFiles`  
+
+Additionally, you can also add the desired names for the output file and the error log:  
+
+`Job, DataFolder, DataFiles, Output, ErrorLog`  
 
 An example of a job for reading phonon **rscan.phonon** files, in a folder called **data_rscan**, and writing the output to **out_rscan.csv**, and the errors to **errors_rscan.txt**, would be:  
 
