@@ -48,13 +48,13 @@ To execute CrystalReader, open a terminal and write:
 * On **Linux Terminal**  
 `python3 CrystalReader.py`
 
-The first time running CrystalReader, it will create an empty batch jobs file, called `CrystalReader_JOBS.txt`. Inside this file, you have to write the jobs that you want to execute, one per line. Each job is a string of the form:  
+The first time running CrystalReader, it will create an empty batch jobs file, called `CrystalReader_JOBS.txt`. Inside this file, you have to write the jobs to execute, one per line. Each job starts by the format to read (castep, cif or phonon), followed by the name of the data folder, and the name of the data files, separated by commas.  
 
-`Job(=castep/cif/phonon), DataFolder, DataFiles`  
+`Format, DataFolder, DataFiles`  
 
-Additionally, you can also add the desired names for the output file and the error log:  
+The names for the output file and the error log will be generated automatically as `out/errors_DataFolder_DataFiles.csv/txt`, but you can specify them if you want to, as follows:  
 
-`Job, DataFolder, DataFiles, Output, ErrorLog`  
+`Format, DataFolder, DataFiles, Output, ErrorLog`  
 
 An example of a job for reading phonon **rscan.phonon** files, in a folder called **data_rscan**, and writing the output to **out_rscan.csv**, and the errors to **errors_rscan.txt**, would be:  
 
@@ -71,7 +71,7 @@ The following sections describe a more advanced use of these scripts. If you wan
 
 ## Error Management
 
-Sometimes some of your files may be corrupted, for example, if the simulation was terminated before it was completed. If a value is not found, an **ERROR** message will be displayed with information about the corrupt file. This particular file will be ignored, because even if other variables could be read, they may be wrong; however, you can still save the rest of the variables from suspicious files by setting the `safemode = False` inside the individual scripts. To avoid false positives, make sure to comment the values that you know are not present in the files, as well as modify the header and row.  
+Sometimes some of your files may be corrupted, for example if the simulation was terminated before it was completed. If a value is not found, an **ERROR** message will be displayed with information about the corrupt file(s). The rest of the variables from a suspicious file are saved by default, but be cautious, because they can be wrong: to avoid mistakes, it is best to make sure to comment the values that you know are not present in your files, as well as modify the header and row variables in the individual scripts; then you can activate the safemode by setting `safemode = True`, so that suspicious files are ignored.  
 
 If a file takes too long to read, it is aborted and an **ERROR** message is displayed. The threshold for considering an error is defined by the variable `cry`, which is usually between 5 and 30 seconds by default, but can be set to **False** to remove the time limit. This variable may need to be changed if you are running the scripts on a supercomputer or in a potato with some wires.  
 
