@@ -25,31 +25,29 @@ import cr_common as cr
 import pandas as pd
 
 
-
 ##################################################################
 #                PARAMETERS THAT YOU MAY MODIFY
 ##################################################################
+# !!! IF YOU CHANGE THE HEADER, make sure to change the columns in the 'row = [...]' line, as well to comment the unnecesary 'searcher' and 'extract' lines. Full header is shown in the next comment for further reference:
+# header = ['filename', 'SSG_H_M', 'SSG_H_M-Efield']
+header = ['filename', 'SSG_H_M']
 # Run the main script for *.cif files at execution. Set to False to import the functions as a module.
 run_at_import = False
 # Rename the file_name in the xxx-xxx-xxx-xxx format, set to False to keep the original name
 rename_files = False
-# Main program for reading cif files. 
+# Seconds for a loop to be considered as an error (a.k.a. seconds for me to cry). Remove this threshold by setting 'cry = False'
+cry = 5
+# Omit, or not, all values from corrupted files
+safemode = False
+# Main program for reading cif files. Change the default arguments to run the script from the command line
 def main(data_directory='data', data_cif='cc-2-out.cif', out='out_cif.csv', out_error='errors_cif.txt'):
-    # Seconds for a loop to be considered as an error (a.k.a. seconds for me to cry). Remove this threshold by setting 'cry = False'
-    cry = 5
-    # Omit, or not, all values from corrupted files
-    safemode = False
-    # IF YOU CHANGE THE HEADER, make sure to change the columns in the 'row = [...]' line, as well to comment the unnecesary 'searcher' and 'extract' lines. Full header is shown in the next comment for further reference:
-    # header = ['filename', 'SSG_H_M', 'SSG_H_M-Efield']
-    header = ['filename', 'SSG_H_M']
-    #data_cifE = 'cc-2_Efield-out.cif'
 ##################################################################
 
     print("")
     if run_at_import == False:
-        print("  Running CrystalReader in 'castep' mode...")
+        print("  Running CrystalReader in 'cif' mode...")
     if run_at_import == True:
-        print("  Running CrystalReader", cr.version(), "in 'castep' mode...")
+        print("  Running CrystalReader", cr.version(), "in 'cif' mode...")
         print("  If you find this code useful, a citation would be awesome :D")
         print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
     print("")
@@ -91,25 +89,21 @@ def main(data_directory='data', data_cif='cc-2-out.cif', out='out_cif.csv', out_
         # Rename, or not, the file_name in the xxx-xxx-xxx-xxx format
         if rename_files == True:
             file_name = cr.naming(directory)
-            #file_cifE = os.path.join(path, directory, data_cifE)
         else:
             file_name = directory
-            #file_cifE = directory
 
         # Read the file and look for the desired lines
-        cif_str = cr.searcher(file_cif, '_symmetry_space_group_name_H_M', cry)
-        #cifE_str = cr.searcher(file_cifE, '_symmetry_space_group_name_H_M', cry)
+        symmetry_group_str = cr.searcher(file_cif, '_symmetry_space_group_name_H_M', cry)
 
         # Extract the values from the strings
-        cif = cr.extract_str_commas(cif_str, '_symmetry_space_group_name_H_M')
-        #cifE = cr.extract_str_commas(cifE_str, '_symmetry_space_group_name_H_M')
+        symmetry_group = cr.extract_str_commas(symmetry_group_str, '_symmetry_space_group_name_H_M')
 
         ##################################################################
         #       IF YOU MODIFIED THE HEADER, MODIFY THE COLUMNS TOO
         ##################################################################
         # Values to save. Full row in the following comment for further reference:
-        # row = [file_name, cif, cifE]
-        row = [file_name, cif]
+        # row = [file_name, cif]
+        row = [file_name, symmetry_group]
         ##################################################################
 
         # ERRORS: Check if any of the values are missing

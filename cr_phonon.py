@@ -25,34 +25,33 @@ import cr_common as cr
 import pandas as pd
 
 
-
 ##################################################################
 #                PARAMETERS THAT YOU MAY MODIFY
 ##################################################################
+# Threshold for the energy to be considered greater than zero
+threshold = 0.1
+# Number of phonon lines to read plus one
+data_lines_phonon = 144
+# !!! IF YOU CHANGE THE HEADER, make sure to change the columns in the 'row = [...]' line, as well to comment the unnecesary 'searcher' and 'extract' lines. Full header is shown in the next comment for further reference:
+# header = ['filename', Ir_1, Ir_2, Ir_3, 'E_1', 'E_2', 'E_3', 'E>'+str(threshold)+'?', 'E_73', 'E_74', 'E_75', 'E_76', 'Zero_E_Gamma_Point=(E_4++144)/2 [cm^-1]', 'Zero_E_Gamma_Point [eV]']
+header = ['filename', 'E_1', 'E_2', 'E_3', 'E>'+str(threshold)+'?', 'E_73', 'E_74', 'E_75', 'E_76', 'Zero_E_Gamma_Point=(E_4++'+str(data_lines_phonon)+')/2 [cm^-1]', 'Zero_E_Gamma_Point [eV]']
 # Run the main script for *.phonon files at execution. Set to False to import the functions as a module.
 run_at_import = False
 # Rename the file_name in the xxx-xxx-xxx-xxx format; set to False to keep the original name
 rename_files = False
-# Main program for reading phonon files. 
+# Seconds for a loop to be considered as an error (a.k.a. seconds for me to cry). Remove this threshold by setting 'cry = False'
+cry = 30
+# Omit, or not, all values from corrupted files
+safemode = False
+# Main program for reading phonon files. Change the default arguments to run the script from the command line
 def main(data_directory='data', data_phonon='cc-2_Efield.phonon', out='out_phonon.csv', out_error='errors_phonon.txt'):
-    # Seconds for a loop to be considered as an error (a.k.a. seconds for me to cry). Remove this threshold by setting 'cry = False'
-    cry = 30
-    # Omit, or not, all values from corrupted files
-    safemode = False
-    # Number of phonon lines to read plus one
-    data_lines_phonon = 144
-    # Threshold for the energy to be considered greater than zero
-    threshold = 0.1
-    # IF YOU CHANGE THE HEADER, make sure to change the columns in the 'row = [...]' line, as well to comment the unnecesary 'searcher' and 'extract' lines. Full header is shown in the next comment for further reference:
-    # header = ['filename', Ir_1, Ir_2, Ir_3, 'E_1', 'E_2', 'E_3', 'E>'+str(threshold)+'?', 'E_73', 'E_74', 'E_75', 'E_76', 'Zero_E_Gamma_Point=(E_4++144)/2 [cm^-1]', 'Zero_E_Gamma_Point [eV]']
-    header = ['filename', 'E_1', 'E_2', 'E_3', 'E>'+str(threshold)+'?', 'E_73', 'E_74', 'E_75', 'E_76', 'Zero_E_Gamma_Point=(E_4++144)/2 [cm^-1]', 'Zero_E_Gamma_Point [eV]']
 ##################################################################
 
     print("")
     if run_at_import == False:
-        print("  Running CrystalReader in 'castep' mode...")
+        print("  Running CrystalReader in 'phonon' mode...")
     if run_at_import == True:
-        print("  Running CrystalReader", cr.version(), "in 'castep' mode...")
+        print("  Running CrystalReader", cr.version(), "in 'phonon' mode...")
         print("  If you find this code useful, a citation would be awesome :D")
         print("  Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader")
     print("")

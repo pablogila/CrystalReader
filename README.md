@@ -5,11 +5,17 @@ CrystalReader is a program to automate the reading and extraction of information
 
 ## Requirements
 
-CrystalReader runs in [Python 3.X](https://www.python.org/downloads/) with **Pandas** installed. To install Pandas, run on your terminal:  
-
+CrystalReader runs in [Python 3.X](https://www.python.org/downloads/) with **Pandas**; to install Pandas, run on your terminal:  
 `pip install --user pandas`  
 
-The use of a virtual environment such as venv is recommended, but not required.  
+The use of a virtual environment such as venv is recommended, but not required; in case you want to use a virtual environment, you can create one by running:  
+`python -m venv .venv`  
+Activate the environment; on **Windows**:  
+`.\.venv\Scripts\activate`  
+On **Linux**:  
+`./.venv/bin/activate`  
+and install Pandas in the virtual environment:  
+`pip install pandas`  
 
 
 ## CrystalReader Usage
@@ -48,15 +54,16 @@ CrystalReader
 
 To execute CrystalReader, open a terminal and write:  
 * On **Windows PowerShell** or **CMD**  
-`python CrystalReader.py`
+`python CrystalReader.py`  
+
 * On **Linux Terminal**  
-`python3 CrystalReader.py`
+`python3 CrystalReader.py`  
 
 The first time running CrystalReader, it will create an empty batch jobs file, called `CrystalReader_JOBS.txt`. Inside this file, you have to write the jobs to execute, one per line. Each job starts by the format to read (castep, cif or phonon), followed by the name of the data folder, and the name of the data files, separated by commas:  
 
 `Format, DataFolder, DataFiles`  
 
-The names for the output file and the error log will be generated automatically as **out_DataFolder_DataFiles.csv** and **errors_DataFolder_DataFiles.txt**, but you can specify their names in the batch job file if you want to, as follows:  
+The names for the output file and the error log will be generated automatically as **out_DataFolder_DataFiles.csv** and **errors_DataFolder_DataFiles.txt**, but you can specify their names in the batch job file if you want to, as follows: 
 
 `Format, DataFolder, DataFiles, Output, ErrorLog`  
 
@@ -149,7 +156,7 @@ The program iterates over this set of files, starting to read from the end of th
 `cr_cif.py` uses the same folder structure as before, but the files to read are set with the variables `data_cif`; its default value is `cc-2-out.cif`.  
 
 The program iterates over this set of files and writes the relevant info to an **out_cif.csv**, containing the following data:  
-* name of the parent folder, in **xxx-xxx-xxx-xxx** format
+* name of the parent folder (in **xxx-xxx-xxx-xxx** format if `rename_files = True`)
 * symmetry_space_group_name_H_M
 
 
@@ -163,7 +170,7 @@ There is a threshold, set by the variable `threshold`, which triggers a note if 
 
 The program iterates over the set of files, and writes the following info to an **out_phonon.csv**:  
 
-* name of the parent folder, in **xxx-xxx-xxx-xxx** format
+* name of the parent folder (in **xxx-xxx-xxx-xxx** format if `rename_files = True`)
 * Energy of the 1st mode, in cm^-1
 * E 2
 * E 3

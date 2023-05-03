@@ -25,23 +25,22 @@ import cr_common as cr
 import pandas as pd
 
 
-
 ##################################################################
 #                PARAMETERS THAT YOU MAY MODIFY
 ##################################################################
+# !!! IF YOU CHANGE THE HEADER, make sure to change the columns in the 'row = [...]' line, as well to comment the unnecesary 'searcher' and 'extract' lines. Full header is shown in the next comment for further reference:
+# header = ['filename', 'enthalpy [eV]', 'enthalpy [kJ/mol]', 'total energy corrected [eV]', 'space group', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume [A^3]', 'density [amu/A^3]', 'density [g/cm^3]']
+header = ['filename', 'total energy corrected [eV]', 'space group', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume [A^3]', 'density [amu/A^3]', 'density [g/cm^3]']
 # Run the main script for *.castep files at execution. Set to False to import the functions as a module.
 run_at_import = False
 # Rename the file_name in the xxx-xxx-xxx-xxx format, set to False to keep the original name
 rename_files = False
-# Main program for reading castep files. 
+# Seconds for a loop to be considered as an error (a.k.a. seconds for me to cry). Remove this threshold by setting 'cry = False'
+cry = 10
+# Omit, or not, all values from corrupted files
+safemode = False
+# Main program for reading castep files. Change the default arguments to run the script from the command line
 def main(data_directory='data', data_castep='cc-2.castep', out='out_castep.csv', out_error='errors_castep.txt'):
-    # Seconds for a loop to be considered as an error (a.k.a. seconds for me to cry). Remove this threshold by setting 'cry = False'
-    cry = 5
-    # Omit, or not, all values from corrupted files
-    safemode = False
-    # IF YOU CHANGE THE HEADER, make sure to change the columns in the 'row = [...]' line, as well to comment the unnecesary 'searcher' and 'extract' lines. Full header is shown in the next comment for further reference:
-    # header = ['filename', 'enthalpy [eV]', 'enthalpy [kJ/mol]', 'total energy corrected [eV]', 'space group', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume [A^3]', 'density [amu/A^3]', 'density [g/cm^3]']
-    header = ['filename', 'total energy corrected [eV]', 'space group', 'a', 'b', 'c', 'alpha', 'beta', 'gamma', 'cell volume [A^3]', 'density [amu/A^3]', 'density [g/cm^3]']
 ##################################################################
 
     print("")

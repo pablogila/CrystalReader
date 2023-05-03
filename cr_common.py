@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 def version():
-    return "vCR.2023.04.25.2000"
+    return "vCR.2023.05.03.1600"
 
 
 
