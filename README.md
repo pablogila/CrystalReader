@@ -5,7 +5,11 @@ CrystalReader is a program to automate the reading and extraction of information
 
 ## Requirements
 
-CrystalReader runs in **Python 3.X** with **Pandas** installed. The use of a virtual environment such as venv is recommended, but not required. 
+CrystalReader runs in [Python 3.X](https://www.python.org/downloads/) with **Pandas** installed. To install Pandas, run on your terminal:  
+
+`pip install --user pandas`  
+
+The use of a virtual environment such as venv is recommended, but not required.  
 
 
 ## CrystalReader Usage
@@ -48,15 +52,15 @@ To execute CrystalReader, open a terminal and write:
 * On **Linux Terminal**  
 `python3 CrystalReader.py`
 
-The first time running CrystalReader, it will create an empty batch jobs file, called `CrystalReader_JOBS.txt`. Inside this file, you have to write the jobs to execute, one per line. Each job starts by the format to read (castep, cif or phonon), followed by the name of the data folder, and the name of the data files, separated by commas.  
+The first time running CrystalReader, it will create an empty batch jobs file, called `CrystalReader_JOBS.txt`. Inside this file, you have to write the jobs to execute, one per line. Each job starts by the format to read (castep, cif or phonon), followed by the name of the data folder, and the name of the data files, separated by commas:  
 
 `Format, DataFolder, DataFiles`  
 
-The names for the output file and the error log will be generated automatically as `out_DataFolder_DataFiles.csv` and `errors_DataFolder_DataFiles.txt`, but you can specify them if you want to, as follows:  
+The names for the output file and the error log will be generated automatically as **out_DataFolder_DataFiles.csv** and **errors_DataFolder_DataFiles.txt**, but you can specify their names in the batch job file if you want to, as follows:  
 
 `Format, DataFolder, DataFiles, Output, ErrorLog`  
 
-An example of a job for reading phonon **rscan.phonon** files, in a folder called **data_rscan**, and writing the output to **out_rscan.csv**, and the errors to **errors_rscan.txt**, would be:  
+An example of a job for reading **rscan.phonon** files, in a folder called **data_rscan**, and writing the output to **out_rscan.csv**, and the errors to **errors_rscan.txt**, would be:  
 
 `phonon, data_rscan, rscan.phonon, out_rscan.csv, errors_rscan.txt`  
 
