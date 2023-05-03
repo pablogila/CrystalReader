@@ -48,7 +48,7 @@ CrystalReader
 │   └── ...
 │
 ├── data_folder_2
-└── data_folder_3
+├── data_folder_3
 └── ...
  ```
 
