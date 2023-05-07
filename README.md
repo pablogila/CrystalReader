@@ -8,7 +8,10 @@ CrystalReader is a program to automate the reading and extraction of information
 CrystalReader runs in [Python 3.X](https://www.python.org/downloads/) with **Pandas**; to install Pandas, run on your terminal:  
 `pip install --user pandas`  
 
-The use of a virtual environment such as venv is recommended, but not required; in case you want to use a virtual environment, you can create one by running:  
+
+### Optional: Using a Virtual Environment
+
+The use of a virtual environment such as venv is recommended, but not required; skip this part if you have no experience with virtual environments. In case you want to use venv, you can run:  
 `python -m venv .venv`  
 Activate the environment; on **Windows**:  
 `.\.venv\Scripts\activate`  
