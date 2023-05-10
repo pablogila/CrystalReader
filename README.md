@@ -63,15 +63,15 @@ To execute CrystalReader, open a terminal and write:
 `python3 CrystalReader.py`  
 
 The first time running CrystalReader, it will create an empty batch jobs file, called `CrystalReader_JOBS.txt`. Inside this file, you have to write the jobs to execute, one per line. Each job starts by the format to read (castep, cif or phonon), followed by the name of the data folder, and the name of the data files, separated by commas:  
-
 `Format, DataFolder, DataFiles`  
 
-The names for the output file and the error log will be generated automatically as **out_DataFolder_DataFiles.csv** and **errors_DataFolder_DataFiles.txt**, but you can specify their names in the batch job file if you want to, as follows: 
-
+The names for the output file and the error log will be generated automatically as **out_DataFolder_DataFiles.csv** and **errors_DataFolder_DataFiles.txt**, but you can specify their names in the batch job file if you want to, as follows:  
 `Format, DataFolder, DataFiles, Output, ErrorLog`  
 
-An example of a job for reading **rscan.phonon** files, in a folder called **data_rscan**, and writing the output to **out_rscan.csv**, and the errors to **errors_rscan.txt**, would be:  
+If you specify subpaths, make sure that said folders, here denoted as **\data** and **\out**, already exist. Notice that if the **DataFolder** is specified as a subpath, the **Output** and **ErrorLog** must be specified.  
+`Format, data\DataFolder, DataFiles, out\Output, out\ErrorLog`  
 
+An example of a job for reading **rscan.phonon** files, in a folder called **data_rscan**, and writing the output to **out_rscan.csv**, and the errors to **errors_rscan.txt**, would be:  
 `phonon, data_rscan, rscan.phonon, out_rscan.csv, errors_rscan.txt`  
 
 Run CrystalReader again, and it will execute the jobs in the batch file. However, before running CrystalReader, you should modify the data header and rows from within the individual scripts, so that it only analyzes the variables that you are looking for; otherwise you may get some errors. Anyway, in case you did not read this documentation, I turned off the safemode, which discards files with errors.  

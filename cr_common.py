@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 def version():
-    return "vCR.2023.05.03.1600"
+    return "vCR.2023.05.10.1300"
 
 
 
@@ -224,9 +224,11 @@ def jobs(job_file):
             f.write("# Format(=castep/cif/phonon), DataFolder, DataFiles\n")
             f.write("# Additionally, you can also specify the desired names for the output file and the error log:\n")
             f.write("# Format, DataFolder, DataFiles, Output, ErrorLog\n")
+            f.write("# If you specify subpaths, make sure that said folders ('data' and 'out' here) already exist:\n")
+            f.write("# Format, data\DataFolder, DataFiles, out\Output, out\ErrorLog\n")
             f.write("#\n")
             f.write("# Example:\n")
-            f.write("# phonon, data_rscan, rscan.phonon, out.csv, errors.csv\n")
+            f.write("# phonon, data_rscan, rscan.phonon, out.csv, errors.txt\n")
             f.write("# ----------------------------------------------------------------------------------------------\n")
         print("")
         print("  ------------------------------------------------------------")
