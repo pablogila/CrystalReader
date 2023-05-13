@@ -100,13 +100,15 @@ def main(data_directory='data', data_cif='cc-2-out.cif', out='out_cif.csv', out_
 
         # Read the file and look for the desired lines
         symmetry_group_str = cr.searcher(file_cif, '_symmetry_space_group_name_H-M', cry)
-        # CAREFUL: This line may be written differently as:
-        # symmetry_group_str = cr.searcher(file_cif, '_symmetry_space_group_name_H_M', cry)
 
         # Extract the values from the strings
-        symmetry_group = cr.extract_str_commas(symmetry_group_str, '_symmetry_space_group_name_H-M')
-        # CAREFUL: This line may be written differently as:
-        # symmetry_group = cr.extract_str_commas(symmetry_group_str, '_symmetry_space_group_name_H_M')
+        symmetry_group = cr.extract_str_commas(symmetry_group_str, '_symmetry_space_group_name_H-M')        
+
+        # Sometimes, '_symmetry_space_group_name_H-M' is written as '_symmetry_space_group_name_H_M'
+        # The following 'if' should handle this issue
+        if symmetry_group_str is None:
+            symmetry_group_str = cr.searcher(file_cif, '_symmetry_space_group_name_H_M', cry)
+            symmetry_group = cr.extract_str_commas(symmetry_group_str, '_symmetry_space_group_name_H_M')
 
         ##################################################################
         #       IF YOU MODIFIED THE HEADER, MODIFY THE COLUMNS TOO
