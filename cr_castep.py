@@ -145,7 +145,7 @@ def main(data_directory='data', data_castep='cc-2.castep', out='out_castep.csv',
         ##################################################################
 
         # ERRORS: Check if any of the values are missing
-        error = [file_name, 'missing values, safemode = ' + str(safemode)]
+        error = [file_name, ' missing value/s', ' safemode = ' + str(safemode)]
         for i, var in enumerate(row):
             if var is None:
                 errors.append(error)

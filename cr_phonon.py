@@ -122,7 +122,7 @@ def main(data_directory='data', data_phonon='cc-2_Efield.phonon', out='out_phono
 
         except:
             # ERROR:
-            error = [file_name, 'missing values, safemode = ' + str(safemode)]
+            error = [file_name, ' missing value/s', ' safemode = ' + str(safemode)]
             errors.append(error)
             bar = True
             row = [file_name]
@@ -149,7 +149,7 @@ def main(data_directory='data', data_phonon='cc-2_Efield.phonon', out='out_phono
         ##################################################################
 
         # ERRORS: Check if any of the values are missing. For 'phonon' files in particular it should be handled in the 'except' part, and should not be neccesary. However, we leave it here just in case.
-        error = [file_name, 'missing values, safemode = ' + str(safemode)]
+        error = [file_name, ' missing value/s', ' safemode = ' + str(safemode)]
         for i, var in enumerate(row):
             if var is None:
                 errors.append(error)

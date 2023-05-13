@@ -119,7 +119,7 @@ def main(data_directory='data', data_cif='cc-2-out.cif', out='out_cif.csv', out_
         ##################################################################
 
         # ERRORS: Check if any of the values are missing
-        error = [file_name, 'missing values, safemode = ' + str(safemode)]
+        error = [file_name, ' missing value/s', ' safemode = ' + str(safemode)]
         for i, var in enumerate(row):
             if var is None:
                 errors.append(error)
