@@ -36,7 +36,7 @@ run_at_import = False
 # Rename the file_name in the xxx-xxx-xxx-xxx format, set to False to keep the original name
 rename_files = False
 # Seconds for a loop to be considered as an error (a.k.a. seconds for me to cry). Remove this threshold by setting 'cry = False'
-cry = 30
+cry = 10
 # Omit, or not, all values from corrupted files
 safemode = False
 # Main program for reading castep files. Change the default arguments to run the script from the command line

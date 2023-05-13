@@ -156,13 +156,10 @@ def errorlog(error_log, errors):
         log = pd.DataFrame(errors)
         log.to_csv(error_log, header=False, index=False)
         print("  ------------------------------------------------------------")
-        print("  COMPLETED WITH ERRORS: Some values are missing")
-        print("  (Hint: If you see too many errors, maybe you forgot")
-        print("  to modify the header and row inside the scripts)")
-        print("  Missing values in the following files:")
+        print("  COMPLETED WITH ERRORS:")
         for k in errors:
             print("  "+str(k))
-        print("  Suspicious files were registered in ", error_log)
+        print("  Error log registered at ", error_log)
         print("  ------------------------------------------------------------")
 
 

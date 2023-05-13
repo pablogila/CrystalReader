@@ -85,6 +85,8 @@ The following sections describe a more advanced use of these scripts. If you wan
 
 ## Error Management
 
+General hint: If you see too many errors, maybe you forgot to modify the header and row inside the scripts.  
+
 Sometimes some of your files may be corrupted, for example if the simulation was terminated before it was completed. If a value is not found, an **ERROR** message will be displayed with information about the corrupt file(s). The rest of the variables from a suspicious file are saved by default, but be cautious, because they can be wrong: to avoid mistakes, it is best to make sure to comment the values that you know are not present in your files, as well as modify the header and row variables in the individual scripts; then you can activate the safemode by setting `safemode = True`, so that suspicious files are ignored.  
 
 If a file takes too long to read, it is aborted and an **ERROR** message is displayed. The threshold for considering an error is defined by the variable `cry`, which is usually between 5 and 30 seconds by default, but can be set to **False** to remove the time limit. This variable may need to be changed if you are running the scripts on a supercomputer or in a potato with some wires.  
@@ -93,7 +95,9 @@ If a value is not found, an **ERROR** is displayed, regardless of whether the **
 
 This whole section could be summarized in the following sentence: **Always check the files marked with ERRORS because they may be corrupt**.  
 
-There are other kinds of errors, but don't worry: you will meet them when the time comes.
+If a file is missing, a 'missing file' error will be triggered, but it will not be displayed until the end of execution.  
+
+If you find any other weird error while running *CrystalReader*, please let me know.  
 
 
 ## Importing and Calling Scripts
