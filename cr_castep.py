@@ -89,6 +89,13 @@ def main(data_directory='data', data_castep='cc-2.castep', out='out_castep.csv',
         
         # Define the path to the .castep file
         file_castep = os.path.join(path, directory, data_castep)
+
+        # Check if the file exists
+        if not os.path.isfile(file_castep):
+            error = [file_name, 'missing file']
+            errors.append(error)
+            continue
+
         # Rename, or not, the file_name in the xxx-xxx-xxx-xxx format
         if rename_files == True:
             file_name = cr.naming(directory)
@@ -138,7 +145,7 @@ def main(data_directory='data', data_castep='cc-2.castep', out='out_castep.csv',
         ##################################################################
 
         # ERRORS: Check if any of the values are missing
-        error = [file_name]
+        error = [file_name, 'missing values, safemode = ' + str(safemode)]
         for i, var in enumerate(row):
             if var is None:
                 errors.append(error)

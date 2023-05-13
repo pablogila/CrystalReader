@@ -92,6 +92,12 @@ def main(data_directory='data', data_phonon='cc-2_Efield.phonon', out='out_phono
         # Define the path to the .phonon file
         file_phonon = os.path.join(path, directory, data_phonon)
 
+        # Check if the file exists
+        if not os.path.isfile(file_phonon):
+            error = [file_name, 'missing file']
+            errors.append(error)
+            continue
+
         # Rename, or not, the file_name in the xxx-xxx-xxx-xxx format
         if rename_files == True:
             file_name = cr.naming(directory)
@@ -116,7 +122,7 @@ def main(data_directory='data', data_phonon='cc-2_Efield.phonon', out='out_phono
 
         except:
             # ERROR:
-            error = [file_name]
+            error = [file_name, 'missing values, safemode = ' + str(safemode)]
             errors.append(error)
             bar = True
             row = [file_name]
@@ -143,7 +149,7 @@ def main(data_directory='data', data_phonon='cc-2_Efield.phonon', out='out_phono
         ##################################################################
 
         # ERRORS: Check if any of the values are missing. For 'phonon' files in particular it should be handled in the 'except' part, and should not be neccesary. However, we leave it here just in case.
-        error = [file_name]
+        error = [file_name, 'missing values, safemode = ' + str(safemode)]
         for i, var in enumerate(row):
             if var is None:
                 errors.append(error)

@@ -86,6 +86,12 @@ def main(data_directory='data', data_cif='cc-2-out.cif', out='out_cif.csv', out_
         # Define the path to the .cif files
         file_cif = os.path.join(path, directory, data_cif)
 
+        # Check if the file exists
+        if not os.path.isfile(file_cif):
+            error = [file_name, 'missing file']
+            errors.append(error)
+            continue
+
         # Rename, or not, the file_name in the xxx-xxx-xxx-xxx format
         if rename_files == True:
             file_name = cr.naming(directory)
@@ -111,7 +117,7 @@ def main(data_directory='data', data_cif='cc-2-out.cif', out='out_cif.csv', out_
         ##################################################################
 
         # ERRORS: Check if any of the values are missing
-        error = [file_name]
+        error = [file_name, 'missing values, safemode = ' + str(safemode)]
         for i, var in enumerate(row):
             if var is None:
                 errors.append(error)
