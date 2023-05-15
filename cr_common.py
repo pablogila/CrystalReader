@@ -27,6 +27,7 @@ def version():
 
 import re
 import time
+import os
 import pandas as pd
 import cr_castep as castep
 import cr_cif as cif
@@ -150,22 +151,11 @@ def progressbar(current, total, start=False):
         print(loadbar, end='\r')
 
 
-# Take the list of missing files as errors and slow loops as warnings, write them to a log file and display in the console
-def errorlog(error_log, errors):
-    if len(errors) > 0:
-        log = pd.DataFrame(errors)
-        log.to_csv(error_log, header=False, index=False)
-        print("  ------------------------------------------------------------")
-        print("  COMPLETED WITH ERRORS:")
-        for k in errors:
-            print("  "+str(k))
-        print("  Error log registered at ", error_log)
-        print("  ------------------------------------------------------------")
-
-
 # This function will read the input file and execute the batch jobs
 def jobs(job_file):
-    try:
+    current_directory = os.getcwd()
+    job_file_path = os.path.join(current_directory, job_file)
+    if os.path.isfile(job_file_path):
         is_file_empty = True
         with open(job_file, 'r') as f:
             lines = f.readlines()
@@ -185,56 +175,97 @@ def jobs(job_file):
                         errors = 'errors_' + line[1] + '_' + line[2] + '.txt'
                     else:
                         errors = line[4]
-                if line[0] == 'cif' or line[0] == 'CIF':
-                    cif.main(line[1], line[2], out, errors)
-                if line[0] == 'castep' or line[0] == 'CASTEP':
-                    castep.main(line[1], line[2], out, errors)
-                if line[0] == 'phonon' or line[0] == 'PHONON':
-                    phonon.main(line[1], line[2], out, errors)
+                data_folder = line[1]
+                data_path = os.path.join(current_directory, data_folder)
+                if os.path.isdir(data_path):
+                    if line[0] == 'cif' or line[0] == 'CIF':
+                        cif.main(line[1], line[2], out, errors)
+                    if line[0] == 'castep' or line[0] == 'CASTEP':
+                        castep.main(line[1], line[2], out, errors)
+                    if line[0] == 'phonon' or line[0] == 'PHONON':
+                        phonon.main(line[1], line[2], out, errors)
+                else:
+                    error_datafolder_missing(line)
+                    continue
             else:
-                print("")
-                print("  ------------------------------------------------------------")
-                print("  ERROR:  Unknown job. Check this line:")
-                print(' ',line)
-                print("  Skipping to the next job...")
-                print("  ------------------------------------------------------------")
-                print("")
+                error_job_unknown(line)
                 continue
         if is_file_empty:
-            print("")
-            print("  ------------------------------------------------------------")
-            print("  WARNING:  '" + job_file + "' batch job file was found,")
-            print("  but it is empty. Please fill it and try again.")
-            print("  ------------------------------------------------------------")
-            print("\n")
+            error_jobfile_empty(job_file)
             exit()
-    except FileNotFoundError:
-        with open(job_file, 'w') as f:
-            f.write("# ----------------------------------------------------------------------------------------------\n")
-            f.write("# CrystalReader Batch Job File\n")
-            f.write("# Copyright (C) 2023  Pablo Gila-Herranz\n")
-            f.write("# If you find this code useful, a citation would be awesome :D\n")
-            f.write("# Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader\n")
-            f.write("# This is free software, and you are welcome to redistribute it under GNU General Public License\n")
-            f.write("#\n")
-            f.write("# Write here all the CrystalReader jobs that you want to execute, following this format:\n")
-            f.write("# Format(=castep/cif/phonon), DataFolder, DataFiles\n")
-            f.write("# Additionally, you can also specify the desired names for the output file and the error log:\n")
-            f.write("# Format, DataFolder, DataFiles, Output, ErrorLog\n")
-            f.write("# If you specify subpaths, make sure that said folders ('data' and 'out' here) already exist:\n")
-            f.write("# Format, data\DataFolder, DataFiles, out\Output, out\ErrorLog\n")
-            f.write("#\n")
-            f.write("# Example:\n")
-            f.write("# phonon, data_rscan, rscan.phonon, out.csv, errors.txt\n")
-            f.write("# ----------------------------------------------------------------------------------------------\n")
-        print("")
-        print("  ------------------------------------------------------------")
-        print("  First time running CrystalReader, huh?")
-        print("  The batch job file was not found, so an empty one called")
-        print("  '" + job_file + "' was created with examples")
-        print("  ------------------------------------------------------------")
-        print("\n")
+    else:
+        error_jobfile_missing(job_file)
         exit()
+
+
+# Take the list of missing files as errors and slow loops as warnings, write them to a log file and display in the console
+def errorlog(error_log, errors):
+    if len(errors) > 0:
+        log = pd.DataFrame(errors)
+        log.to_csv(error_log, header=False, index=False)
+        print("  ------------------------------------------------------------")
+        print("  COMPLETED WITH ERRORS:")
+        for k in errors:
+            print("  "+str(k))
+        print("  Error log registered at ", error_log)
+        print("  ------------------------------------------------------------")
+
+
+def error_datafolder_missing(line):
+    print("")
+    print("  ------------------------------------------------------------")
+    print("  ERROR:  DataFolder not found. Check this line:")
+    print(' ',line)
+    print("  Skipping to the next job...")
+    print("  ------------------------------------------------------------")
+    print("")
+
+
+def error_job_unknown(line):
+    print("")
+    print("  ------------------------------------------------------------")
+    print("  ERROR:  Unknown job. Check this line:")
+    print(' ',line)
+    print("  Skipping to the next job...")
+    print("  ------------------------------------------------------------")
+    print("")
+
+
+def error_jobfile_empty(job_file):
+    print("")
+    print("  ------------------------------------------------------------")
+    print("  WARNING:  '" + job_file + "' batch job file was found,")
+    print("  but it is empty. Please fill it and try again.")
+    print("  ------------------------------------------------------------")
+    print("\n")
+
+
+def error_jobfile_missing(job_file):
+    with open(job_file, 'w') as f:
+        f.write("# ----------------------------------------------------------------------------------------------\n")
+        f.write("# CrystalReader Batch Job File\n")
+        f.write("# Copyright (C) 2023  Pablo Gila-Herranz\n")
+        f.write("# If you find this code useful, a citation would be awesome :D\n")
+        f.write("# Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader\n")
+        f.write("# This is free software, and you are welcome to redistribute it under GNU General Public License\n")
+        f.write("#\n")
+        f.write("# Write here all the CrystalReader jobs that you want to execute, following this format:\n")
+        f.write("# Format(=castep/cif/phonon), DataFolder, DataFiles\n")
+        f.write("# Additionally, you can also specify the desired names for the output file and the error log:\n")
+        f.write("# Format, DataFolder, DataFiles, Output, ErrorLog\n")
+        f.write("# If you specify subpaths, make sure that said folders ('data' and 'out' here) already exist:\n")
+        f.write("# Format, data\DataFolder, DataFiles, out\Output, out\ErrorLog\n")
+        f.write("#\n")
+        f.write("# Example:\n")
+        f.write("# phonon, data_rscan, rscan.phonon, out.csv, errors.txt\n")
+        f.write("# ----------------------------------------------------------------------------------------------\n")
+    print("")
+    print("  ------------------------------------------------------------")
+    print("  First time running CrystalReader, huh?")
+    print("  The batch job file was not found, so an empty one called")
+    print("  '" + job_file + "' was created with examples")
+    print("  ------------------------------------------------------------")
+    print("\n")
 
 
 # Conversion factor from eV to kJ/mol, Supposing that the energy is in eV/cell
@@ -245,6 +276,16 @@ def ev_kjmol():
 # Conversion factor from cm^-1 to eV
 def cm_ev():
     return (1.0 / 8065.54429)
+
+
+def ev_cm():
+    return (8065.54429)
+
+
+def print_conversion_factors():
+    print("cm^-1 to eV:   ", cm_ev())
+    print("eV to cm^-1:   ", ev_cm())
+    print("eV to kJ/mol:  ", ev_kjmol())
 
 
 
