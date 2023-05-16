@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 def version():
-    return "vCR.2023.05.10.1300"
+    return "vCR.2023.05.16.1000"
 
 
 
@@ -86,7 +86,7 @@ def extract_str_commas(string, name):
         return None
 
 
-# This function will extract the string value of a given variable from a raw string
+# This function will extract the desired column of a given string
 def extract_column(string, column):
     if string is None:
         return None
@@ -266,6 +266,12 @@ def error_jobfile_missing(job_file):
     print("  '" + job_file + "' was created with examples")
     print("  ------------------------------------------------------------")
     print("\n")
+
+
+
+############################
+###  CONVERSION FACTORS  ###
+############################
 
 
 # Conversion factor from eV to kJ/mol, Supposing that the energy is in eV/cell
