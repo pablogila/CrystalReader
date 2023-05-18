@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 def version():
-    return "vCR.2023.05.16.1000"
+    return "vCR.2023.05.18.1000"
 
 
 
@@ -274,6 +274,12 @@ def error_jobfile_missing(job_file):
 ############################
 
 
+def print_conversion_factors():
+    print("cm^-1 to eV:   ", cm_ev())
+    print("eV to cm^-1:   ", ev_cm())
+    print("eV to kJ/mol:  ", ev_kjmol())
+
+
 # Conversion factor from eV to kJ/mol, Supposing that the energy is in eV/cell
 def ev_kjmol():
     return ((1.602176634E-19 / 1000) * 6.02214076E+23)
@@ -286,80 +292,4 @@ def cm_ev():
 
 def ev_cm():
     return (8065.54429)
-
-
-def print_conversion_factors():
-    print("cm^-1 to eV:   ", cm_ev())
-    print("eV to cm^-1:   ", ev_cm())
-    print("eV to kJ/mol:  ", ev_kjmol())
-
-
-
-#######################
-###  OLD FUNCTIONS  ###
-### left for legacy ###
-#######################
-
-
-# Take the list of missing files as errors and slow loops as warnings, write them to a log file and display in the console
-def errorlog_OLD(error_log, errors, warnings):
-    # Remove warnings that resulted in errors, saving in warn[] only the loops that took too long yet seemed to work
-    error_files = [error[0] for error in errors]
-    warning_files = [warning[0] for warning in warnings]
-    warn = []
-    for i, warning in enumerate(warning_files):
-        if warning not in error_files:
-            warn.append(warnings[i])
-    # Write the errors and warnings to a log file, and print them to the console
-    if len(errors) > 0:
-        errors.insert(0, "COMPLETED WITH ERRORS:  The following values are missing:")
-    if len(warn) > 0:
-        warn.insert(0, "WARNING:  The following files were suspiciously slow to read:")
-        for warning in warn:
-            errors.append(warning)
-    if len(errors) > 0:
-        log = pd.DataFrame(errors)
-        log.to_csv(error_log, header=False, index=False)
-        print("  -----------------------------------------------------------")
-        for k in errors:
-            print("  "+str(k))
-        print("  Error log registered in ", error_log)
-        print("  DON'T TRUST FILES WITH ERRORS OR WARNINGS, CHECK MANUALLY")
-        print("  -----------------------------------------------------------")
-
-
-# This function will search for a specific string value in a given file, and return the corresponding line
-def searcher_OLD(filename, search_value, time_limit = False):
-    with open(filename, 'r') as file:
-        # Move the file pointer to the end of the file
-        file.seek(0, 2)
-        # Get the position of the file pointer
-        position = file.tell()
-        time_start = time.time() # record the start time
-        while position >= 0:
-            # Check if the elapsed time exceeds the specified time limit
-            if time_limit and time.time() - time_start > time_limit:
-                return None
-            file.seek(position)
-            next_char = file.read(1)
-            if next_char == '\n':
-                line = file.readline().strip()
-                if line.startswith(search_value):
-                    return line
-            position -= 1
-    return None
-
-
-def naming_OLD(string):
-    # Define a regular expression pattern to match the desired value
-    pattern = r"pnam-p-1-(\d{3})-(\d{3})-(\d{3})-(\d{3})"
-    # Use the re.search() function to find the first occurrence of the pattern in the string
-    match = re.search(pattern, string)
-    # Check if a match was found
-    if match:
-        # Extract the matched groups and join them with hyphens
-        return "-".join(match.groups())
-    else:
-        # If no match was found, return None
-        return None
 
