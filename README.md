@@ -252,7 +252,15 @@ To call the progressbar function, the main loop should have the following struct
 * `ev_kjmol()` and `cm_ev()` are the conversion factors used to transform values from eV to kJ/mol and from cm^-1 to eV.  
 
 
+## Suggestions and Citation
+
 Please feel free to contact me if you have any questions or suggestions.  
 If you find these scripts useful, a citation would be awesome :D  
 *Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader*  
+
+
+## References
+
+* [CASTEP website](http://www.castep.org/)
+* [OclimaxPlus on GitHub](https://github.com/pablogila/OclimaxPlus)
 
