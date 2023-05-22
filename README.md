@@ -93,9 +93,9 @@ If a file takes too long to read, it is aborted and an **ERROR** message is disp
 
 If a value is not found, an **ERROR** is displayed, regardless of whether the **cry** threshold has been reached or not, and the suspicious files are saved to an error log defined by the `error_log` variable.  
 
-This whole section could be summarized in the following sentence: **Always check the files marked with ERRORS because they may be corrupt**.  
-
 If a file is missing, a 'missing file' error will be triggered, but it will not be displayed until the end of execution.  
+
+This entire section could be summarized in the following sentence: **Always check the files marked with ERRORS because they may be corrupt**.  
 
 If you find any other weird error while running *CrystalReader*, please let me know.  
 
