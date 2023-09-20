@@ -25,7 +25,7 @@ and install Pandas in the virtual environment:
 
 First download the source code, as you prefer:  
 * From your **web browser**  
-On GitHub, clic on 'Code', 'Download ZIP', and extract.  
+[Download the latest ZIP](https://github.com/pablogila/CrystalReader/archive/refs/heads/main.zip) and extract.  
 * Using **git**  
 `git clone https://github.com/pablogila/CrystalReader.git`  
 
@@ -263,4 +263,5 @@ If you find these scripts useful, a citation would be awesome :D
 
 * [CASTEP website](http://www.castep.org/)
 * [OclimaxPlus on GitHub](https://github.com/pablogila/OclimaxPlus)
+* [CrystalReader Documentation Page](https://pablogila.github.io/CrystalReader/)
 
