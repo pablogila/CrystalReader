@@ -3,6 +3,23 @@
 CrystalReader is a program to automate the reading and extraction of information from __*.castep__, __*.cif__ and __*.phonon__ files, built with the premise of reliability and ease of reuse through an easy to read code structure, with the potential to be repurposed to process any type of text-based data files.
 
 
+## Table of Contents
+
+- [CrystalReader](#crystalreader)
+  - [Table of Contents](#table-of-contents)
+  - [Requirements](#requirements)
+    - [Optional: Using a Virtual Environment](#optional-using-a-virtual-environment)
+  - [CrystalReader Usage](#crystalreader-usage)
+  - [Error Management](#error-management)
+  - [Importing and Calling Scripts](#importing-and-calling-scripts)
+  - [For **.castep** files](#for-castep-files)
+  - [For **.cif** files](#for-cif-files)
+  - [For **.phonon** files](#for-phonon-files)
+  - [Common Functions](#common-functions)
+  - [Suggestions and Citation](#suggestions-and-citation)
+  - [References](#references)
+
+
 ## Requirements
 
 CrystalReader runs in [Python 3.X](https://www.python.org/downloads/) with **Pandas**; to install Pandas, run on your terminal:  
