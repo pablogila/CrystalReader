@@ -1,6 +1,6 @@
 # CrystalReader
 
-CrystalReader is a program to automate the reading and extraction of information from __*.castep__, __*.cif__ and __*.phonon__ files, built with the premise of reliability and ease of reuse through an easy to read code structure, with the potential to be repurposed to process any type of text-based data files.
+CrystalReader is a program to automate the reading and extraction of information from __*.castep__, __*.cif__ and __*.phonon__ files, built with the premise of reliability and ease of reuse through an easy to read code structure, with the potential to be repurposed to process any type of text-based data files. You can check the latest documentation [here](https://pablogila.github.io/CrystalReader/).  
 
 
 ## Table of Contents
