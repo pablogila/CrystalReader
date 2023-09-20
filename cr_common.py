@@ -2,7 +2,7 @@
 CrystalReader Common Functions. Read and extract data from different files.
 Copyright (C) 2023  Pablo Gila-Herranz
 If you find this code useful, a citation would be awesome :D
-Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader
+Pablo Gila-Herranz, “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 def version():
-    return "vCR.2023.05.18.1000"
+    return "vCR.2023.09.20.2330"
 
 
 

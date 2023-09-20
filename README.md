@@ -1,6 +1,6 @@
 # CrystalReader
 
-CrystalReader is a program to automate the reading and extraction of information from __*.castep__, __*.cif__ and __*.phonon__ files, built with the premise of reliability and ease of reuse through an easy to read code structure, with the potential to be repurposed to process any type of text-based data files. You can check the latest documentation [here](https://pablogila.github.io/CrystalReader/).  
+CrystalReader is a program to automate the reading and extraction of information from `*.castep`, `*.cif` and `*.phonon` files, built with the premise of reliability and ease of reuse through an easy to read code structure, with the potential to be repurposed to process any type of text-based data files. You can check the latest documentation [here](https://pablogila.github.io/CrystalReader/).  
 
 
 ## Table of Contents
@@ -9,15 +9,18 @@ CrystalReader is a program to automate the reading and extraction of information
   - [Table of Contents](#table-of-contents)
   - [Requirements](#requirements)
     - [Optional: Using a Virtual Environment](#optional-using-a-virtual-environment)
-  - [CrystalReader Usage](#crystalreader-usage)
+- [Basic Usage](#basic-usage)
+  - [Installing](#installing)
+  - [Execution](#execution)
+- [Advanced Usage](#advanced-usage)
   - [Error Management](#error-management)
   - [Importing and Calling Scripts](#importing-and-calling-scripts)
   - [For **.castep** files](#for-castep-files)
   - [For **.cif** files](#for-cif-files)
   - [For **.phonon** files](#for-phonon-files)
   - [Common Functions](#common-functions)
-  - [Suggestions and Citation](#suggestions-and-citation)
-  - [References](#references)
+- [Suggestions and Citation](#suggestions-and-citation)
+- [References](#references)
 
 
 ## Requirements
@@ -38,7 +41,9 @@ and install Pandas in the virtual environment:
 `pip install pandas`  
 
 
-## CrystalReader Usage
+# Basic Usage
+
+## Installing
 
 First download the source code, as you prefer:  
 * From your **web browser**  
@@ -72,6 +77,9 @@ CrystalReader
 └── ...
  ```
 
+
+## Execution
+
 To execute CrystalReader, open a terminal and write:  
 * On **Windows PowerShell** or **CMD**  
 `python CrystalReader.py`  
@@ -85,13 +93,13 @@ The first time running CrystalReader, it will create an empty batch jobs file, c
 The names for the output file and the error log will be generated automatically as **out_DataFolder_DataFiles.csv** and **errors_DataFolder_DataFiles.txt**, but you can specify their names in the batch job file if you want to, as follows:  
 `Format, DataFolder, DataFiles, Output, ErrorLog`  
 
-If you specify subpaths, make sure that said folders, here denoted as **\data** and **\out**, already exist. Notice that if the **DataFolder** is specified as a subpath, the **Output** and **ErrorLog** must be specified.  
+If you specify subpaths, make sure that said folders, here denoted as **\data** and **\out**, already exist. Notice that if the **DataFolder** is specified as a subpath, the **Output** and **ErrorLog** _must_ be specified.  
 `Format, data\DataFolder, DataFiles, out\Output, out\ErrorLog`  
 
 An example of a job for reading **rscan.phonon** files, in a folder called **data_rscan**, and writing the output to **out_rscan.csv**, and the errors to **errors_rscan.txt**, would be:  
 `phonon, data_rscan, rscan.phonon, out_rscan.csv, errors_rscan.txt`  
 
-Run CrystalReader again, and it will execute the jobs in the batch file. However, before running CrystalReader, you should modify the data header and rows from within the individual scripts, so that it only analyzes the variables that you are looking for; otherwise you may get some errors. Anyway, in case you did not read this documentation, I turned off the safemode, which discards files with errors.  
+Run CrystalReader again, and it will execute the jobs in the batch file. However, before running CrystalReader, you should modify the data header and rows from within the individual scripts, so that it only analyzes the variables that you are looking for; otherwise you may get some errors. The variables that you can extract by default are detailed in the sections [For __.castep__ files](#for-castep-files), [For __.cif__ files](#for-cif-files) and [For __.phonon__ files](#for-phonon-files). Anyway, in case you did not read this documentation, I turned off the safemode, which discards files with errors.  
 
 Regarding the naming of the subfolders inside your data folder, containing the data files, just know that their name will be extracted in the output file as **filename**. This naming is not relevant, just *do not use commas*.  
 
@@ -99,6 +107,8 @@ If your subfolders follow the xxx-xxx-xxx-xxx naming convention, but you have so
 
 The following sections describe a more advanced use of these scripts. If you want to get the most out of CrystalReader, keep reading.  
 
+
+# Advanced Usage
 
 ## Error Management
 
@@ -269,14 +279,14 @@ To call the progressbar function, the main loop should have the following struct
 * `ev_kjmol()` and `cm_ev()` are the conversion factors used to transform values from eV to kJ/mol and from cm^-1 to eV.  
 
 
-## Suggestions and Citation
+# Suggestions and Citation
 
 Please feel free to contact me if you have any questions or suggestions.  
 If you find these scripts useful, a citation would be awesome :D  
-*Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader*  
+*Pablo Gila-Herranz, “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader*  
 
 
-## References
+# References
 
 * [CASTEP website](http://www.castep.org/)
 * [OclimaxPlus on GitHub](https://github.com/pablogila/OclimaxPlus)

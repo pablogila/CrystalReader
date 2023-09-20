@@ -2,7 +2,7 @@
 CrystalReader 'cif' script. Read and extract data from '.cif' files.
 Copyright (C) 2023  Pablo Gila-Herranz
 If you find this code useful, a citation would be awesome :D
-Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader
+Pablo Gila-Herranz, “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
