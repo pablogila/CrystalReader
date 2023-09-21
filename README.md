@@ -105,10 +105,11 @@ Regarding the naming of the subfolders inside your data folder, containing the d
 
 If your subfolders follow the xxx-xxx-xxx-xxx naming convention, but you have some comments at the folders such as __comment-*000-000-090-180*_example__, you can clean the comments and leave only the numbers, by setting `rename_files = True` inside the individual scripts.  
 
-The following sections describe a more advanced use of these scripts. If you want to get the most out of CrystalReader, keep reading.  
-
 
 # Advanced Usage
+
+The following sections describe a more advanced use of these scripts. If you want to get the most out of CrystalReader, keep reading.  
+
 
 ## Error Management
 
