@@ -289,8 +289,8 @@ If you find these scripts useful, a citation would be awesome :D
 
 # References
 
-* [CASTEP website](http://www.castep.org/)
-* [OclimaxPlus on GitHub](https://github.com/pablogila/OclimaxPlus)
-* [CrystalReader on GitHub](https://github.com/pablogila/CrystalReader/)
-* [CrystalReader Documentation Page](https://pablogila.github.io/CrystalReader/)
+* [CASTEP website](http://www.castep.org/)  
+* [OclimaxPlus on GitHub](https://github.com/pablogila/OclimaxPlus)  
+* [CrystalReader on GitHub](https://github.com/pablogila/CrystalReader/)  
+* [CrystalReader Documentation Page](https://pablogila.github.io/CrystalReader/)  
 
