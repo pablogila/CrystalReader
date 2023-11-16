@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 def version():
-    return "vCR.2023.09.20.2330"
+    return "vCR.2023.11.16.1100"
 
 
 
@@ -246,7 +246,7 @@ def error_jobfile_missing(job_file):
         f.write("# CrystalReader Batch Job File\n")
         f.write("# Copyright (C) 2023  Pablo Gila-Herranz\n")
         f.write("# If you find this code useful, a citation would be awesome :D\n")
-        f.write("# Gila-Herranz, Pablo. “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader\n")
+        f.write("# Pablo Gila-Herranz, “CrystalReader”, 2023. https://github.com/pablogila/CrystalReader\n")
         f.write("# This is free software, and you are welcome to redistribute it under GNU General Public License\n")
         f.write("#\n")
         f.write("# Write here all the CrystalReader jobs that you want to execute, following this format:\n")
