@@ -1,3 +1,16 @@
+# Archieved
+
+This repository was very useful during my MsC thesis, and was used to analyse the data that led to the following publication:
+
+> Kacper Drużbicki, Pablo Gila-Herranz, Pelayo Marin-Villa, Mattia Gaboardi, Jeff Armstrong, and Felix Fernandez-Alonso, *"Cation Dynamics as Structure Explorer in Hybrid Perovskites─The Case of MAPbI3"*. Crystal Growth & Design 2024 24 (1), 391-404. DOI: 10.1021/acs.cgd.3c01112 
+
+This repository is now archived. The evolution of these rudimentary scripts is available as the fully featured [ThotPy](https://github.com/pablogila/ThotPy) Python package.
+
+Thanks CrystalReader. It was great.  
+Pablo Gila-Herranz
+
+---
+
 # CrystalReader
 
 CrystalReader is a program to automate the reading and extraction of information from `*.castep`, `*.cif` and `*.phonon` files, built with the premise of reliability and ease of reuse through an easy to read code structure, with the potential to be repurposed to process any type of text-based data files. You can check the latest documentation [here](https://pablogila.github.io/CrystalReader/).  
@@ -5,6 +18,7 @@ CrystalReader is a program to automate the reading and extraction of information
 
 ## Table of Contents
 
+- [Archieved](#archieved)
 - [CrystalReader](#crystalreader)
   - [Table of Contents](#table-of-contents)
   - [Requirements](#requirements)
